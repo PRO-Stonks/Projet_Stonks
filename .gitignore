@@ -103,11 +103,9 @@ dist
 # TernJS port file
 .tern-port
 
-./idea
 .idea/
 .yarn/
 package-lock.json
 yarn.lock
-.yarn/
 .pnp.js
 config.env
