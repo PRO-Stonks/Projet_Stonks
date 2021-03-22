@@ -112,11 +112,11 @@ exports.protect = async (req, res, next) => {
         // 2) Verify token
         const decode = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-        // 3) check if the user is exist (not deleted)
+        // 3) check if the user exist (not deleted)
         const user = await User.findById(decode.id);
         if (!user) {
             return next(
-                new AppError(401, "fail", "This user is no longer exist"),
+                new AppError(401, "fail", "This user no longer exist"),
                 req,
                 res,
                 next,
