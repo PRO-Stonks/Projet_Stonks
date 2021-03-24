@@ -65,19 +65,18 @@ exports.login = async (req, res, next) => {
 exports.signup = async (req, res, next) => {
     try {
         const user = await User.create({
-            name: req.body.name,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
             email: req.body.email,
             password: req.body.password,
             role: req.body.role,
         });
 
-        const token = createToken(user.id);
 
         user.password = undefined;
 
         res.status(201).json({
             status: "success",
-            token,
             data: {
                 user,
             },
