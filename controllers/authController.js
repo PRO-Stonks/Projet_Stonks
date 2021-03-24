@@ -3,10 +3,11 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const AppError = require("../utils/appError");
 
-const createToken = id => {
+const createToken = (id,role) => {
     return jwt.sign(
         {
             id,
+            role,
         },
         process.env.JWT_SECRET,
         {
@@ -44,7 +45,7 @@ exports.login = async (req, res, next) => {
         }
 
         // 3) All correct, send jwt to client
-        const token = createToken(user.id);
+        const token = createToken(user.id, user.role);
 
         // Remove the password from the output
         user.password = undefined;
@@ -123,7 +124,7 @@ exports.protect = async (req, res, next) => {
             );
         }
 
-        req.user = user;
+        req.user = {id: decode.id, role: decode.role};
         next();
     } catch (err) {
         next(err);
