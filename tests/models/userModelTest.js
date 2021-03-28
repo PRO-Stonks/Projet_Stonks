@@ -9,7 +9,7 @@ dotenv.config({
     path: './config.env'
 });
 
-before(function () {
+before(async function () {
     const database = process.env.DATABASE.replace(
         '${MONGO_USERNAME}', process.env.MONGO_USERNAME).replace(
         '${MONGO_PASSWORD}', process.env.MONGO_PASSWORD).replace(
@@ -20,48 +20,95 @@ before(function () {
     console.log(database);
 
 // Connect the database
-    mongoose.connect(database, {
+    await mongoose.connect(database, {
         useNewUrlParser: true,
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
     }).then(con => {
         console.log('DB connection Successfully!');
-        mongoose.connection.db.dropDatabase(console.log(`${connection.db.databaseName} database dropped.`)
+        mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
         );
     });
 
 })
 
-describe('UserModel', function() {
-    describe('Missing Firstname', function() {
-        it('should throws when the value is not present', async () => {
+describe('UserModel', function () {
+    describe('Missing Element', function () {
+        Object.keys(User.schema.obj).forEach((key) => {
+            if (User.schema.obj[key].hasOwnProperty('required')) {
+                let test = {
+                    firstName: "test",
+                    lastName: "test",
+                    email: "email@email.test",
+                    password: "012345678",
+                };
+                delete test[key];
+                it('should throws when ' + key + ' is not present', async () => {
+                    await expect(User.create(test)).to.be.rejectedWith(Error);
+                });
+            }
+        });
+    });
+    describe('Role', function () {
+        it('should throws when value is not in the enum', async () => {
             await expect(User.create({
-                firstName: "",
+                firstName: "test",
                 lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
+                role: "NOPE"
             })).to.be.rejectedWith(Error);
         });
     });
-    describe('Missing Lastname', function() {
-        it('should throws when the value is not present', async () => {
+    describe('Role', function () {
+        it('should throws when value is not in the enum', async () => {
             await expect(User.create({
                 firstName: "test",
-                lastName: "",
+                lastName: "test",
                 email: "email@email.test",
+                password: "012345678",
+                role: "NOPE"
+            })).to.be.rejectedWith(Error);
+        });
+    });
+    describe('Password', function () {
+        it('should throws when the length is too small', async () => {
+            await expect(User.create({
+                firstName: "test",
+                lastName: "test",
+                email: "email@email.test",
+                password: "0123456",
+            })).to.be.rejectedWith(Error);
+        });
+    });
+    describe('Email', function () {
+        it('should throws when the string is incorrectly formated', async () => {
+            await expect(User.create({
+                firstName: "test",
+                lastName: "test",
+                email: "email@emailtest",
                 password: "012345678",
             })).to.be.rejectedWith(Error);
         });
     });
-    describe('Missing Lastname', function() {
-        it('should throws when the value is not present', async () => {
-            await expect(User.create({
+    describe('Creation', function () {
+        it('should throws when value is not in the enum', async () => {
+            await User.create({
                 firstName: "test",
-                lastName: "",
+                lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
-            })).to.be.rejectedWith(Error);
+            }).then((data) => {
+                console.log(data);
+                expect(data.active).to.be.true;
+                expect(data.role).to.be.equal("manager");
+                expect(data.firstName).to.be.equal("test");
+                expect(data.lastName).to.be.equal("test");
+                expect(data.email).to.be.equal("email@email.test");
+                expect(data.password).to.not.be.equal("012345678");
+                expect(data.id).to.be.not.empty;
+            });
         });
     });
 });
