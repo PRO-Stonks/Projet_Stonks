@@ -1,9 +1,9 @@
 'use strict';
 const User = require('../../models/userModel');
-const chai = require('chai')
+const chai = require('chai');
 const mongoose = require('mongoose');
-const expect = chai.expect
-chai.use(require('chai-as-promised'))
+const expect = chai.expect;
+chai.use(require('chai-as-promised'));
 const dotenv = require('dotenv');
 dotenv.config({
     path: './config.env'
