@@ -85,19 +85,61 @@ describe('AuthControler', function () {
     });
 
     describe('Login',  function () {
-        it("Login with valid parameter works", async () => {
-            const user = await User.create({
+        it("Wrong email fails the login process", (done) => {
+           User.create({
                 firstName: "test",
                 lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
+            }).then(user => {
+               chai
+                   .request(app)
+                   .post("/api/v1/users/login").send({
+                   "email": "email@email",
+                   "password": "012345678"
+               }).end((err, res) => {
+                   console.log(res.body)
+                   expect(res.status).to.be.equal(401);
+                   expect(res.body.status).to.be.equal('fail');
+                   expect(res.body.token).to.not.exist;
+                   done();
+               }).timeout(timeoutDuration);
+           });
+        });
+        it("Wrong password fails the login process", (done) => {
+            User.create({
+                firstName: "test",
+                lastName: "test",
+                email: "email@email.test",
+                password: "012345678",
+            }).then(user => {
+                chai
+                    .request(app)
+                    .post("/api/v1/users/login").send({
+                    "email": "email@email.test",
+                    "password": "0123456789"
+                }).end((err, res) => {
+                    console.log(res.body)
+                    expect(res.status).to.be.equal(401);
+                    expect(res.body.status).to.be.equal('fail');
+                    expect(res.body.token).to.not.exist;
+                    done();
+                }).timeout(timeoutDuration);
             });
-            chai
-                .request(app)
-                .post("/api/v1/users/login").send({
-                "email": "email@email.test",
-                "password": "012345678"
-            }).end((err, res) => {
+        });
+        it("Login with valid parameter works",  (done) => {
+            User.create({
+                firstName: "test",
+                lastName: "test",
+                email: "email@email.test",
+                password: "012345678",
+            }).then(user => {
+                chai
+                    .request(app)
+                    .post("/api/v1/users/login").send({
+                    "email": "email@email.test",
+                    "password": "012345678"
+                }).end((err, res) => {
                     console.log(res.body)
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal('success');
@@ -106,26 +148,9 @@ describe('AuthControler', function () {
                     expect(res.body.data.user.role).to.be.equal("manager");
                     expect(validator.isMongoId(res.body.data.user._id)).to.be.true;
                     expect(validator.isJWT(res.body.token)).to.be.true;
+                    done();
                 }).timeout(timeoutDuration);
-        });
-        it("Wrong email fails the login process", async () => {
-            const user = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.test",
-                password: "012345678",
             });
-            chai
-                .request(app)
-                .post("/api/v1/users/login").send({
-                "email": "email@email",
-                "password": "012345678"
-            }).end((err, res) => {
-                console.log(res.body)
-                expect(res.status).to.be.equal(401);
-                expect(res.body.status).to.be.equal('fail');
-                expect(res.body.token).to.not.exist;
-            }).timeout(timeoutDuration);
         });
     });
 });
