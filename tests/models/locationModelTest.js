@@ -19,7 +19,7 @@ before(async function () {
 
     console.log(database);
 
-// Connect the database
+    // Connect the database
     await mongoose.connect(database, {
         useNewUrlParser: true,
         useCreateIndex: true,
@@ -97,5 +97,11 @@ describe('LocationModel', function () {
             });
         });
     });
-
 });
+
+after(async function(){
+    await mongoose.disconnect().then(() => {
+        console.log("All connections closed.")
+    });
+
+})
