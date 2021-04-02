@@ -11,7 +11,8 @@ const locationSchema = new mongoose.Schema({
         noStreet: {type: Number, required: [true, "Please provide a street number"]},
         npa: {type: Number, required: [true, "Please provide a NPA"]},
         city: {type: String, required: [true, "Please provide a city name"]},
-        country: {type: String, required: [true, "Please provide the country name"]}
+        country: {type: String, required: [true, "Please provide the country name"]},
+        required: [true, "Please provide an address"]
     },
 });
 
