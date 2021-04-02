@@ -74,4 +74,28 @@ describe('LocationModel', function () {
         });
     });
 
+    describe('Creation', function () {
+        it('should create the correct Location', async () => {
+            await Location.create({
+                name: "test",
+                address: {
+                    street: "sirTest",
+                    noStreet: 42,
+                    npa: 95,
+                    city: "Roosevelt",
+                    country: "Moon"
+                }
+            }).then((data) => {
+                console.log(data);
+                expect(data.name).to.be.equal("test");
+                expect(data.address.street).to.be.equal("sirTest");
+                expect(data.address.noStreet).to.be.equal(42);
+                expect(data.address.npa).to.be.equal(95);
+                expect(data.address.city).to.be.equal("Roosevelt");
+                expect(data.address.country).to.be.equal("Moon");
+                expect(data.id).to.be.not.empty;
+            });
+        });
+    });
+
 });
