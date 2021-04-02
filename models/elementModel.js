@@ -15,7 +15,7 @@ const elementSchema = new mongoose.Schema({
     },
     exitDate: {
         type: Date,
-        min: super.entryDate, // To test, i was searching a way to put exit date >= entryDate
+        //min // searching a way to put exit date >= entryDate
         required: false
     },
     price: {
