@@ -58,11 +58,15 @@ const eventProduct = new mongoose.Schema({
     },
     oldLocation: {
         type: mongoose.Schema.Types.ObjectId,
-        validate: [validator.isMongoId, "LocationId is invalid"]
+        validate: [validator.isMongoId, "LocationId is invalid"],
+        required: {
+            validator: function () {
+                return this.change === "Move";
+            },
+            message: "Location is required"
+        }
     }
 });
-
-
 
 
 const Event = mongoose.model("Event", eventSchema);
