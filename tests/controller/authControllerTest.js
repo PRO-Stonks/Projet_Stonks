@@ -41,6 +41,21 @@ beforeEach(async function () {
 
 describe('AuthControler', function () {
     describe('Sign Up', function () {
+        it("Fail sign up a new user with invalid parameter", (done) => {
+            chai
+                .request(app)
+                .post("/api/v1/users/signup").send({
+                firstName: "test",
+                lastName: "test",
+                email: "email@emai",
+                password: "0123",
+            }).end((err, res) => {
+                console.log(res.body)
+                expect(res.status).to.be.equal(400);
+                expect(res.body.status).to.be.equal('Invalid Input');
+                done();
+            }).timeout(timeoutDuration);
+        });
         it("Successfully sign up a new user", (done) => {
             chai
                 .request(app)
@@ -49,7 +64,7 @@ describe('AuthControler', function () {
                 lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
-                })
+            })
                 .end((err, res) => {
                     console.log(res.body)
                     expect(res.status).to.be.equal(201);
@@ -69,7 +84,7 @@ describe('AuthControler', function () {
                 lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
-                role:"admin"
+                role: "admin"
             })
                 .end((err, res) => {
                     console.log(res.body)
@@ -84,27 +99,27 @@ describe('AuthControler', function () {
         });
     });
 
-    describe('Login',  function () {
+    describe('Login', function () {
         it("Wrong email fails the login process", (done) => {
-           User.create({
+            User.create({
                 firstName: "test",
                 lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
             }).then(user => {
-               chai
-                   .request(app)
-                   .post("/api/v1/users/login").send({
-                   "email": "email@email",
-                   "password": "012345678"
-               }).end((err, res) => {
-                   console.log(res.body)
-                   expect(res.status).to.be.equal(401);
-                   expect(res.body.status).to.be.equal('fail');
-                   expect(res.body.token).to.not.exist;
-                   done();
-               }).timeout(timeoutDuration);
-           });
+                chai
+                    .request(app)
+                    .post("/api/v1/users/login").send({
+                    "email": "email@email",
+                    "password": "012345678"
+                }).end((err, res) => {
+                    console.log(res.body)
+                    expect(res.status).to.be.equal(401);
+                    expect(res.body.status).to.be.equal('fail');
+                    expect(res.body.token).to.not.exist;
+                    done();
+                }).timeout(timeoutDuration);
+            });
         });
         it("Wrong password fails the login process", (done) => {
             User.create({
@@ -127,7 +142,7 @@ describe('AuthControler', function () {
                 }).timeout(timeoutDuration);
             });
         });
-        it("Login with valid parameter works",  (done) => {
+        it("Login with valid parameter works", (done) => {
             User.create({
                 firstName: "test",
                 lastName: "test",
@@ -153,4 +168,8 @@ describe('AuthControler', function () {
             });
         });
     });
+
+    // TODO ADD test with duplicate email
+    // Add test with access to protected route
+    // Add test to verify behaviour of deleted users
 });
