@@ -43,4 +43,9 @@ const eventOrder = new mongoose.Schema({
 
 const Event = mongoose.model("Event", eventSchema);
 const ConnectionEvent = Event.discriminator("ConnectionEvent", eventConnection);
-module.exports = Event;
+const ConnectionOrder = Event.discriminator("ConnectionOrder", eventOrder);
+module.exports = {
+    Event,
+    ConnectionEvent,
+    ConnectionOrder
+};
