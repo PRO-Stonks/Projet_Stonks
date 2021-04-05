@@ -1,7 +1,6 @@
 'use strict';
 const mongoose = require("mongoose");
 const validator = require("validator");
-const bcrypt = require("bcryptjs");
 
 const eventSchema = new mongoose.Schema({
     time: {
@@ -78,11 +77,11 @@ const eventProduct = new mongoose.Schema({
     }
 });
 
-
 const Event = mongoose.model("Event", eventSchema);
 const ConnectionEvent = Event.discriminator("ConnectionEvent", eventConnection);
 const OrderEvent = Event.discriminator("OrderEvent", eventOrder);
 const ProductEvent = Event.discriminator("ProductEvent", eventProduct);
+
 module.exports = {
     Event,
     ConnectionEvent,
