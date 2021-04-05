@@ -37,8 +37,20 @@ exports.updateOne = Model => async (req, res, next) => {
             }
         });
 
-    } catch (error) {
-        next(error);
+    } catch (err) {
+        if(err instanceof mongoose.Error.ValidationError){
+            let errorOutput = ""
+            Object.keys(err.errors).forEach((key) => {
+                errorOutput+= err.errors[key].message+"\n";
+            });
+
+            next(new AppError(400, "Invalid Input", errorOutput),
+                req,
+                res,
+                next);
+        }else{
+            next(err);
+        }
     }
 };
 
@@ -54,8 +66,20 @@ exports.createOne = Model => async (req, res, next) => {
             }
         });
 
-    } catch (error) {
-        next(error);
+    } catch (err) {
+        if(err instanceof mongoose.Error.ValidationError){
+            let errorOutput = ""
+            Object.keys(err.errors).forEach((key) => {
+                errorOutput+= err.errors[key].message+"\n";
+            });
+
+            next(new AppError(400, "Invalid Input", errorOutput),
+                req,
+                res,
+                next);
+        }else{
+            next(err);
+        }
     }
 };
 

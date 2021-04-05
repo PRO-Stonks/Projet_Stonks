@@ -3,6 +3,7 @@ const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const AppError = require("../utils/appError");
+const mongoose = require("mongoose");
 
 const createToken = (id,role) => {
     return jwt.sign(
@@ -83,7 +84,19 @@ exports.signup = async (req, res, next) => {
             },
         });
     } catch (err) {
-        next(err);
+        if(err instanceof mongoose.Error.ValidationError){
+            let errorOutput = ""
+            Object.keys(err.errors).forEach((key) => {
+                errorOutput+= err.errors[key].message+"\n";
+            });
+
+            next(new AppError(400, "Invalid Input", errorOutput),
+                req,
+                res,
+                next);
+        }else{
+            next(err);
+        }
     }
 };
 
