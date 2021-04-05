@@ -2,6 +2,7 @@
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+const {ConnectionEvent} = require("../models/eventModel");
 const AppError = require("../utils/appError");
 const mongoose = require("mongoose");
 
@@ -46,6 +47,9 @@ exports.login = async (req, res, next) => {
             );
         }
 
+        ConnectionEvent.create({user: user.id,
+        userAgent: req.headers['user-agent'],
+        ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress}).catch(err => {next(err)});
         // 3) All correct, send jwt to client
         const token = createToken(user.id, user.role);
 
