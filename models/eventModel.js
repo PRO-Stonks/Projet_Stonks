@@ -40,12 +40,37 @@ const eventOrder = new mongoose.Schema({
     }
 });
 
+const eventProduct = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        validate: [validator.isMongoId, "UserId is invalid"]
+    },
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        validate: [validator.isMongoId, "ProductId is invalid"]
+    },
+    change: {
+        type: String,
+        enum: ["Creation", "Move", "Remove"],
+        default: "Creation"
+    },
+    oldLocation: {
+        type: mongoose.Schema.Types.ObjectId,
+        validate: [validator.isMongoId, "LocationId is invalid"]
+    }
+});
+
+
+
 
 const Event = mongoose.model("Event", eventSchema);
 const ConnectionEvent = Event.discriminator("ConnectionEvent", eventConnection);
-const ConnectionOrder = Event.discriminator("ConnectionOrder", eventOrder);
+const OrderEvent = Event.discriminator("OrderEvent", eventOrder);
+const ProductEvent = Event.discriminator("ProductEvent", eventProduct);
 module.exports = {
-    Event,
     ConnectionEvent,
-    ConnectionOrder
+    OrderEvent,
+    ProductEvent
 };
