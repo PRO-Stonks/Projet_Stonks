@@ -84,6 +84,7 @@ const ConnectionEvent = Event.discriminator("ConnectionEvent", eventConnection);
 const OrderEvent = Event.discriminator("OrderEvent", eventOrder);
 const ProductEvent = Event.discriminator("ProductEvent", eventProduct);
 module.exports = {
+    Event,
     ConnectionEvent,
     OrderEvent,
     ProductEvent
