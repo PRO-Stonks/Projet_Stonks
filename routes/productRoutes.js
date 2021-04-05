@@ -15,6 +15,7 @@ router.use(authController.restrictTo('admin'));
 
 router.delete('/delete', productController.deleteProduct);
 router.delete('/softDelete', productController.softDeleteProduct);
+router.post('/add', productController.addProduct);
 
 router
     .route('/:id')
