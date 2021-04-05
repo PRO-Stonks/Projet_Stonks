@@ -19,8 +19,14 @@ const eventConnection = new mongoose.Schema({
     userAgent: {
         type: String,
         required: true
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        validate: [validator.isMongoId, "UserId is invalid"]
     }
-})
+});
+
 
 const Event = mongoose.model("Event", eventSchema);
 const ConnectionEvent = Event.discriminator("ConnectionEvent", eventConnection);
