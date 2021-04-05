@@ -21,7 +21,10 @@ exports.softDeleteProduct = async (req, res, next) => {
     }
 }
 
-exports.getProduct = base.getOne(Product);
-exports.getAllProduct = base.getAll(Product);
+// Need admin perms
+exports.addProduct = base.createOne(Product);
 exports.deleteProduct = base.deleteOne(Product);
 exports.updateProduct = base.updateOne(Product);
+
+exports.getProduct = base.getOne(Product);
+exports.getAllProduct = base.getAll(Product);
