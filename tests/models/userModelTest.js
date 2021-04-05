@@ -31,7 +31,7 @@ before(async function () {
         );
     });
 
-})
+});
 
 describe('UserModel', function () {
     describe('Missing Element', function () {
