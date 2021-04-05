@@ -17,7 +17,7 @@ const {ConnectionEvent} = require("../../models/eventModel");
 
 const timeoutDuration = 3000;
 
-beforeEach(async function () {
+before(async function () {
     const database = process.env.DATABASE.replace(
         '${MONGO_USERNAME}', process.env.MONGO_USERNAME).replace(
         '${MONGO_PASSWORD}', process.env.MONGO_PASSWORD).replace(
@@ -40,7 +40,13 @@ beforeEach(async function () {
     });
 });
 
+
+
 describe('AuthControler', function () {
+    beforeEach( function (done) {
+        mongoose.connection.db.dropDatabase(() => {console.log(`${mongoose.connection.db.databaseName} database dropped.`);
+            done();});
+    })
     describe('Sign Up', function () {
         it("Fail sign up a new user with invalid parameter", (done) => {
             chai
@@ -168,17 +174,27 @@ describe('AuthControler', function () {
                 }).timeout(timeoutDuration);
             });
         });
-        it("Login with valid parameter add an event entry", () => {
+        it("Sucessful login Create a ConnectionEvent Entry", (done) => {
             User.create({
                 firstName: "test",
                 lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
-            }).then(
-                ConnectionEvent.find({}).then(res => {
-                    console.log(res)
-                    expect(res.kind).to.be.equal("ConnectionEvent");
-                }));
+            }).then(user => {
+                chai
+                    .request(app)
+                    .post("/api/v1/users/login").send({
+                    "email": "email@email.test",
+                    "password": "012345678"
+                }).end((err, res) => {
+                    ConnectionEvent.find({}).then(res => {
+                        console.log(res)
+                        expect(res.length).to.be.greaterThan(0);
+                        expect(res.kind).to.be.equal("ConnectionEvent");
+                    });
+                    done();
+                }).timeout(timeoutDuration);
+            });
         });
     });
 
