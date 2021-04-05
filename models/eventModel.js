@@ -27,6 +27,19 @@ const eventConnection = new mongoose.Schema({
     }
 });
 
+const eventOrder = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        validate: [validator.isMongoId, "UserId is invalid"]
+    },
+    order: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        validate: [validator.isMongoId, "UserId is invalid"]
+    }
+});
+
 
 const Event = mongoose.model("Event", eventSchema);
 const ConnectionEvent = Event.discriminator("ConnectionEvent", eventConnection);
