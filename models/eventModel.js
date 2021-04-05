@@ -6,7 +6,8 @@ const bcrypt = require("bcryptjs");
 const eventSchema = new mongoose.Schema({
     time: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        immutable: true
     }
 }, {discriminatorKey: 'kind'});
 
@@ -14,16 +15,19 @@ const eventConnection = new mongoose.Schema({
     ip: {
         type: String,
         required: true,
-        validate: [validator.isIP, "IP is invalid"]
+        validate: [validator.isIP, "IP is invalid"],
+        immutable: true
     },
     userAgent: {
         type: String,
-        required: true
+        required: true,
+        immutable: true
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        validate: [validator.isMongoId, "UserId is invalid"]
+        validate: [validator.isMongoId, "UserId is invalid"],
+        immutable: true
     }
 });
 
@@ -31,12 +35,14 @@ const eventOrder = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        validate: [validator.isMongoId, "UserId is invalid"]
+        validate: [validator.isMongoId, "UserId is invalid"],
+        immutable: true
     },
     order: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        validate: [validator.isMongoId, "UserId is invalid"]
+        validate: [validator.isMongoId, "UserId is invalid"],
+        immutable: true
     }
 });
 
@@ -44,17 +50,20 @@ const eventProduct = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        validate: [validator.isMongoId, "UserId is invalid"]
+        validate: [validator.isMongoId, "UserId is invalid"],
+        immutable: true
     },
     product: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        validate: [validator.isMongoId, "ProductId is invalid"]
+        validate: [validator.isMongoId, "ProductId is invalid"],
+        immutable: true
     },
     change: {
         type: String,
         enum: ["Creation", "Move", "Remove"],
-        default: "Creation"
+        default: "Creation",
+        immutable: true
     },
     oldLocation: {
         type: mongoose.Schema.Types.ObjectId,
@@ -64,7 +73,8 @@ const eventProduct = new mongoose.Schema({
                 return this.change === "Move";
             },
             message: "Location is required"
-        }
+        },
+        immutable: true
     }
 });
 
