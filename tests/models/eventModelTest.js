@@ -1,5 +1,5 @@
 'use strict';
-const User = require('../../models/userModel');
+const User = require('../../models/eventModel');
 const chai = require('chai');
 const mongoose = require('mongoose');
 const expect = chai.expect;
@@ -34,5 +34,7 @@ before(async function () {
 });
 
 describe('EventModel', function () {
-
+    describe('Missing Element', function () {
+        
+    });
 });
