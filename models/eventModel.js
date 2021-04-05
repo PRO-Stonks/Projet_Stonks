@@ -10,7 +10,18 @@ const eventSchema = new mongoose.Schema({
     }
 }, {discriminatorKey: 'kind'});
 
-
+const eventConnection = new mongoose.Schema({
+    ip: {
+        type: String,
+        required: true,
+        validate: [validator.isIP, "IP is invalid"]
+    },
+    userAgent: {
+        type: String,
+        required: true
+    }
+})
 
 const Event = mongoose.model("Event", eventSchema);
+const ConnectionEvent = Event.discriminator("ConnectionEvent", eventConnection);
 module.exports = Event;
