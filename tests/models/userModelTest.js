@@ -2,6 +2,7 @@
 const User = require('../../models/userModel');
 const chai = require('chai');
 const mongoose = require('mongoose');
+const validator = require("validator");
 const expect = chai.expect;
 chai.use(require('chai-as-promised'));
 const dotenv = require('dotenv');
@@ -112,3 +113,10 @@ describe('UserModel', function () {
         });
     });
 });
+
+after(async function(){
+    await mongoose.disconnect().then(() => {
+        console.log("All connections closed.")
+    });
+
+})
