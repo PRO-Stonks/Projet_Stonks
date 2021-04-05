@@ -13,6 +13,7 @@ dotenv.config({
 });
 const app = require("../../app");
 const User = require("../../models/userModel");
+const {ConnectionEvent} = require("../../models/eventModel");
 
 const timeoutDuration = 3000;
 
@@ -166,6 +167,18 @@ describe('AuthControler', function () {
                     done();
                 }).timeout(timeoutDuration);
             });
+        });
+        it("Login with valid parameter add an event entry", () => {
+            User.create({
+                firstName: "test",
+                lastName: "test",
+                email: "email@email.test",
+                password: "012345678",
+            }).then(
+                ConnectionEvent.find({}).then(res => {
+                    console.log(res)
+                    expect(res.kind).to.be.equal("ConnectionEvent");
+                }));
         });
     });
 
