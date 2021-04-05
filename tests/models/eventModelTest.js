@@ -38,17 +38,16 @@ describe('EventModel', function () {
     describe('Base event', function () {
         it('is created correctly', async () => {
             await Event.create({}).then(res => {
-                console.log(res);
                 expect(res).to.have.property("time");
                 expect(validator.isDate(res.time)).to.be.true;
                 expect(validator.isMongoId(res._id.toString())).to.be.true;
             });
         });
     });
-    describe('Order event', function () {
+    describe('Connection event', function () {
         describe('Missing elements', function () {
-            Object.keys(OrderEvent.schema.obj).forEach((key) => {
-                if (OrderEvent.schema.obj[key].hasOwnProperty('required')) {
+            Object.keys(ConnectionEvent.schema.obj).forEach((key) => {
+                if (ConnectionEvent.schema.obj[key].hasOwnProperty('required')) {
                     let test = {
                         ip: "127.0.0.1",
                         userAgent: "Red Star OS 4",
@@ -56,7 +55,7 @@ describe('EventModel', function () {
                     };
                     delete test[key];
                     it('should throws when ' + key + ' is not present', async () => {
-                        await expect(OrderEvent.create(test)).to.be.rejectedWith(Error);
+                        await expect(ConnectionEvent.create(test)).to.be.rejectedWith(Error);
                     });
                 }
             });
@@ -80,24 +79,24 @@ describe('EventModel', function () {
             });
         });
     });
-    describe('Connection event', function () {
+    describe('Order event', function () {
         describe('Missing elements', function () {
-            Object.keys(ConnectionEvent.schema.obj).forEach((key) => {
-                if (ConnectionEvent.schema.obj[key].hasOwnProperty('required')) {
+            Object.keys(OrderEvent.schema.obj).forEach((key) => {
+                if (OrderEvent.schema.obj[key].hasOwnProperty('required')) {
                     let test = {
                         order: "606afdb5aa09d43a84b6181a",
                         user: "606afdb5aa09d43a84b6181a",
                     };
                     delete test[key];
                     it('should throws when ' + key + ' is not present', async () => {
-                        await expect(ConnectionEvent.create(test)).to.be.rejectedWith(Error);
+                        await expect(OrderEvent.create(test)).to.be.rejectedWith(Error);
                     });
                 }
             });
         });
         describe('order', function () {
-            it('should throws when value is not a correct ip', async () => {
-                await expect(ConnectionEvent.create({
+            it('should throws when value is not a correct id', async () => {
+                await expect(OrderEvent.create({
                     order: "606afdb5aa09d43a84b618",
                     user: "606afdb5aa09d43a84b6181a",
                 })).to.be.rejectedWith(Error);
@@ -105,7 +104,7 @@ describe('EventModel', function () {
         });
         describe('user', function () {
             it('should throws when value is not a correct id', async () => {
-                await expect(ConnectionEvent.create({
+                await expect(OrderEvent.create({
                     order: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b618",
                 })).to.be.rejectedWith(Error);
@@ -127,20 +126,71 @@ describe('EventModel', function () {
                 }
             });
         });
-        describe('oder', function () {
-            it('should throws when value is not a correct ip', async () => {
-                await expect(ConnectionEvent.create({
-                    order: "606afdb5aa09d43a84b618",
+        describe('Product', function () {
+            it('should throws when value is not a correct id', async () => {
+                await expect(ProductEvent.create({
+                    product: "606afdb5aa09d43a84b618",
                     user: "606afdb5aa09d43a84b6181a",
                 })).to.be.rejectedWith(Error);
             });
         });
         describe('user', function () {
             it('should throws when value is not a correct id', async () => {
-                await expect(ConnectionEvent.create({
-                    order: "606afdb5aa09d43a84b6181a",
+                await expect(ProductEvent.create({
+                    product: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b618",
                 })).to.be.rejectedWith(Error);
+            });
+        });
+        describe('change', function () {
+            it('should throws when value is not in the enum', async () => {
+                await expect(ProductEvent.create({
+                    product: "606afdb5aa09d43a84b6181a",
+                    user: "606afdb5aa09d43a84b618",
+                    change: "Nothing"
+                })).to.be.rejectedWith(Error);
+            });
+        });
+        describe('change', function () {
+            it('should throws when value is not in the enum', async () => {
+                await expect(ProductEvent.create({
+                    product: "606afdb5aa09d43a84b6181a",
+                    user: "606afdb5aa09d43a84b618",
+                    change: "Nothing"
+                })).to.be.rejectedWith(Error);
+            });
+        });
+        describe('Old location', function () {
+            it('should throws when value is missing', async () => {
+                await expect(ProductEvent.create({
+                    product: "606afdb5aa09d43a84b6181a",
+                    user: "606afdb5aa09d43a84b6181a",
+                    change: "Move"
+                })).to.be.rejectedWith(Error);
+            });
+            it('should throws when value is not an id', async () => {
+                await expect(ProductEvent.create({
+                    product: "606afdb5aa09d43a84b6181a",
+                    user: "606afdb5aa09d43a84b6181a",
+                    change: "Move",
+                    oldLocation: "606afdb5aa09d43a84b618"
+                })).to.be.rejectedWith(Error);
+            });
+            it('should throws when value is specified when it should not', async () => {
+                await expect(ProductEvent.create({
+                    product: "606afdb5aa09d43a84b6181a",
+                    user: "606afdb5aa09d43a84b6181a",
+                    change: "Creation",
+                    oldLocation: "606afdb5aa09d43a84b6181a"
+                })).to.be.rejectedWith(Error);
+            });
+            it('should resolve when everything is ok',  () => {
+                return  expect(ProductEvent.create({
+                    product: "606afdb5aa09d43a84b6181a",
+                    user: "606afdb5aa09d43a84b6181a",
+                    change: "Move",
+                    oldLocation: "606afdb5aa09d43a84b6181a"
+                })).to.be.fulfilled;
             });
         });
     });

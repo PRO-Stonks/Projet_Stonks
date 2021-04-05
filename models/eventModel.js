@@ -25,7 +25,6 @@ const eventConnection = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        validate: [validator.isMongoId, "UserId is invalid"],
         immutable: true
     }
 });
@@ -34,13 +33,11 @@ const eventOrder = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        validate: [validator.isMongoId, "UserId is invalid"],
         immutable: true
     },
     order: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        validate: [validator.isMongoId, "UserId is invalid"],
         immutable: true
     }
 });
@@ -49,13 +46,11 @@ const eventProduct = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        validate: [validator.isMongoId, "UserId is invalid"],
         immutable: true
     },
     product: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        validate: [validator.isMongoId, "ProductId is invalid"],
         immutable: true
     },
     change: {
@@ -66,12 +61,17 @@ const eventProduct = new mongoose.Schema({
     },
     oldLocation: {
         type: mongoose.Schema.Types.ObjectId,
-        validate: [validator.isMongoId, "LocationId is invalid"],
         required: {
             validator: function () {
                 return this.change === "Move";
             },
             message: "Location is required"
+        },
+        validate: {
+            validator: function (v) {
+                return this.change === "Move";
+            },
+            message: "Location is not required or bad id given"
         },
         immutable: true
     }
