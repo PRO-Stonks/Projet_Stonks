@@ -1,0 +1,37 @@
+'use strict';
+const express = require('express');
+const router = express.Router();
+const elementController = require('../controllers/elementController');
+const authController = require('./../controllers/authController');
+
+// Protect all routes after this middleware
+router.use(authController.protect);
+
+// Available by every user
+router
+    .route('/:id')
+    .get(elementController.getElement);
+
+router
+    .route('/:location/')
+    .get(elementController.getAllElementsByLocation);
+
+router
+    .route('/')
+    .get(elementController.getAllElements);
+
+router.post('/add', elementController.addElement);
+
+router
+    .route('/:id')
+    .patch(elementController.updateElement)
+    .delete(elementController.softDeleteElement);
+
+// Only admin have permission to access for the below APIs
+router.use(authController.restrictTo('admin'));
+
+router
+    .route('/hardDel/:id')
+    .delete(productController.deleteProduct);
+
+module.exports = router;
