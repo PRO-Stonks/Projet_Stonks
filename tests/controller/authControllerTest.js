@@ -253,6 +253,34 @@ describe('AuthControler', function () {
                 });
             });
         });
+        it("Admin can acces admin only route", (done) => {
+            User.create({
+                firstName: "test",
+                lastName: "test",
+                email: "email@email.test",
+                password: "012345678",
+                role: "admin"
+            }).then(user => {
+                const requester = chai.request(app).keepOpen()
+                requester.post("/api/v1/users/login").send({
+                    "email": "email@email.test",
+                    "password": "012345678"
+                }).then( res => {
+                     requester
+                        .get("/api/v1/events/connections/")
+                        .set('Authorization', 'Bearer '+res.body.token)
+                        .send().then(res => {
+                        console.log(res.body)
+                        expect(res.body.results).to.be.greaterThan(0);
+                        expect(res.status).to.be.equal(200);
+                        expect(res.body.status).to.be.equal('success');
+                        done();
+                    });
+                }).catch(function (err) {
+                    throw err;
+                });
+            });
+        });
     });
 });
 
