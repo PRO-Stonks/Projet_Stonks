@@ -5,6 +5,7 @@ const User = require("../../models/userModel");
 const app = require("../../app");
 const validator = require("validator");
 const mongoose = require('mongoose');
+const mainRoute = "/api/v1";
 
 const chai = require('chai');
 const expect = chai.expect;
@@ -56,10 +57,10 @@ before(async function () {
 
 describe('productController', function () {
     describe('Add product', function () {
-        it('should fails when not logged in or without token', async () => {
-            // Add a product
+        it('should fail when not logged in or without token', async () => {
+            // Add product
             await chai.request(app)
-                .post("/api/v1/products/add")
+                .post(mainRoute + "/products/add")
                 .send({
                     name: "test",
                     tag: "junk food"
@@ -71,14 +72,14 @@ describe('productController', function () {
                 });
         });
 
-        it('should fails with invalid token', async () => {
-            // Create admin user, log-in and get token
+        it('should fail with invalid token', async () => {
+            // Fake token
             let token = "fakeTokenIsNotVeryGentle"
 
-            // Add a product
+            // Add product
             await chai
                 .request(app)
-                .post("/api/v1/products/add")
+                .post(mainRoute + "/products/add")
                 .set("Authorization", "Bearer " + token)
                 .send({
                     name: "test",
@@ -91,7 +92,7 @@ describe('productController', function () {
                 });
         });
 
-        it('should fails as non-admin user', async () => {
+        it('should fail as non-admin user', async () => {
             // Create admin user, log-in and get token
             let token = await User.create({
                 firstName: "test",
@@ -100,7 +101,7 @@ describe('productController', function () {
                 password: "012345678",
             }).then(() => {
                 return chai.request(app)
-                    .post("/api/v1/users/login")
+                    .post(mainRoute + "/users/login")
                     .send({
                         "email": "email@email.tests",
                         "password": "012345678"
@@ -116,10 +117,10 @@ describe('productController', function () {
                     });
             });
 
-            // Add a product
+            // Add product
             await chai
                 .request(app)
-                .post("/api/v1/products/add")
+                .post(mainRoute + "/products/add")
                 .set("Authorization", "Bearer " + token)
                 .send({
                     name: "test",
@@ -142,7 +143,7 @@ describe('productController', function () {
                 role: "admin"
             }).then(() => {
                 return chai.request(app)
-                    .post("/api/v1/users/login")
+                    .post(mainRoute + "/users/login")
                     .send({
                         "email": "email@email.tests",
                         "password": "012345678"
@@ -158,10 +159,10 @@ describe('productController', function () {
                     });
             });
 
-            // Add a product
+            // Add product
             await chai
                 .request(app)
-                .post("/api/v1/products/add")
+                .post(mainRoute + "/products/add")
                 .set("Authorization", "Bearer " + token)
                 .send({
                     name: "test",
@@ -177,12 +178,12 @@ describe('productController', function () {
     });
 
 
-    describe('Get one product', function () {
-        it('should fails when not logged in or without token', async () => {
-            // Get a product
+    describe('Get a product', function () {
+        it('should fail when not logged in or without token', async () => {
+            // Get product
             await chai
                 .request(app)
-                .get("/api/v1/products/" + idProduct1)
+                .get(mainRoute + "/products/" + idProduct1)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -191,13 +192,14 @@ describe('productController', function () {
                 });
         });
 
-        it('should fails with invalid token', async () => {
+        it('should fail with invalid token', async () => {
+            // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
-            // Get a product
+            // Get product
             await chai
                 .request(app)
-                .get("/api/v1/products/" + idProduct1)
+                .get(mainRoute + "/products/" + idProduct1)
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -207,7 +209,7 @@ describe('productController', function () {
                 })
         });
 
-        it('should fails with invalid id', async () => {
+        it('should fail with invalid id', async () => {
             // Create admin user, log-in and get token
             let token = await User.create({
                 firstName: "test",
@@ -217,7 +219,7 @@ describe('productController', function () {
                 role: "admin"
             }).then(() => {
                 return chai.request(app)
-                    .post("/api/v1/users/login")
+                    .post(mainRoute + "/users/login")
                     .send({
                         "email": "email@email.tests",
                         "password": "012345678"
@@ -233,10 +235,10 @@ describe('productController', function () {
                     });
             });
 
-            // Get a product
+            // Get product
             await chai
                 .request(app)
-                .get("/api/v1/products/" + mongoose.Types.ObjectId.createFromTime(42))
+                .get(mainRoute + "/products/" + mongoose.Types.ObjectId.createFromTime(42))
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -257,7 +259,7 @@ describe('productController', function () {
                 role: "admin"
             }).then(() => {
                 return chai.request(app)
-                    .post("/api/v1/users/login")
+                    .post(mainRoute + "/users/login")
                     .send({
                         "email": "email@email.tests",
                         "password": "012345678"
@@ -273,10 +275,10 @@ describe('productController', function () {
                     });
             });
 
-            // Get a product
+            // Get product
             await chai
                 .request(app)
-                .get("/api/v1/products/" + idProduct1)
+                .get(mainRoute + "/products/" + idProduct1)
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -290,11 +292,11 @@ describe('productController', function () {
 
 
     describe('Get all products', function () {
-        it('should fails when not logged in or without token', async () => {
-            // Get a product
+        it('should fail when not logged in or without token', async () => {
+            // Get products
             await chai
                 .request(app)
-                .get("/api/v1/products/")
+                .get(mainRoute + "/products/")
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -303,13 +305,14 @@ describe('productController', function () {
                 });
         });
 
-        it('should fails with invalid token', async () => {
+        it('should fail with invalid token', async () => {
+            // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
-            // Get a product
+            // Get products
             await chai
                 .request(app)
-                .get("/api/v1/products/")
+                .get(mainRoute + "/products/")
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -329,7 +332,7 @@ describe('productController', function () {
                 role: "admin"
             }).then(() => {
                 return chai.request(app)
-                    .post("/api/v1/users/login")
+                    .post(mainRoute + "/users/login")
                     .send({
                         "email": "email@email.tests",
                         "password": "012345678"
@@ -345,14 +348,17 @@ describe('productController', function () {
                     });
             });
 
-            // Get a product
+            // Get products
             await chai
                 .request(app)
-                .get("/api/v1/products/")
+                .get(mainRoute + "/products/")
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
+                    res.body.data.data.forEach((product) => {
+                        console.log(product);
+                    });
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.results).to.be.equal(2);
@@ -364,11 +370,11 @@ describe('productController', function () {
 
 
     describe('Update a product', function () {
-        it('should fails when not logged in or without token', async () => {
-            // Update a product
+        it('should fail when not logged in or without token', async () => {
+            // Update roduct
             await chai
                 .request(app)
-                .patch("/api/v1/products/" + idProduct1)
+                .patch(mainRoute + "/products/" + idProduct1)
                 .send({
                     tag: "potatoe"
                 })
@@ -380,13 +386,13 @@ describe('productController', function () {
                 });
         });
 
-        it('should fails with invalid token', async () => {
+        it('should fail with invalid token', async () => {
             let token = "fakeTokenIsNotVeryGentle";
 
             // Update a product
             await chai
                 .request(app)
-                .patch("/api/v1/products/" + idProduct1)
+                .patch(mainRoute + "/products/" + idProduct1)
                 .send({
                     tag: "potatoe"
                 })
@@ -399,7 +405,7 @@ describe('productController', function () {
                 })
         });
 
-        it('should fails with non-admin users', async () => {
+        it('should fail with non-admin users', async () => {
             // Create admin user, log-in and get token
             let token = await User.create({
                 firstName: "test",
@@ -408,7 +414,7 @@ describe('productController', function () {
                 password: "012345678",
             }).then(() => {
                 return chai.request(app)
-                    .post("/api/v1/users/login")
+                    .post(mainRoute + "/users/login")
                     .send({
                         "email": "email@email.tests",
                         "password": "012345678"
@@ -424,10 +430,10 @@ describe('productController', function () {
                     });
             });
 
-            // Update a product
+            // Update product
             await chai
                 .request(app)
-                .patch("/api/v1/products/" + idProduct1)
+                .patch(mainRoute + "/products/" + idProduct1)
                 .send({
                     tag: "fries"
                 })
@@ -440,7 +446,7 @@ describe('productController', function () {
                 });
         });
 
-        it('should fails with invalid id', async () => {
+        it('should fail with invalid id', async () => {
             // Create admin user, log-in and get token
             let token = await User.create({
                 firstName: "test",
@@ -450,7 +456,7 @@ describe('productController', function () {
                 role: "admin"
             }).then(() => {
                 return chai.request(app)
-                    .post("/api/v1/users/login")
+                    .post(mainRoute + "/users/login")
                     .send({
                         "email": "email@email.tests",
                         "password": "012345678"
@@ -466,10 +472,10 @@ describe('productController', function () {
                     });
             });
 
-            // Update a product
+            // Update product
             await chai
                 .request(app)
-                .patch("/api/v1/products/" + mongoose.Types.ObjectId.createFromTime(42))
+                .patch(mainRoute + "/products/" + mongoose.Types.ObjectId.createFromTime(42))
                 .send({
                     tag: "potatoe"
                 })
@@ -493,7 +499,7 @@ describe('productController', function () {
                 role: "admin"
             }).then(() => {
                 return chai.request(app)
-                    .post("/api/v1/users/login")
+                    .post(mainRoute + "/users/login")
                     .send({
                         "email": "email@email.tests",
                         "password": "012345678"
@@ -509,10 +515,10 @@ describe('productController', function () {
                     });
             });
 
-            // Update a product
+            // Update product
             await chai
                 .request(app)
-                .patch("/api/v1/products/" + idProduct1)
+                .patch(mainRoute + "/products/" + idProduct1)
                 .send({
                     tag: "potatoe"
                 })
@@ -530,11 +536,11 @@ describe('productController', function () {
 
 
     describe('Soft delete a product', function () {
-        it('should fails when not logged in or without token', async () => {
-            // soft delete a product
+        it('should fail when not logged in or without token', async () => {
+            // Soft delete product
             await chai
                 .request(app)
-                .delete("/api/v1/products/" + idProduct1)
+                .delete(mainRoute + "/products/" + idProduct1)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -543,13 +549,14 @@ describe('productController', function () {
                 });
         });
 
-        it('should fails with invalid token', async () => {
+        it('should fail with invalid token', async () => {
+            // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
-            // soft delete a product
+            // Soft delete product
             await chai
                 .request(app)
-                .delete("/api/v1/products/" + idProduct1)
+                .delete(mainRoute + "/products/" + idProduct1)
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -559,7 +566,7 @@ describe('productController', function () {
                 })
         });
 
-        it('should fails with non-admin users', async () => {
+        it('should fail with non-admin users', async () => {
             // Create admin user, log-in and get token
             let token = await User.create({
                 firstName: "test",
@@ -568,7 +575,7 @@ describe('productController', function () {
                 password: "012345678",
             }).then(() => {
                 return chai.request(app)
-                    .post("/api/v1/users/login")
+                    .post(mainRoute + "/users/login")
                     .send({
                         "email": "email@email.tests",
                         "password": "012345678"
@@ -584,10 +591,10 @@ describe('productController', function () {
                     });
             });
 
-            // soft delete a product
+            // Soft delete product
             await chai
                 .request(app)
-                .delete("/api/v1/products/" + idProduct1)
+                .delete(mainRoute + "/products/" + idProduct1)
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -597,7 +604,7 @@ describe('productController', function () {
                 });
         });
 
-        it('should fails with invalid id', async () => {
+        it('should fail with invalid id', async () => {
             // Create admin user, log-in and get token
             let token = await User.create({
                 firstName: "test",
@@ -607,7 +614,7 @@ describe('productController', function () {
                 role: "admin"
             }).then(() => {
                 return chai.request(app)
-                    .post("/api/v1/users/login")
+                    .post(mainRoute + "/users/login")
                     .send({
                         "email": "email@email.tests",
                         "password": "012345678"
@@ -623,10 +630,10 @@ describe('productController', function () {
                     });
             });
 
-            // soft delete a product
+            // Soft delete product
             await chai
                 .request(app)
-                .delete("/api/v1/products/" + mongoose.Types.ObjectId.createFromTime(42))
+                .delete(mainRoute + "/products/" + mongoose.Types.ObjectId.createFromTime(42))
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -647,7 +654,7 @@ describe('productController', function () {
                 role: "admin"
             }).then(() => {
                 return chai.request(app)
-                    .post("/api/v1/users/login")
+                    .post(mainRoute + "/users/login")
                     .send({
                         "email": "email@email.tests",
                         "password": "012345678"
@@ -663,7 +670,7 @@ describe('productController', function () {
                     });
             });
 
-            // Create a Product and softDelete it
+            // Create a product
             let id = await Product.create({
                 name: "test2",
                 tag: "real fun"
@@ -671,24 +678,29 @@ describe('productController', function () {
                 return doc._id
             });
 
+            // Soft delete previous product
             await chai
                 .request(app)
-                .delete("/api/v1/products/" + id)
+                .delete(mainRoute + "/products/" + id)
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
                     expect(res.status).to.be.equal(204);
                 });
+
+            // Check for the soft deleted Product
+            let doc = await Product.findById(id);
+            expect(doc).to.be.not.null;
         });
     });
 
     describe('Hard delete a product', function () {
-        it('should fails when not logged in or without token', async () => {
-            // hard delete a product
+        it('should fail when not logged in or without token', async () => {
+            // Hard delete product
             await chai
                 .request(app)
-                .delete("/api/v1/products/hardDel/" + idProduct1)
+                .delete(mainRoute + "/products/hardDel/" + idProduct1)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -697,13 +709,14 @@ describe('productController', function () {
                 });
         });
 
-        it('should fails with invalid token', async () => {
+        it('should fail with invalid token', async () => {
+            // Fake Token
             let token = "fakeTokenIsNotVeryGentle";
 
-            // hard delete a product
+            // Hard delete product
             await chai
                 .request(app)
-                .delete("/api/v1/products/hardDel/" + idProduct1)
+                .delete(mainRoute + "/products/hardDel/" + idProduct1)
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -713,7 +726,7 @@ describe('productController', function () {
                 })
         });
 
-        it('should fails with non-admin users', async () => {
+        it('should fail with non-admin users', async () => {
             // Create admin user, log-in and get token
             let token = await User.create({
                 firstName: "test",
@@ -722,7 +735,7 @@ describe('productController', function () {
                 password: "012345678",
             }).then(() => {
                 return chai.request(app)
-                    .post("/api/v1/users/login")
+                    .post(mainRoute + "/users/login")
                     .send({
                         "email": "email@email.tests",
                         "password": "012345678"
@@ -738,10 +751,10 @@ describe('productController', function () {
                     });
             });
 
-            // hard delete a product
+            // Hard delete a product
             await chai
                 .request(app)
-                .delete("/api/v1/products/hardDel/" + idProduct1)
+                .delete(mainRoute + "/products/hardDel/" + idProduct1)
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -751,7 +764,7 @@ describe('productController', function () {
                 });
         });
 
-        it('should fails with invalid id', async () => {
+        it('should fail with invalid id', async () => {
             // Create admin user, log-in and get token
             let token = await User.create({
                 firstName: "test",
@@ -761,7 +774,7 @@ describe('productController', function () {
                 role: "admin"
             }).then(() => {
                 return chai.request(app)
-                    .post("/api/v1/users/login")
+                    .post(mainRoute + "/users/login")
                     .send({
                         "email": "email@email.tests",
                         "password": "012345678"
@@ -777,10 +790,10 @@ describe('productController', function () {
                     });
             });
 
-            // hard delete a product
+            // Hard delete product
             await chai
                 .request(app)
-                .delete("/api/v1/products/hardDel/" + mongoose.Types.ObjectId.createFromTime(42))
+                .delete(mainRoute + "/products/hardDel/" + mongoose.Types.ObjectId.createFromTime(42))
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -801,7 +814,7 @@ describe('productController', function () {
                 role: "admin"
             }).then(() => {
                 return chai.request(app)
-                    .post("/api/v1/users/login")
+                    .post(mainRoute + "/users/login")
                     .send({
                         "email": "email@email.tests",
                         "password": "012345678"
@@ -817,7 +830,7 @@ describe('productController', function () {
                     });
             });
 
-            // Create a Product and softDelete it
+            // Create a product
             let id = await Product.create({
                 name: "test3",
                 tag: "real fun"
@@ -825,15 +838,20 @@ describe('productController', function () {
                 return doc._id
             });
 
+            // Hard delete previous product
             await chai
                 .request(app)
-                .delete("/api/v1/products/hardDel/" + id)
+                .delete(mainRoute + "/products/hardDel/" + id)
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
                     expect(res.status).to.be.equal(204);
                 });
+
+            // Check for the hard deleted Product
+            let doc = await Product.findById(id);
+            expect(doc).to.be.null;
         });
     });
 });
