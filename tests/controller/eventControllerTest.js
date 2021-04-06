@@ -37,3 +37,86 @@ before(async function () {
         );
     });
 });
+
+describe('EventController', function () {
+    beforeEach(function (done) {
+        mongoose.connection.db.dropDatabase(() => {
+            console.log(`${mongoose.connection.db.databaseName} database dropped.`);
+            done();
+        });
+    });
+    describe('ConnectionEvent', function () {
+        describe('Get All', function () {
+            it("Return all connection event", (done) => {
+                User.create({
+                    firstName: "test",
+                    lastName: "test",
+                    email: "email@email.test",
+                    password: "012345678",
+                    role: "admin"
+                }).then(user => {
+                    const requester = chai.request(app).keepOpen()
+                    requester.post("/api/v1/users/login").send({
+                        "email": "email@email.test",
+                        "password": "012345678"
+                    }).then(res => {
+                        const body = res.body;
+                        const userData = body.data.user;
+                        requester
+                            .get("/api/v1/events/connections/")
+                            .set('Authorization', 'Bearer ' + body.token)
+                            .send().then(res => {
+                            expect(res.body.results).to.be.greaterThan(0);
+                            expect(res.status).to.be.equal(200);
+                            expect(res.body.status).to.be.equal('success');
+                            expect(res.body.data.data[0].kind).to.be.equal("ConnectionEvent");
+                            expect(res.body.data.data[0].user).to.be.equal(userData._id);
+                            done();
+                        });
+                    }).catch(function (err) {
+                        throw err;
+                    });
+                });
+            });
+        });
+        describe('Get one', function () {
+            it("Return nothing if the id specified is non existant", (done) => {
+                User.create({
+                    firstName: "test",
+                    lastName: "test",
+                    email: "email@email.test",
+                    password: "012345678",
+                    role: "admin"
+                }).then(user => {
+                    const requester = chai.request(app).keepOpen()
+                    requester.post("/api/v1/users/login").send({
+                        "email": "email@email.test",
+                        "password": "012345678"
+                    }).then(res => {
+                        const body = res.body;
+                        const userData = body.data.user;
+                        requester
+                            .get("/api/v1/events/connections/"+"606c955dfb7fda73ac878a77")
+                            .set('Authorization', 'Bearer ' + body.token)
+                            .send().then(res => {
+                            expect(res.status).to.be.equal(404);
+                            expect(res.body.status).to.be.equal('fail');
+                            expect(res.body.message).to.be.equal('No document found with that id');
+                            done();
+                        }).catch(function (err){
+                            throw err;
+                        });
+                    }).catch(function (err) {
+                        throw err;
+                    });
+                });
+            });
+        });
+    });
+});
+
+after(async function () {
+    await mongoose.disconnect().then(() => {
+        console.log("All connections closed.")
+    });
+});
