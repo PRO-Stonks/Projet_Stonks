@@ -28,16 +28,16 @@ before(async function () {
         useUnifiedTopology: true
     }).then(con => {
         console.log('DB connection Successfully!');
-        mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
-        );
+        mongoose.connection.db.dropDatabase();
     });
 
 });
 
 describe('UserModel', function () {
-    beforeEach( function (done) {
-        mongoose.connection.db.dropDatabase(() => {console.log(`${mongoose.connection.db.databaseName} database dropped.`);
-            done();});
+    beforeEach(function (done) {
+        mongoose.connection.db.dropDatabase(() => {
+            done();
+        });
     });
     describe('Missing Element', function () {
         Object.keys(User.schema.obj).forEach((key) => {
@@ -105,7 +105,6 @@ describe('UserModel', function () {
                 email: "email@email.test",
                 password: "012345678",
             }).then((data) => {
-                console.log(data);
                 expect(data.active).to.be.true;
                 expect(data.role).to.be.equal("manager");
                 expect(data.firstName).to.be.equal("test");
@@ -115,29 +114,30 @@ describe('UserModel', function () {
                 expect(data.id).to.be.not.empty;
             });
         });
-    });
-    describe('Creation', function () {
-        it('should throws when value is not in the enum', async () => {
+        it('should throws when same email is used both time', async () => {
             await User.create({
                 firstName: "test",
                 lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
-            }).then((data) => {
-                console.log(data);
-                expect(data.active).to.be.true;
-                expect(data.role).to.be.equal("manager");
-                expect(data.firstName).to.be.equal("test");
-                expect(data.lastName).to.be.equal("test");
-                expect(data.email).to.be.equal("email@email.test");
-                expect(data.password).to.not.be.equal("012345678");
-                expect(data.id).to.be.not.empty;
+            }).then(async (res) => {
+                await User.create({
+                    firstName: "test",
+                    lastName: "test",
+                    email: "email@email.test",
+                    password: "012345678",
+                }).catch(err => {
+                    if (err instanceof mongoose.Error.ValidationError) {
+                        expect(err.errors.hasOwnProperty("email")).to.be.true;
+                        expect(err._message).to.be.equal("User validation failed");
+                    }
+                })
             });
         });
     });
 });
 
-after(async function(){
+after(async function () {
     await mongoose.disconnect().then(() => {
         console.log("All connections closed.")
     });
