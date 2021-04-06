@@ -40,4 +40,5 @@ exports.getProductEventForElement = getEvent(ProductEvent, "product");
 exports.getProductEventForUser = getEvent(ProductEvent,"user");
 
 exports.getConnectionEventForUser = getEvent(ConnectionEvent, "user");
+
 exports.getOrderEventForUser = getEvent(OrderEvent, "user");
