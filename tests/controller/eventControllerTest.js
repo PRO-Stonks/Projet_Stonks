@@ -47,69 +47,89 @@ describe('EventController', function () {
     });
     describe('ConnectionEvent', function () {
         describe('Get All', function () {
-            it("Return all connection event", (done) => {
-                User.create({
+            it("Return all connection event", async () => {
+                const user = await User.create({
                     firstName: "test",
                     lastName: "test",
                     email: "email@email.test",
                     password: "012345678",
                     role: "admin"
-                }).then(user => {
-                    const requester = chai.request(app).keepOpen()
-                    requester.post("/api/v1/users/login").send({
-                        "email": "email@email.test",
-                        "password": "012345678"
-                    }).then(res => {
-                        const body = res.body;
-                        const userData = body.data.user;
-                        requester
-                            .get("/api/v1/events/connections/")
-                            .set('Authorization', 'Bearer ' + body.token)
-                            .send().then(res => {
-                            expect(res.body.results).to.be.greaterThan(0);
-                            expect(res.status).to.be.equal(200);
-                            expect(res.body.status).to.be.equal('success');
-                            expect(res.body.data.data[0].kind).to.be.equal("ConnectionEvent");
-                            expect(res.body.data.data[0].user).to.be.equal(userData._id);
-                            done();
-                        });
-                    }).catch(function (err) {
-                        throw err;
-                    });
                 });
+
+                const requester = chai.request(app).keepOpen()
+                let res = await requester.post("/api/v1/users/login").send({
+                    "email": "email@email.test",
+                    "password": "012345678"
+                });
+
+                const body = res.body;
+                const userData = body.data.user;
+                res = await requester
+                    .get("/api/v1/events/connections/")
+                    .set('Authorization', 'Bearer ' + body.token)
+                    .send()
+                expect(res.body.results).to.be.greaterThan(0);
+                expect(res.status).to.be.equal(200);
+                expect(res.body.status).to.be.equal('success');
+                expect(res.body.data.data[0].kind).to.be.equal("ConnectionEvent");
+                expect(res.body.data.data[0].user).to.be.equal(userData._id);
+
             });
         });
         describe('Get one', function () {
-            it("Return nothing if the id specified is non existant", (done) => {
-                User.create({
+            it("Return nothing if the id specified is non existant", async () => {
+                let user = await User.create({
                     firstName: "test",
                     lastName: "test",
                     email: "email@email.test",
                     password: "012345678",
                     role: "admin"
-                }).then(user => {
-                    const requester = chai.request(app).keepOpen()
-                    requester.post("/api/v1/users/login").send({
-                        "email": "email@email.test",
-                        "password": "012345678"
-                    }).then(res => {
-                        const body = res.body;
-                        const userData = body.data.user;
-                        requester
-                            .get("/api/v1/events/connections/"+"606c955dfb7fda73ac878a77")
-                            .set('Authorization', 'Bearer ' + body.token)
-                            .send().then(res => {
-                            expect(res.status).to.be.equal(404);
-                            expect(res.body.status).to.be.equal('fail');
-                            expect(res.body.message).to.be.equal('No document found with that id');
-                            done();
-                        }).catch(function (err){
-                            throw err;
-                        });
-                    }).catch(function (err) {
-                        throw err;
-                    });
                 });
+
+                const requester = chai.request(app).keepOpen();
+                let query = await requester.post("/api/v1/users/login").send({
+                    "email": "email@email.test",
+                    "password": "012345678"
+                });
+                const body = query.body;
+                const userData = body.data.user;
+                query = await requester
+                    .get("/api/v1/events/connections/" + "606c955dfb7fda73ac878a77")
+                    .set('Authorization', 'Bearer ' + body.token)
+                    .send();
+
+                expect(query.status).to.be.equal(404);
+                expect(query.body.status).to.be.equal('fail');
+                expect(query.body.message).to.be.equal('No document found with that id');
+            });
+        });
+        describe('Get event made by user', function () {
+            it("Return the event made by the user", async () => {
+                let user = await User.create({
+                    firstName: "test",
+                    lastName: "test",
+                    email: "email@email.test",
+                    password: "012345678",
+                    role: "admin"
+                });
+
+                const requester = chai.request(app).keepOpen();
+                let query = await requester.post("/api/v1/users/login").send({
+                    "email": "email@email.test",
+                    "password": "012345678"
+                });
+                const body = query.body;
+                const userData = body.data.user;
+                query = await requester
+                    .get("/api/v1/events/connections/user/" + userData._id)
+                    .set('Authorization', 'Bearer ' + body.token)
+                    .send();
+                console.log(query.body.data)
+                console.log(userData._id)
+                expect(query.status).to.be.equal(200);
+                expect(query.body.status).to.be.equal('success');
+                expect(query.body.data[0].kind).to.be.equal("ConnectionEvent");
+                expect(query.body.data[0].user).to.be.equal(userData._id);
             });
         });
     });
