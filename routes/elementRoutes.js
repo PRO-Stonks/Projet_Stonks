@@ -32,6 +32,6 @@ router.use(authController.restrictTo('admin'));
 
 router
     .route('/hardDel/:id')
-    .delete(productController.deleteProduct);
+    .delete(elementController.deleteElement);
 
 module.exports = router;

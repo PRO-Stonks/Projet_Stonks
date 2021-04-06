@@ -10,6 +10,7 @@ const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
 const locationRoutes = require('./routes/locationRoutes');
+const elementRoutes = require('./routes/elementRoutes');
 
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -48,7 +49,7 @@ app.use(hpp());
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/locations', locationRoutes);
-app.use('/api/v1/elements', locationRoutes);
+app.use('/api/v1/elements', elementRoutes);
 
 
 // handle undefined Routes

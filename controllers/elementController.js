@@ -2,6 +2,7 @@
 const Element = require("../models/elementModel");
 const base = require("./baseController");
 const AppError = require('../utils/appError');
+const APIFeatures = require('../utils/apiFeatures');
 
 exports.softDeleteElement = async (req, res, next) => {
     try {
@@ -21,11 +22,11 @@ exports.softDeleteElement = async (req, res, next) => {
     } catch (error) {
         next(error)
     }
-}
+};
 
 exports.getAllElementsByLocation = async (req, res, next ) => {
     try {
-        const features = new APIFeatures(Model.find({ idLocation: req.params.location }), req.query)
+        const features = new APIFeatures(Element.find({ idLocation: req.params.location }), req.query)
             .sort()
             .paginate();
 
@@ -42,7 +43,7 @@ exports.getAllElementsByLocation = async (req, res, next ) => {
     } catch (error) {
         next(error);
     }
-}
+};
 
 exports.addElement = base.createOne(Element);
 exports.deleteElement = base.deleteOne(Element);
