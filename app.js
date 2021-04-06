@@ -6,11 +6,11 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cors = require('cors');
-
-
-const userRoutes = require('./routes/userRoutes');
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
+
+
+
 const app = express();
 
 // Allow Cross-Origin requests
@@ -43,7 +43,8 @@ app.use(hpp());
 
 
 // Routes
-app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/users', require('./routes/userRoutes'));
+app.use('/api/v1/events', require('./routes/eventRoutes'));
 
 // handle undefined Routes
 app.use('*', (req, res, next) => {
