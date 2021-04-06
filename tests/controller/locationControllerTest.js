@@ -69,7 +69,7 @@ before(async function () {
 
 describe('locationController', function () {
     describe('Add location', function () {
-        it('should fails when not logged in or without token', async () => {
+        it('should fail when not logged in or without token', async () => {
             // Add a Location
             await chai.request(app)
                 .post(mainRoute + "/locations/add")
@@ -90,7 +90,7 @@ describe('locationController', function () {
                 });
         });
 
-        it('should fails with invalid token', async () => {
+        it('should fail with invalid token', async () => {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle"
 
@@ -116,7 +116,7 @@ describe('locationController', function () {
                 });
         });
 
-        it('should fails as non-admin user', async () => {
+        it('should fail as non-admin user', async () => {
             // Create admin user, log-in and get token
             let token = await User.create({
                 firstName: "test",
@@ -215,7 +215,7 @@ describe('locationController', function () {
 
 
     describe('Get location', function () {
-        it('should fails when not logged in or without token', async () => {
+        it('should fail when not logged in or without token', async () => {
             // Get Location
             await chai
                 .request(app)
@@ -228,7 +228,7 @@ describe('locationController', function () {
                 });
         });
 
-        it('should fails with invalid token', async () => {
+        it('should fail with invalid token', async () => {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
@@ -245,7 +245,7 @@ describe('locationController', function () {
                 })
         });
 
-        it('should fails with invalid id', async () => {
+        it('should fail with invalid id', async () => {
             // Create admin user, log-in and get token
             let token = await User.create({
                 firstName: "test",
@@ -329,7 +329,7 @@ describe('locationController', function () {
 
 
     describe('Get all locations', function () {
-        it('should fails when not logged in or without token', async () => {
+        it('should fail when not logged in or without token', async () => {
             // Get locations
             await chai
                 .request(app)
@@ -342,7 +342,7 @@ describe('locationController', function () {
                 });
         });
 
-        it('should fails with invalid token', async () => {
+        it('should fail with invalid token', async () => {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
@@ -407,7 +407,7 @@ describe('locationController', function () {
 
 
     describe('Update location', function () {
-        it('should fails when not logged in or without token', async () => {
+        it('should fail when not logged in or without token', async () => {
             // Update location
             await chai
                 .request(app)
@@ -429,7 +429,7 @@ describe('locationController', function () {
                 });
         });
 
-        it('should fails with invalid token', async () => {
+        it('should fail with invalid token', async () => {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
@@ -455,7 +455,7 @@ describe('locationController', function () {
                 })
         });
 
-        it('should fails with non-admin users', async () => {
+        it('should fail with non-admin users', async () => {
             // Create admin user, log-in and get token
             let token = await User.create({
                 firstName: "test",
@@ -502,7 +502,7 @@ describe('locationController', function () {
                 });
         });
 
-        it('should fails with invalid id', async () => {
+        it('should fail with invalid id', async () => {
             // Create admin user, log-in and get token
             let token = await User.create({
                 firstName: "test",
@@ -604,7 +604,7 @@ describe('locationController', function () {
 
 
     describe('Delete a location', function () {
-        it('should fails when not logged in or without token', async () => {
+        it('should fail when not logged in or without token', async () => {
             // Delete location
             await chai
                 .request(app)
@@ -617,7 +617,7 @@ describe('locationController', function () {
                 });
         });
 
-        it('should fails with invalid token', async () => {
+        it('should fail with invalid token', async () => {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
@@ -634,7 +634,7 @@ describe('locationController', function () {
                 })
         });
 
-        it('should fails with non-admin users', async () => {
+        it('should fail with non-admin users', async () => {
             // Create admin user, log-in and get token
             let token = await User.create({
                 firstName: "test",
@@ -672,7 +672,7 @@ describe('locationController', function () {
                 });
         });
 
-        it('should fails with invalid id', async () => {
+        it('should fail with invalid id', async () => {
             // Create admin user, log-in and get token
             let token = await User.create({
                 firstName: "test",
