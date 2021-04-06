@@ -18,11 +18,16 @@ router
     .get(eventController.getConnectionEvent);
 
 router
+    .route('/connections/user/:id')
+    .get(eventController.getConnectionEventForUser);
+
+
+router
     .route('/order/')
     .get(eventController.getAllOrderEvent);
 
 router
-    .route('/connections/:id')
+    .route('/order/:id')
     .get(eventController.getOrderEvent);
 
 router
@@ -32,5 +37,13 @@ router
 router
     .route('/element/:id')
     .get(eventController.getProductEvent);
+
+router
+    .route('/element/product/:id')
+    .get(eventController.getProductEventForElement);
+
+router
+    .route('/element/user/:id')
+    .get(eventController.getProductEventForUser);
 
 module.exports = router;
