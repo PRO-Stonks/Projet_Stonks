@@ -35,14 +35,9 @@ before(async function () {
 });
 // 606afdb5aa09d43a84b6181a
 describe('EventModel', function () {
-    describe('Base event', function () {
-        it('is created correctly', async () => {
-            await Event.create({}).then(res => {
-                expect(res).to.have.property("time");
-                expect(validator.isDate(res.time)).to.be.true;
-                expect(validator.isMongoId(res._id.toString())).to.be.true;
-            });
-        });
+    beforeEach( function (done) {
+        mongoose.connection.db.dropDatabase(() => {console.log(`${mongoose.connection.db.databaseName} database dropped.`);
+            done();});
     });
     describe('Connection event', function () {
         describe('Missing elements', function () {

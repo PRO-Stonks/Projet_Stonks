@@ -46,7 +46,7 @@ describe('AuthControler', function () {
     beforeEach( function (done) {
         mongoose.connection.db.dropDatabase(() => {console.log(`${mongoose.connection.db.databaseName} database dropped.`);
             done();});
-    })
+    });
     describe('Sign Up', function () {
         it("Fail sign up a new user with invalid parameter", (done) => {
             chai

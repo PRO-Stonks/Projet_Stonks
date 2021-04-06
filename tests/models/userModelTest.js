@@ -35,6 +35,10 @@ before(async function () {
 });
 
 describe('UserModel', function () {
+    beforeEach( function (done) {
+        mongoose.connection.db.dropDatabase(() => {console.log(`${mongoose.connection.db.databaseName} database dropped.`);
+            done();});
+    });
     describe('Missing Element', function () {
         Object.keys(User.schema.obj).forEach((key) => {
             if (User.schema.obj[key].hasOwnProperty('required')) {
@@ -91,6 +95,25 @@ describe('UserModel', function () {
                 email: "email@emailtest",
                 password: "012345678",
             })).to.be.rejectedWith(Error);
+        });
+    });
+    describe('Creation', function () {
+        it('should throws when value is not in the enum', async () => {
+            await User.create({
+                firstName: "test",
+                lastName: "test",
+                email: "email@email.test",
+                password: "012345678",
+            }).then((data) => {
+                console.log(data);
+                expect(data.active).to.be.true;
+                expect(data.role).to.be.equal("manager");
+                expect(data.firstName).to.be.equal("test");
+                expect(data.lastName).to.be.equal("test");
+                expect(data.email).to.be.equal("email@email.test");
+                expect(data.password).to.not.be.equal("012345678");
+                expect(data.id).to.be.not.empty;
+            });
         });
     });
     describe('Creation', function () {
