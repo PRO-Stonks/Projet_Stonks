@@ -48,6 +48,8 @@ app.use(hpp());
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/locations', locationRoutes);
+app.use('/api/v1/elements', locationRoutes);
+
 
 // handle undefined Routes
 app.use('*', (req, res, next) => {
