@@ -4,7 +4,7 @@
   "description": "The best stocks manager application to ever exists",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha \"tests/**/*.js\"",
     "debug": "ndb server.js",
     "start": "nodemon server.js"
   },
