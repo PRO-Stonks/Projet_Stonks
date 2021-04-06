@@ -198,7 +198,15 @@ describe('AuthControler', function () {
         });
     });
 
+
+
     // TODO ADD test with duplicate email
     // Add test with access to protected route
     // Add test to verify behaviour of deleted users
+});
+
+after(async function () {
+    await mongoose.disconnect().then(() => {
+        console.log("All connections closed.")
+    });
 });
