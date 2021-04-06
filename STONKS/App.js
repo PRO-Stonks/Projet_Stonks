@@ -6,28 +6,30 @@ import { Login } from './screens/Login.js';
 import Menu from './screens/Menu.js';
 import Scan from './screens/Scan.js';
 
-
+/*
+Créer le stack screen et définit le header pour les screens
+! une fois loggé on peut plus revenir en arrière
+ */
 function StackScreen() {
   return (
       <Stack.Navigator initialRouteName="Login"
           screenOptions={{
               headerStyle: {
-                  backgroundColor : 'orange',
+                  backgroundColor : '#ffe385',
               },
+              headerTintColor: 'black',
               headerTitleStyle : {
                   fontWeight: 'bold',
               },
           }}
       >
-          <Stack.Screen
-              name="Login"
-              component={Login}
-        />
-        <Stack.Screen name="Menu" component={Menu} />
-        <Stack.Screen name="Scan" component={Scan} />
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Menu" component={Menu} options={{headerLeft: null, gestureEnabled: false }}/>
+          <Stack.Screen name="Scan" component={Scan} />
       </Stack.Navigator>
   );
 }
+
 
 const Stack = createStackNavigator();
 
@@ -35,7 +37,7 @@ export default class App extends React.Component {
   render () {
     return (
         <NavigationContainer>
-          <StackScreen/>
+            <StackScreen/>
         </NavigationContainer>
     );
   }

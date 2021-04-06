@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Image, Text, TouchableOpacity, TextInput, View, StyleSheet } from 'react-native';
+import { Image, Text, TouchableOpacity, TextInput, View, StyleSheet } from 'react-native';
 
 export class Login extends React.Component {
 
@@ -23,7 +23,7 @@ export class Login extends React.Component {
                 />
                 <TextInput
                     value={this.state.email}
-                    keyboardType = 'email-address'
+                    keyboardType ='email-address'
                     onChangeText={(email) => this.setState({ email })}
                     placeholder='email'
                     placeholderTextColor = 'black'
@@ -32,7 +32,7 @@ export class Login extends React.Component {
                 <TextInput
                     value={this.state.password}
                     onChangeText={(password) => this.setState({ password })}
-                    placeholder={'password'}
+                    placeholder='password'
                     secureTextEntry={true}
                     placeholderTextColor = 'black'
                     style={styles.input}
@@ -57,18 +57,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: 'white',
     },
-    titleText:{
-        fontSize: 50,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     button: {
         alignItems: 'center',
-        backgroundColor: 'azure',
+        backgroundColor: '#e1663b',
         width: 250,
         height: 44,
         padding: 10,
-        borderWidth: 1,
         borderRadius: 5,
         marginBottom: 10,
     },
@@ -76,10 +70,12 @@ const styles = StyleSheet.create({
         fontSize: 20,
         alignItems: 'center',
         justifyContent: 'center',
+        color: 'white',
+        fontWeight: 'bold',
     },
     input: {
         width: 250,
-        fontSize: 20,
+        fontSize: 18,
         height: 44,
         padding: 10,
         borderWidth: 1,

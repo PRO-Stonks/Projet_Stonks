@@ -32,6 +32,8 @@ export default function Menu({navigation}) {
     );
 }
 
+
+
 const styles = StyleSheet.create({
     buttonsContainer: {
         flex: 1,
