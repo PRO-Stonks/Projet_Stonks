@@ -1,5 +1,5 @@
 'use strict';
-const {Event, ConnectionEvent, OrderEvent, ProductEvent} = require('../../models/eventModel');
+const {ConnectionEvent, OrderEvent, ElementEvent} = require('../../models/eventModel');
 const chai = require('chai');
 const mongoose = require('mongoose');
 const validator = require("validator");
@@ -106,41 +106,41 @@ describe('EventModel', function () {
             });
         });
     });
-    describe('Product event', function () {
+    describe('element event', function () {
         describe('Missing elements', function () {
-            Object.keys(ProductEvent.schema.obj).forEach((key) => {
-                if (ProductEvent.schema.obj[key].hasOwnProperty('required')) {
+            Object.keys(ElementEvent.schema.obj).forEach((key) => {
+                if (ElementEvent.schema.obj[key].hasOwnProperty('required')) {
                     let test = {
-                        product: "606afdb5aa09d43a84b6181a",
+                        element: "606afdb5aa09d43a84b6181a",
                         user: "606afdb5aa09d43a84b6181a",
                     };
                     delete test[key];
                     it('should throws when ' + key + ' is not present', async () => {
-                        await expect(ProductEvent.create(test)).to.be.rejectedWith(Error);
+                        await expect(ElementEvent.create(test)).to.be.rejectedWith(Error);
                     });
                 }
             });
         });
-        describe('Product', function () {
+        describe('element', function () {
             it('should throws when value is not a correct id', async () => {
-                await expect(ProductEvent.create({
-                    product: "606afdb5aa09d43a84b618",
+                await expect(ElementEvent.create({
+                    element: "606afdb5aa09d43a84b618",
                     user: "606afdb5aa09d43a84b6181a",
                 })).to.be.rejectedWith(Error);
             });
         });
         describe('user', function () {
             it('should throws when value is not a correct id', async () => {
-                await expect(ProductEvent.create({
-                    product: "606afdb5aa09d43a84b6181a",
+                await expect(ElementEvent.create({
+                    element: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b618",
                 })).to.be.rejectedWith(Error);
             });
         });
         describe('change', function () {
             it('should throws when value is not in the enum', async () => {
-                await expect(ProductEvent.create({
-                    product: "606afdb5aa09d43a84b6181a",
+                await expect(ElementEvent.create({
+                    element: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b618",
                     change: "Nothing"
                 })).to.be.rejectedWith(Error);
@@ -148,8 +148,8 @@ describe('EventModel', function () {
         });
         describe('change', function () {
             it('should throws when value is not in the enum', async () => {
-                await expect(ProductEvent.create({
-                    product: "606afdb5aa09d43a84b6181a",
+                await expect(ElementEvent.create({
+                    element: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b618",
                     change: "Nothing"
                 })).to.be.rejectedWith(Error);
@@ -157,31 +157,31 @@ describe('EventModel', function () {
         });
         describe('Old location', function () {
             it('should throws when value is missing', async () => {
-                await expect(ProductEvent.create({
-                    product: "606afdb5aa09d43a84b6181a",
+                await expect(ElementEvent.create({
+                    element: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b6181a",
                     change: "Move"
                 })).to.be.rejectedWith(Error);
             });
             it('should throws when value is not an id', async () => {
-                await expect(ProductEvent.create({
-                    product: "606afdb5aa09d43a84b6181a",
+                await expect(ElementEvent.create({
+                    element: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b6181a",
                     change: "Move",
                     oldLocation: "606afdb5aa09d43a84b618"
                 })).to.be.rejectedWith(Error);
             });
             it('should throws when value is specified when it should not', async () => {
-                await expect(ProductEvent.create({
-                    product: "606afdb5aa09d43a84b6181a",
+                await expect(ElementEvent.create({
+                    element: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b6181a",
                     change: "Creation",
                     oldLocation: "606afdb5aa09d43a84b6181a"
                 })).to.be.rejectedWith(Error);
             });
             it('should resolve when everything is ok',  () => {
-                return  expect(ProductEvent.create({
-                    product: "606afdb5aa09d43a84b6181a",
+                return  expect(ElementEvent.create({
+                    element: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b6181a",
                     change: "Move",
                     oldLocation: "606afdb5aa09d43a84b6181a"

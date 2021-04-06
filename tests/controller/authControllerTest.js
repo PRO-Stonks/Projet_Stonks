@@ -41,11 +41,12 @@ before(async function () {
 });
 
 
-
 describe('AuthControler', function () {
-    beforeEach( function (done) {
-        mongoose.connection.db.dropDatabase(() => {console.log(`${mongoose.connection.db.databaseName} database dropped.`);
-            done();});
+    beforeEach(function (done) {
+        mongoose.connection.db.dropDatabase(() => {
+            console.log(`${mongoose.connection.db.databaseName} database dropped.`);
+            done();
+        });
     });
     describe('Sign Up', function () {
         it("Fail sign up a new user with invalid parameter", (done) => {
@@ -174,7 +175,31 @@ describe('AuthControler', function () {
                 }).timeout(timeoutDuration);
             });
         });
-        it("Sucessful login Create a ConnectionEvent Entry", (done) => {
+        it("Successful login Create a ConnectionEvent Entry", (done) => {
+            User.create({
+                firstName: "test",
+                lastName: "test",
+                email: "email@email.test",
+                password: "012345678",
+            }).then( user => {
+                chai
+                    .request(app)
+                    .post("/api/v1/users/login").send({
+                    "email": "email@email.test",
+                    "password": "012345678"
+                }).then(async res => {
+                    await ConnectionEvent.find({}, function(err, docs){
+                        expect(docs.length).to.be.not.equal(0);
+                        expect(docs[0].kind).to.be.equal("ConnectionEvent");
+                        return true;
+                    }).exec();
+                    done();
+                }).catch(function (err) {
+                    throw err;
+                });
+            });
+        });
+        it("Protected route need an authorisation token", (done) => {
             User.create({
                 firstName: "test",
                 lastName: "test",
@@ -186,23 +211,49 @@ describe('AuthControler', function () {
                     .post("/api/v1/users/login").send({
                     "email": "email@email.test",
                     "password": "012345678"
-                }).end((err, res) => {
-                    ConnectionEvent.find({}).then(res => {
-                        console.log(res)
-                        expect(res.length).to.be.greaterThan(0);
-                        expect(res.kind).to.be.equal("ConnectionEvent");
+                }).then(async res => {
+                    console.log(res.body);
+                    chai
+                        .request(app)
+                        .get("/api/v1/events/connections/").send().then(res => {
+                        console.log(res.body);
+                        expect(res.status).to.be.equal(401);
+                        expect(res.body.status).to.be.equal('fail');
+                        expect(res.body.message).to.be.equal("You are not logged in! Please login in to continue");
                     });
                     done();
-                }).timeout(timeoutDuration);
+                }).catch(function (err) {
+                    throw err;
+                });
+            });
+        });
+        it("Admin only route need token", (done) => {
+            User.create({
+                firstName: "test",
+                lastName: "test",
+                email: "email@email.test",
+                password: "012345678",
+            }).then(user => {
+                const requester = chai.request(app).keepOpen()
+                requester.post("/api/v1/users/login").send({
+                    "email": "email@email.test",
+                    "password": "012345678"
+                }).then( res => {
+                    requester
+                        .get("/api/v1/events/connections/")
+                        .set('Authorization', 'Bearer '+res.body.token)
+                        .send().then(res => {
+                        expect(res.status).to.be.equal(403);
+                        expect(res.body.status).to.be.equal('fail');
+                        expect(res.body.message).to.be.equal("You are not allowed to do this action");
+                        done();
+                    });
+                }).catch(function (err) {
+                    throw err;
+                });
             });
         });
     });
-
-
-
-    // TODO ADD test with duplicate email
-    // Add test with access to protected route
-    // Add test to verify behaviour of deleted users
 });
 
 after(async function () {
