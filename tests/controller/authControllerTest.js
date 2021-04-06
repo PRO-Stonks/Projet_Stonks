@@ -49,240 +49,197 @@ describe('AuthControler', function () {
         });
     });
     describe('Sign Up', function () {
-        it("Fail sign up a new user with invalid parameter", (done) => {
-            chai
+        it("Fail sign up a new user with invalid parameter", async () => {
+            const res = await chai
                 .request(app)
                 .post("/api/v1/users/signup").send({
-                firstName: "test",
-                lastName: "test",
-                email: "email@emai",
-                password: "0123",
-            }).end((err, res) => {
-                console.log(res.body)
-                expect(res.status).to.be.equal(400);
-                expect(res.body.status).to.be.equal('Invalid Input');
-                done();
-            }).timeout(timeoutDuration);
+                    firstName: "test",
+                    lastName: "test",
+                    email: "email@emai",
+                    password: "0123",
+                });
+            expect(res.status).to.be.equal(400);
+            expect(res.body.status).to.be.equal('Invalid Input');
         });
-        it("Successfully sign up a new user", (done) => {
-            chai
+        it("Successfully sign up a new user", async () => {
+            const res = await chai
                 .request(app)
                 .post("/api/v1/users/signup").send({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.test",
-                password: "012345678",
-            })
-                .end((err, res) => {
-                    console.log(res.body)
-                    expect(res.status).to.be.equal(201);
-                    expect(res.body.status).to.be.equal('success');
-                    expect(res.body.data.user.hasOwnProperty("password")).to.be.false;
-                    expect(res.body.data.user.active).to.be.true;
-                    expect(res.body.data.user.role).to.be.equal("manager");
-                    expect(validator.isMongoId(res.body.data.user._id)).to.be.true;
-                    done();
-                }).timeout(timeoutDuration);
+                    firstName: "test",
+                    lastName: "test",
+                    email: "email@email.test",
+                    password: "012345678",
+                });
+            expect(res.status).to.be.equal(201);
+            expect(res.body.status).to.be.equal('success');
+            expect(res.body.data.user.hasOwnProperty("password")).to.be.false;
+            expect(res.body.data.user.active).to.be.true;
+            expect(res.body.data.user.role).to.be.equal("manager");
+            expect(validator.isMongoId(res.body.data.user._id)).to.be.true;
+
         });
-        it("Successfully sign up a new admin", (done) => {
-            chai
+        it("Successfully sign up a new admin", async () => {
+            const res = await chai
                 .request(app)
                 .post("/api/v1/users/signup").send({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.test",
-                password: "012345678",
-                role: "admin"
-            })
-                .end((err, res) => {
-                    console.log(res.body)
-                    expect(res.status).to.be.equal(201);
-                    expect(res.body.status).to.be.equal('success');
-                    expect(res.body.data.user.hasOwnProperty("password")).to.be.false;
-                    expect(res.body.data.user.active).to.be.true;
-                    expect(res.body.data.user.role).to.be.equal("admin");
-                    expect(validator.isMongoId(res.body.data.user._id)).to.be.true;
-                    done();
-                }).timeout(timeoutDuration);
+                    firstName: "test",
+                    lastName: "test",
+                    email: "email@email.test",
+                    password: "012345678",
+                    role: "admin"
+                });
+            expect(res.status).to.be.equal(201);
+            expect(res.body.status).to.be.equal('success');
+            expect(res.body.data.user.hasOwnProperty("password")).to.be.false;
+            expect(res.body.data.user.active).to.be.true;
+            expect(res.body.data.user.role).to.be.equal("admin");
+            expect(validator.isMongoId(res.body.data.user._id)).to.be.true;
+
         });
     });
 
     describe('Login', function () {
-        it("Wrong email fails the login process", (done) => {
-            User.create({
+        it("Wrong email fails the login process", async () => {
+            const user = await User.create({
                 firstName: "test",
                 lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
-            }).then(user => {
-                chai
-                    .request(app)
-                    .post("/api/v1/users/login").send({
+            });
+            const res = await chai
+                .request(app)
+                .post("/api/v1/users/login").send({
                     "email": "email@email",
                     "password": "012345678"
-                }).end((err, res) => {
-                    console.log(res.body)
-                    expect(res.status).to.be.equal(401);
-                    expect(res.body.status).to.be.equal('fail');
-                    expect(res.body.token).to.not.exist;
-                    done();
-                }).timeout(timeoutDuration);
-            });
+                });
+            expect(res.status).to.be.equal(401);
+            expect(res.body.status).to.be.equal('fail');
+            expect(res.body.token).to.not.exist;
         });
-        it("Wrong password fails the login process", (done) => {
-            User.create({
+        it("Wrong password fails the login process", async () => {
+            const user = await User.create({
                 firstName: "test",
                 lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
-            }).then(user => {
-                chai
-                    .request(app)
-                    .post("/api/v1/users/login").send({
+            });
+            const res = await chai
+                .request(app)
+                .post("/api/v1/users/login").send({
                     "email": "email@email.test",
                     "password": "0123456789"
-                }).end((err, res) => {
-                    console.log(res.body)
-                    expect(res.status).to.be.equal(401);
-                    expect(res.body.status).to.be.equal('fail');
-                    expect(res.body.token).to.not.exist;
-                    done();
-                }).timeout(timeoutDuration);
-            });
-        });
-        it("Login with valid parameter works", (done) => {
-            User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.test",
-                password: "012345678",
-            }).then(user => {
-                chai
-                    .request(app)
-                    .post("/api/v1/users/login").send({
-                    "email": "email@email.test",
-                    "password": "012345678"
-                }).end((err, res) => {
-                    console.log(res.body)
-                    expect(res.status).to.be.equal(200);
-                    expect(res.body.status).to.be.equal('success');
-                    expect(res.body.token).to.exist;
-                    expect(res.body.data.user.hasOwnProperty("password")).to.be.false;
-                    expect(res.body.data.user.role).to.be.equal("manager");
-                    expect(validator.isMongoId(res.body.data.user._id)).to.be.true;
-                    expect(validator.isJWT(res.body.token)).to.be.true;
-                    done();
-                }).timeout(timeoutDuration);
-            });
-        });
-        it("Successful login Create a ConnectionEvent Entry", (done) => {
-            User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.test",
-                password: "012345678",
-            }).then( user => {
-                chai
-                    .request(app)
-                    .post("/api/v1/users/login").send({
-                    "email": "email@email.test",
-                    "password": "012345678"
-                }).then(async res => {
-                    await ConnectionEvent.find({}, function(err, docs){
-                        expect(docs.length).to.be.not.equal(0);
-                        expect(docs[0].kind).to.be.equal("ConnectionEvent");
-                        return true;
-                    }).exec();
-                    done();
-                }).catch(function (err) {
-                    throw err;
                 });
-            });
+            expect(res.status).to.be.equal(401);
+            expect(res.body.status).to.be.equal('fail');
+            expect(res.body.token).to.not.exist;
         });
-        it("Protected route need an authorisation token", (done) => {
-            User.create({
+        it("Login with valid parameter works", async () => {
+            const user = await User.create({
                 firstName: "test",
                 lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
-            }).then(user => {
-                chai
-                    .request(app)
-                    .post("/api/v1/users/login").send({
+            });
+            const res = await chai
+                .request(app)
+                .post("/api/v1/users/login").send({
                     "email": "email@email.test",
                     "password": "012345678"
-                }).then(async res => {
-                    console.log(res.body);
-                    chai
-                        .request(app)
-                        .get("/api/v1/events/connections/").send().then(res => {
-                        console.log(res.body);
-                        expect(res.status).to.be.equal(401);
-                        expect(res.body.status).to.be.equal('fail');
-                        expect(res.body.message).to.be.equal("You are not logged in! Please login in to continue");
-                    });
-                    done();
-                }).catch(function (err) {
-                    throw err;
                 });
-            });
+            expect(res.status).to.be.equal(200);
+            expect(res.body.status).to.be.equal('success');
+            expect(res.body.token).to.exist;
+            expect(res.body.data.user.hasOwnProperty("password")).to.be.false;
+            expect(res.body.data.user.role).to.be.equal("manager");
+            expect(validator.isMongoId(res.body.data.user._id)).to.be.true;
+            expect(validator.isJWT(res.body.token)).to.be.true;
+
         });
-        it("Admin only route need token", (done) => {
-            User.create({
+        it("Successful login Create a ConnectionEvent Entry", async () => {
+            const user = await User.create({
                 firstName: "test",
                 lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
-            }).then(user => {
-                const requester = chai.request(app).keepOpen()
-                requester.post("/api/v1/users/login").send({
+            });
+            const res = await chai
+                .request(app)
+                .post("/api/v1/users/login").send({
                     "email": "email@email.test",
                     "password": "012345678"
-                }).then( res => {
-                    requester
-                        .get("/api/v1/events/connections/")
-                        .set('Authorization', 'Bearer '+res.body.token)
-                        .send().then(res => {
-                        expect(res.status).to.be.equal(403);
-                        expect(res.body.status).to.be.equal('fail');
-                        expect(res.body.message).to.be.equal("You are not allowed to do this action");
-                        done();
-                    });
-                }).catch(function (err) {
-                    throw err;
                 });
-            });
+            const docs = await ConnectionEvent.find({}).exec();
+            expect(docs.length).to.be.not.equal(0);
+            expect(docs[0].kind).to.be.equal("ConnectionEvent");
         });
-        it("Admin can acces admin only route", (done) => {
-            User.create({
+        it("Protected route need an authorisation token", async () => {
+            const user = await User.create({
+                firstName: "test",
+                lastName: "test",
+                email: "email@email.test",
+                password: "012345678",
+            });
+            let res = await chai
+                .request(app)
+                .post("/api/v1/users/login").send({
+                    "email": "email@email.test",
+                    "password": "012345678"
+                });
+            console.log(res.body);
+            res = await chai
+                .request(app)
+                .get("/api/v1/events/connections/").send();
+            console.log(res.body);
+            expect(res.status).to.be.equal(401);
+            expect(res.body.status).to.be.equal('fail');
+            expect(res.body.message).to.be.equal("You are not logged in! Please login in to continue");
+        });
+
+        it("Admin only route need token", async () => {
+            let user = await User.create({
+                firstName: "test",
+                lastName: "test",
+                email: "email@email.test",
+                password: "012345678",
+            });
+            const requester = chai.request(app).keepOpen()
+            let res = await requester.post("/api/v1/users/login").send({
+                "email": "email@email.test",
+                "password": "012345678"
+            });
+            res = await requester
+                .get("/api/v1/events/connections/")
+                .set('Authorization', 'Bearer ' + res.body.token)
+                .send();
+            expect(res.status).to.be.equal(403);
+            expect(res.body.status).to.be.equal('fail');
+            expect(res.body.message).to.be.equal("You are not allowed to do this action");
+        });
+        it("Admin can acces admin only route", async () => {
+            let user = await User.create({
                 firstName: "test",
                 lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
                 role: "admin"
-            }).then(user => {
-                const requester = chai.request(app).keepOpen()
-                requester.post("/api/v1/users/login").send({
-                    "email": "email@email.test",
-                    "password": "012345678"
-                }).then( res => {
-                     requester
-                        .get("/api/v1/events/connections/")
-                        .set('Authorization', 'Bearer '+res.body.token)
-                        .send().then(res => {
-                        console.log(res.body)
-                        expect(res.body.results).to.be.greaterThan(0);
-                        expect(res.status).to.be.equal(200);
-                        expect(res.body.status).to.be.equal('success');
-                        done();
-                    });
-                }).catch(function (err) {
-                    throw err;
-                });
             });
+            const requester = chai.request(app).keepOpen()
+            let res = await requester.post("/api/v1/users/login").send({
+                "email": "email@email.test",
+                "password": "012345678"
+            });
+            res = await requester
+                .get("/api/v1/events/connections/")
+                .set('Authorization', 'Bearer ' + res.body.token)
+                .send();
+            console.log(res.body)
+            expect(res.body.results).to.be.greaterThan(0);
+            expect(res.status).to.be.equal(200);
+            expect(res.body.status).to.be.equal('success');
         });
     });
-});
+})
+;
 
 after(async function () {
     await mongoose.disconnect().then(() => {
