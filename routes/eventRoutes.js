@@ -10,7 +10,7 @@ router.use(authController.protect);
 router.use(authController.restrictTo('admin'));
 
 router
-    .route('/connections/')
+    .route('/connections')
     .get(eventController.getAllConnectionEvent);
 
 router
@@ -32,18 +32,18 @@ router
 
 router
     .route('/element/')
-    .get(eventController.getAllProductEvent);
+    .get(eventController.getAllElementEvent);
 
 router
     .route('/element/:id')
-    .get(eventController.getProductEvent);
+    .get(eventController.getElementEvent);
 
 router
     .route('/element/product/:id')
-    .get(eventController.getProductEventForElement);
+    .get(eventController.getElementEventForElement);
 
 router
     .route('/element/user/:id')
-    .get(eventController.getProductEventForUser);
+    .get(eventController.getElementEventForUser);
 
 module.exports = router;

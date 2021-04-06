@@ -42,13 +42,13 @@ const eventOrder = new mongoose.Schema({
     }
 });
 
-const eventProduct = new mongoose.Schema({
+const eventElement = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         immutable: true
     },
-    product: {
+    element: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         immutable: true
@@ -80,10 +80,10 @@ const eventProduct = new mongoose.Schema({
 const Event = mongoose.model("Event", eventSchema);
 const ConnectionEvent = Event.discriminator("ConnectionEvent", eventConnection);
 const OrderEvent = Event.discriminator("OrderEvent", eventOrder);
-const ProductEvent = Event.discriminator("ProductEvent", eventProduct);
+const ElementEvent = Event.discriminator("ElementEvent", eventElement);
 
 module.exports = {
     ConnectionEvent,
     OrderEvent,
-    ProductEvent
+    ElementEvent
 };

@@ -47,9 +47,11 @@ exports.login = async (req, res, next) => {
             );
         }
 
-        ConnectionEvent.create({user: user.id,
-        userAgent: req.headers['user-agent'],
-        ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress}).catch(err => {next(err)});
+        await ConnectionEvent.create({
+            user: user.id,
+            userAgent: req.headers['user-agent'],
+            ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress
+        });
         // 3) All correct, send jwt to client
         const token = createToken(user.id, user.role);
 

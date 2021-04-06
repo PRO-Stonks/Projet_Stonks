@@ -1,9 +1,9 @@
 'use strict';
-const {ConnectionEvent, OrderEvent, ProductEvent} = require('../models/eventModel');
+const {ConnectionEvent, OrderEvent, ElementEvent} = require('../models/eventModel');
 const base = require('./baseController');
 
 /**
- * Util function to get ProductEvent based on a criteria
+ * Util function to get an event based on a criteria
  * @param Model the model to make the request from
  * @param param criteria of the search
  * @returns {function(req, res, next): Promise<Document[]>}
@@ -33,11 +33,11 @@ exports.getConnectionEvent = base.getOne(ConnectionEvent);
 exports.getAllOrderEvent = base.getAll(OrderEvent);
 exports.getOrderEvent = base.getOne(OrderEvent);
 
-exports.getAllProductEvent = base.getAll(ProductEvent);
-exports.getProductEvent = base.getOne(ProductEvent);
+exports.getAllElementEvent = base.getAll(ElementEvent);
+exports.getElementEvent = base.getOne(ElementEvent);
 
-exports.getProductEventForElement = getEvent(ProductEvent, "product");
-exports.getProductEventForUser = getEvent(ProductEvent,"user");
+exports.getElementEventForElement = getEvent(ElementEvent, "element");
+exports.getElementEventForUser = getEvent(ElementEvent,"user");
 
 exports.getConnectionEventForUser = getEvent(ConnectionEvent, "user");
 
