@@ -12,7 +12,8 @@ const getEvent = (Model, param) => async ( req, res, next) => {
     let obj = {};
     obj[param]=req.params.id;
     try {
-        const doc = await Model.find({obj});
+
+        const doc = await Model.find(obj);
 
         if (!doc) {
             return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
