@@ -190,36 +190,12 @@ describe('elementController', function () {
                 });
         });
 
-        it('should work as non-admin user', async () => {
+        it('should work', async () => {
             // Add Element
             await chai
                 .request(app)
                 .post(mainRoute + "/elements/add")
                 .set("Authorization", "Bearer " + tokenManager)
-                .send({
-                    _id: "test",
-                    entryDate: new Date('2020-01-01'),
-                    price: 1,
-                    idProduct: idProduct,
-                    idLocation: idLocation1
-                }).timeout(timeoutDuration)
-                .then((res) => {
-                    console.log(res.body)
-                    expect(res.status).to.be.equal(201);
-                    expect(res.body.status).to.be.equal('success');
-                });
-
-            // Check the created Element
-            let doc = await Element.findById("test");
-            expect(doc).to.be.not.null;
-        });
-
-        it('should work as admin', async () => {
-            // Add Element
-            await chai
-                .request(app)
-                .post(mainRoute + "/elements/add")
-                .set("Authorization", "Bearer " + tokenAdmin)
                 .send({
                     _id: "test",
                     entryDate: new Date('2021-04-02'),
@@ -655,7 +631,7 @@ afterEach(async function () {
     await Element.remove({
         _id: "test"
     }).then(() => {
-        console.log("Clean Element")
+        console.log("Clean Element");
     });
 });
 
@@ -663,6 +639,6 @@ afterEach(async function () {
 // Disconnect the DB at the end
 after(async function () {
     await mongoose.disconnect().then(() => {
-        console.log("All connections closed.")
+        console.log("All connections closed.");
     });
 });

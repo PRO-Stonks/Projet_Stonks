@@ -17,6 +17,8 @@ dotenv.config({
 });
 const timeoutDuration = 3000;
 
+let tokenAdmin;
+let tokenManager;
 let idProduct1;
 let idProduct2;
 before(async function () {
@@ -37,6 +39,55 @@ before(async function () {
         console.log('DB connection Successfully!');
         mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
         );
+    });
+
+    // Create manager/admin accounts, log in and get their tokens
+    tokenManager = await User.create({
+        firstName: "test",
+        lastName: "test",
+        email: "manager@email.tests",
+        password: "012345678",
+    }).then(() => {
+        console.log("Manager account created");
+        return chai.request(app)
+            .post(mainRoute + "/users/login")
+            .send({
+                "email": "manager@email.tests",
+                "password": "012345678"
+            })
+            .timeout(timeoutDuration)
+            .then((res) => {
+                if (res.status === 200) {
+                    console.log("Log in successfully");
+                    return res.body.token;
+                } else {
+                    throw "failed to log in";
+                }
+            });
+    });
+    tokenAdmin = await User.create({
+        firstName: "test",
+        lastName: "test",
+        email: "admin@email.tests",
+        password: "012345678",
+        role: "admin"
+    }).then(() => {
+        console.log("Admin account created");
+        return chai.request(app)
+            .post(mainRoute + "/users/login")
+            .send({
+                "email": "admin@email.tests",
+                "password": "012345678"
+            })
+            .timeout(timeoutDuration)
+            .then((res) => {
+                if (res.status === 200) {
+                    console.log("Log in successfully");
+                    return res.body.token;
+                } else {
+                    throw "failed to log in";
+                }
+            });
     });
 
     // Create 2 products
@@ -93,35 +144,11 @@ describe('productController', function () {
         });
 
         it('should fail as non-admin user', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Add product
             await chai
                 .request(app)
                 .post(mainRoute + "/products/add")
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenManager)
                 .send({
                     name: "test",
                     tag: "junk food"
@@ -134,36 +161,11 @@ describe('productController', function () {
         });
 
         it('should work as admin', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Add product
             await chai
                 .request(app)
                 .post(mainRoute + "/products/add")
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .send({
                     name: "test",
                     tag: "junk food"
@@ -210,36 +212,11 @@ describe('productController', function () {
         });
 
         it('should fail with invalid id', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Get product
             await chai
                 .request(app)
                 .get(mainRoute + "/products/" + mongoose.Types.ObjectId.createFromTime(42))
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -250,36 +227,11 @@ describe('productController', function () {
         });
 
         it('should work with correct id', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Get product
             await chai
                 .request(app)
                 .get(mainRoute + "/products/" + idProduct1)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -323,36 +275,11 @@ describe('productController', function () {
         });
 
         it('should work', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Get products
             await chai
                 .request(app)
                 .get(mainRoute + "/products/")
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -371,7 +298,7 @@ describe('productController', function () {
 
     describe('Update a product', function () {
         it('should fail when not logged in or without token', async () => {
-            // Update roduct
+            // Update product
             await chai
                 .request(app)
                 .patch(mainRoute + "/products/" + idProduct1)
@@ -389,7 +316,7 @@ describe('productController', function () {
         it('should fail with invalid token', async () => {
             let token = "fakeTokenIsNotVeryGentle";
 
-            // Update a product
+            // Update product
             await chai
                 .request(app)
                 .patch(mainRoute + "/products/" + idProduct1)
@@ -406,30 +333,6 @@ describe('productController', function () {
         });
 
         it('should fail with non-admin users', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Update product
             await chai
                 .request(app)
@@ -437,7 +340,7 @@ describe('productController', function () {
                 .send({
                     tag: "fries"
                 })
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -447,31 +350,6 @@ describe('productController', function () {
         });
 
         it('should fail with invalid id', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Update product
             await chai
                 .request(app)
@@ -479,7 +357,7 @@ describe('productController', function () {
                 .send({
                     tag: "potatoe"
                 })
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -490,31 +368,6 @@ describe('productController', function () {
         });
 
         it('should work with correct id', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Update product
             await chai
                 .request(app)
@@ -522,7 +375,7 @@ describe('productController', function () {
                 .send({
                     tag: "potatoe"
                 })
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -567,35 +420,11 @@ describe('productController', function () {
         });
 
         it('should fail with non-admin users', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Soft delete product
             await chai
                 .request(app)
                 .delete(mainRoute + "/products/" + idProduct1)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -605,36 +434,11 @@ describe('productController', function () {
         });
 
         it('should fail with invalid id', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Soft delete product
             await chai
                 .request(app)
                 .delete(mainRoute + "/products/" + mongoose.Types.ObjectId.createFromTime(42))
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -645,31 +449,6 @@ describe('productController', function () {
         });
 
         it('should work with correct id', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Create a product
             let id = await Product.create({
                 name: "test2",
@@ -682,7 +461,7 @@ describe('productController', function () {
             await chai
                 .request(app)
                 .delete(mainRoute + "/products/" + id)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -694,6 +473,7 @@ describe('productController', function () {
             expect(doc).to.be.not.null;
         });
     });
+
 
     describe('Hard delete a product', function () {
         it('should fail when not logged in or without token', async () => {
@@ -727,35 +507,11 @@ describe('productController', function () {
         });
 
         it('should fail with non-admin users', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Hard delete a product
             await chai
                 .request(app)
                 .delete(mainRoute + "/products/hardDel/" + idProduct1)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -765,36 +521,11 @@ describe('productController', function () {
         });
 
         it('should fail with invalid id', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Hard delete product
             await chai
                 .request(app)
                 .delete(mainRoute + "/products/hardDel/" + mongoose.Types.ObjectId.createFromTime(42))
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -805,31 +536,6 @@ describe('productController', function () {
         });
 
         it('should work with correct id', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Create a product
             let id = await Product.create({
                 name: "test3",
@@ -842,7 +548,7 @@ describe('productController', function () {
             await chai
                 .request(app)
                 .delete(mainRoute + "/products/hardDel/" + id)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -859,13 +565,13 @@ describe('productController', function () {
 
 // Remove the user after each test
 afterEach(async function () {
-    await User.remove({
-        email: "email@email.tests"
-    });
     await Product.remove({
         name: "test"
+    }).then(() => {
+        console.log("Clean Product")
     });
 });
+
 
 // Disconnect the DB at the end
 after(async function () {

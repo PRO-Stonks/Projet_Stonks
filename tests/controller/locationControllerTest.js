@@ -17,6 +17,8 @@ dotenv.config({
 });
 const timeoutDuration = 3000;
 
+let tokenAdmin;
+let tokenManager;
 let idLocation1;
 let idLocation2;
 before(async function () {
@@ -37,6 +39,55 @@ before(async function () {
         console.log('DB connection Successfully!');
         mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
         );
+    });
+
+    // Create manager/admin accounts, log in and get their tokens
+    tokenManager = await User.create({
+        firstName: "test",
+        lastName: "test",
+        email: "manager@email.tests",
+        password: "012345678",
+    }).then(() => {
+        console.log("Manager account created");
+        return chai.request(app)
+            .post(mainRoute + "/users/login")
+            .send({
+                "email": "manager@email.tests",
+                "password": "012345678"
+            })
+            .timeout(timeoutDuration)
+            .then((res) => {
+                if (res.status === 200) {
+                    console.log("Log in successfully");
+                    return res.body.token;
+                } else {
+                    throw "failed to log in";
+                }
+            });
+    });
+    tokenAdmin = await User.create({
+        firstName: "test",
+        lastName: "test",
+        email: "admin@email.tests",
+        password: "012345678",
+        role: "admin"
+    }).then(() => {
+        console.log("Admin account created");
+        return chai.request(app)
+            .post(mainRoute + "/users/login")
+            .send({
+                "email": "admin@email.tests",
+                "password": "012345678"
+            })
+            .timeout(timeoutDuration)
+            .then((res) => {
+                if (res.status === 200) {
+                    console.log("Log in successfully");
+                    return res.body.token;
+                } else {
+                    throw "failed to log in";
+                }
+            });
     });
 
     // Create 2 products
@@ -70,7 +121,7 @@ before(async function () {
 describe('locationController', function () {
     describe('Add location', function () {
         it('should fail when not logged in or without token', async () => {
-            // Add a Location
+            // Add Location
             await chai.request(app)
                 .post(mainRoute + "/locations/add")
                 .send({
@@ -94,7 +145,7 @@ describe('locationController', function () {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle"
 
-            // Add a Location
+            // Add Location
             await chai
                 .request(app)
                 .post(mainRoute + "/locations/add")
@@ -117,35 +168,11 @@ describe('locationController', function () {
         });
 
         it('should fail as non-admin user', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
-            // Add a Location
+            // Add Location
             await chai
                 .request(app)
                 .post(mainRoute + "/locations/add")
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenManager)
                 .send({
                     name: "test",
                     address: {
@@ -164,36 +191,11 @@ describe('locationController', function () {
         });
 
         it('should work as admin', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
-            // Add a Location
+            // Add Location
             await chai
                 .request(app)
                 .post(mainRoute + "/locations/add")
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .send({
                     name: "test",
                     address: {
@@ -246,36 +248,11 @@ describe('locationController', function () {
         });
 
         it('should fail with invalid id', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Get Location
             await chai
                 .request(app)
                 .get(mainRoute + "/locations/" + mongoose.Types.ObjectId.createFromTime(42))
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -286,36 +263,11 @@ describe('locationController', function () {
         });
 
         it('should work with correct id', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Get location
             await chai
                 .request(app)
                 .get(mainRoute + "/locations/" + idLocation1)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -360,36 +312,11 @@ describe('locationController', function () {
         });
 
         it('should work', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Get locations
             await chai
                 .request(app)
                 .get(mainRoute + "/locations/")
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -456,30 +383,6 @@ describe('locationController', function () {
         });
 
         it('should fail with non-admin users', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Update location
             await chai
                 .request(app)
@@ -493,7 +396,7 @@ describe('locationController', function () {
                         country: "lnd"
                     }
                 })
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -503,31 +406,6 @@ describe('locationController', function () {
         });
 
         it('should fail with invalid id', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Update location
             await chai
                 .request(app)
@@ -541,7 +419,7 @@ describe('locationController', function () {
                         country: "lnd"
                     }
                 })
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -552,31 +430,6 @@ describe('locationController', function () {
         });
 
         it('should work with correct id', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Update location
             await chai
                 .request(app)
@@ -590,7 +443,7 @@ describe('locationController', function () {
                         country: "lnd"
                     }
                 })
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -635,35 +488,11 @@ describe('locationController', function () {
         });
 
         it('should fail with non-admin users', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Delete location
             await chai
                 .request(app)
                 .delete(mainRoute + "/locations/" + idLocation1)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -673,36 +502,11 @@ describe('locationController', function () {
         });
 
         it('should fail with invalid id', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Delete location
             await chai
                 .request(app)
                 .delete(mainRoute + "/locations/" + mongoose.Types.ObjectId.createFromTime(42))
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -713,31 +517,6 @@ describe('locationController', function () {
         });
 
         it('should work with correct id', async () => {
-            // Create admin user, log-in and get token
-            let token = await User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.tests",
-                password: "012345678",
-                role: "admin"
-            }).then(() => {
-                return chai.request(app)
-                    .post(mainRoute + "/users/login")
-                    .send({
-                        "email": "email@email.tests",
-                        "password": "012345678"
-                    })
-                    .timeout(timeoutDuration)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            console.log("Log in successfully");
-                            return res.body.token;
-                        } else {
-                            throw "failed to log in";
-                        }
-                    });
-            });
-
             // Create Location
             let id = await Location.create({
                 name: "test2",
@@ -756,7 +535,7 @@ describe('locationController', function () {
             await chai
                 .request(app)
                 .delete(mainRoute + "/locations/" + id)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -773,11 +552,10 @@ describe('locationController', function () {
 
 // Remove the user after each test
 afterEach(async function () {
-    await User.remove({
-        email: "email@email.tests"
-    });
     await Location.remove({
         name: "test"
+    }).then(() => {
+        console.log("Clean location");
     });
 });
 
@@ -785,6 +563,6 @@ afterEach(async function () {
 // Disconnect the DB at the end
 after(async function () {
     await mongoose.disconnect().then(() => {
-        console.log("All connections closed.")
+        console.log("All connections closed.");
     });
 });
