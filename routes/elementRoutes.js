@@ -13,7 +13,7 @@ router
     .get(elementController.getElement);
 
 router
-    .route('/:location/')
+    .route('/local/:location/')
     .get(elementController.getAllElementsByLocation);
 
 router
