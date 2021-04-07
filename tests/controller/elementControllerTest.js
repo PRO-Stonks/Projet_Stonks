@@ -319,14 +319,14 @@ describe('elementController', function () {
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
-                    res.body.data.data.forEach((element) => {
+                    res.body.data.forEach((element) => {
                         console.log(element);
                     });
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.results).to.be.equal(2);
-                    expect(res.body.data.data[0].price).to.be.equal(4);
-                    expect(res.body.data.data[1].price).to.be.equal(2);
+                    expect(res.body.data[0].price).to.be.equal(4);
+                    expect(res.body.data[1].price).to.be.equal(2);
                 });
         });
     });
@@ -452,7 +452,7 @@ describe('elementController', function () {
                     console.log(res.body);
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.data.doc.price).to.be.equal(666);
+                    expect(res.body.data.price).to.be.equal(666);
                 });
         });
     });
