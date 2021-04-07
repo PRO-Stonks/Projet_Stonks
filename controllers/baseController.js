@@ -142,6 +142,19 @@ exports.getAll = Model => async (req, res, next) => {
 
 };
 
+exports.deleteAll = Model => async (req, res, next) => {
+    try {
+        await Model.deleteMany({});
+
+        res.status(204).json({
+            status: 'success',
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
 /**
  * Util function to get a document based on a criteria
  * @param Model the model to make the request from

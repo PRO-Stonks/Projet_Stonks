@@ -1,4 +1,5 @@
 'use strict';
+
 class AppError extends Error {
     constructor(statusCode, status, message) {
         super(message);
