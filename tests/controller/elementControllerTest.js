@@ -39,9 +39,9 @@ before(async function () {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
-    }).then(() => {
+    }).then(async () => {
         console.log('DB connection Successfully!');
-        mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
+        await mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
         );
     });
 
@@ -273,7 +273,7 @@ describe('elementController', function () {
                     console.log(res.body);
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.data.doc.price).to.be.equal(4);
+                    expect(res.body.data.price).to.be.equal(4);
                 });
         });
     });
@@ -367,17 +367,17 @@ describe('elementController', function () {
             // Get Elements
             await chai
                 .request(app)
-                .get(mainRoute + "/elements/local/" + idLocation2 + "/")
+                .get(mainRoute + "/elements/local/" + idLocation1 + "/")
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
-                    res.body.data.data.forEach((element) => {
+                    res.body.data.forEach((element) => {
                         console.log(element);
                     });
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.results).to.be.equal(0);
+                    expect(res.body.results).to.be.equal(2);
                 });
         });
     });
@@ -628,7 +628,7 @@ describe('elementController', function () {
 
 // Remove the user after each test
 afterEach(async function () {
-    await Element.remove({
+    await Element.deleteMany({
         _id: "test"
     }).then(() => {
         console.log("Clean Element");
