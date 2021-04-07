@@ -6,6 +6,12 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cors = require('cors');
+
+const userRoutes = require('./routes/userRoutes');
+const productRoutes = require('./routes/productRoutes');
+const locationRoutes = require('./routes/locationRoutes');
+const elementRoutes = require('./routes/elementRoutes');
+
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 
@@ -43,8 +49,13 @@ app.use(hpp());
 
 
 // Routes
+
+app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/locations', locationRoutes);
+app.use('/api/v1/elements', elementRoutes);
 app.use('/api/v1/users', require('./routes/userRoutes'));
 app.use('/api/v1/events', require('./routes/eventRoutes'));
+
 
 // handle undefined Routes
 app.use('*', (req, res, next) => {
