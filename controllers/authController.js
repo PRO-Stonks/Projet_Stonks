@@ -1,12 +1,12 @@
 'use strict';
-const { promisify } = require("util");
+const {promisify} = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const {ConnectionEvent} = require("../models/eventModel");
 const AppError = require("../utils/appError");
 const mongoose = require("mongoose");
 
-const createToken = (id,role) => {
+const createToken = (id, role) => {
     return jwt.sign(
         {
             id,
@@ -21,7 +21,7 @@ const createToken = (id,role) => {
 
 exports.login = async (req, res, next) => {
     try {
-        const { email, password } = req.body;
+        const {email, password} = req.body;
 
         // 1) check if email and password exist
         if (!email || !password) {
@@ -90,17 +90,17 @@ exports.signup = async (req, res, next) => {
             },
         });
     } catch (err) {
-        if(err instanceof mongoose.Error.ValidationError){
+        if (err instanceof mongoose.Error.ValidationError) {
             let errorOutput = ""
             Object.keys(err.errors).forEach((key) => {
-                errorOutput+= err.errors[key].message+"\n";
+                errorOutput += err.errors[key].message + "\n";
             });
 
             next(new AppError(400, "Invalid Input", errorOutput),
                 req,
                 res,
                 next);
-        }else{
+        } else {
             next(err);
         }
     }

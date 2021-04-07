@@ -35,9 +35,11 @@ before(async function () {
 });
 // 606afdb5aa09d43a84b6181a
 describe('EventModel', function () {
-    beforeEach( function (done) {
-        mongoose.connection.db.dropDatabase(() => {console.log(`${mongoose.connection.db.databaseName} database dropped.`);
-            done();});
+    beforeEach(function (done) {
+        mongoose.connection.db.dropDatabase(() => {
+            console.log(`${mongoose.connection.db.databaseName} database dropped.`);
+            done();
+        });
     });
     describe('Connection event', function () {
         describe('Missing elements', function () {
@@ -179,8 +181,8 @@ describe('EventModel', function () {
                     oldLocation: "606afdb5aa09d43a84b6181a"
                 })).to.be.rejectedWith(Error);
             });
-            it('should resolve when everything is ok',  () => {
-                return  expect(ElementEvent.create({
+            it('should resolve when everything is ok', () => {
+                return expect(ElementEvent.create({
                     element: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b6181a",
                     change: "Move",

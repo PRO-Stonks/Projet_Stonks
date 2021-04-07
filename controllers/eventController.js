@@ -13,7 +13,7 @@ exports.getAllElementEvent = base.getAll(ElementEvent);
 exports.getElementEvent = base.getOne(ElementEvent);
 
 exports.getElementEventForElement = base.getDocumentWithFilter(ElementEvent, "element");
-exports.getElementEventForUser = base.getDocumentWithFilter(ElementEvent,"user");
+exports.getElementEventForUser = base.getDocumentWithFilter(ElementEvent, "user");
 
 exports.getConnectionEventForUser = base.getDocumentWithFilter(ConnectionEvent, "user");
 
