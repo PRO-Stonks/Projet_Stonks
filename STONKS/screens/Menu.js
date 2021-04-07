@@ -33,7 +33,6 @@ export default function Menu({navigation}) {
 }
 
 
-
 const styles = StyleSheet.create({
     buttonsContainer: {
         flex: 1,
@@ -63,6 +62,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     bVisualize: {
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: 'lightskyblue',
         padding: 30,
         borderRadius: 5,
@@ -70,6 +71,8 @@ const styles = StyleSheet.create({
         height: '25%',
     },
     bAdd: {
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: 'darkseagreen',
         padding: 30,
         borderRadius: 5,
@@ -77,6 +80,8 @@ const styles = StyleSheet.create({
         height: '25%',
     },
     bSupress: {
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: 'lightsalmon',
         padding: 30,
         borderRadius: 5,
