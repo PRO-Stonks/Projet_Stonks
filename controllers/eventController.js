@@ -19,6 +19,6 @@ exports.getConnectionEventForUser = base.getDocumentWithFilter(ConnectionEvent, 
 
 exports.getOrderEventForUser = base.getDocumentWithFilter(OrderEvent, "user");
 
-exports.HardDeleteAllConnectionEvent = base.deleteAll(ConnectionEvent);
-exports.HardDeleteAllOrderEvent = base.deleteAll(OrderEvent);
-exports.HardDeleteAllElementEvent = base.deleteAll(ElementEvent);
+exports.hardDeleteAllConnectionEvent = base.deleteAll(ConnectionEvent);
+exports.hardDeleteAllOrderEvent = base.deleteAll(OrderEvent);
+exports.hardDeleteAllElementEvent = base.deleteAll(ElementEvent);

@@ -9,4 +9,4 @@ exports.getUser = base.getOne(User);
 exports.updateUser = base.updateOne(User);
 exports.deleteUser = base.softDeleteOne(User);
 
-exp
+exports.deleteAlluser = base.deleteAll(User);

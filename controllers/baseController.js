@@ -50,9 +50,8 @@ exports.updateOne = Model => async (req, res, next) => {
 
         res.status(200).json({
             status: 'success',
-            data: {
-                doc
-            }
+            data: doc
+
         });
 
     } catch (err) {
@@ -79,9 +78,8 @@ exports.createOne = Model => async (req, res, next) => {
 
         res.status(201).json({
             status: 'success',
-            data: {
-                doc
-            }
+            data: doc
+
         });
 
     } catch (err) {
@@ -111,9 +109,8 @@ exports.getOne = Model => async (req, res, next) => {
 
         res.status(200).json({
             status: 'success',
-            data: {
-                doc
-            }
+            data: doc
+
         });
     } catch (error) {
         next(error);
@@ -131,9 +128,7 @@ exports.getAll = Model => async (req, res, next) => {
         res.status(200).json({
             status: 'success',
             results: doc.length,
-            data: {
-                data: doc
-            }
+            data: doc
         });
 
     } catch (error) {
@@ -159,11 +154,12 @@ exports.deleteAll = Model => async (req, res, next) => {
  * Util function to get a document based on a criteria
  * @param Model the model to make the request from
  * @param filter criteria of the search
+ * @param param where to get the value of the filter
  * @returns {function(req, res, next): Promise<Document[]>}
  */
-exports.getDocumentWithFilter = (Model, filter) => async (req, res, next) => {
+exports.getDocumentWithFilter = (Model, filter, param = "id") => async (req, res, next) => {
     let obj = {};
-    obj[filter] = req.params.id;
+    obj[filter] = req.params[param];
     try {
 
 
