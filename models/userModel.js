@@ -2,6 +2,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const uniqueValidator = require('mongoose-unique-validator');
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -36,6 +37,8 @@ const userSchema = new mongoose.Schema({
         select: false,
     },
 });
+
+userSchema.plugin(uniqueValidator);
 
 // encrypt the password using 'bcryptjs'
 // Mongoose -> Document Middleware

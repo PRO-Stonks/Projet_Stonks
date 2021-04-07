@@ -19,6 +19,24 @@ exports.deleteOne = Model => async (req, res, next) => {
     }
 };
 
+exports.softDeleteOne = Model => async (req, res, next) => {
+    try {
+        const doc = await Model.findByIdAndUpdate(req.params.id, {
+            active: false
+        });
+        if (!doc) {
+            return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
+        }
+
+        res.status(204).json({
+            status: 'success',
+            data: null
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 exports.updateOne = Model => async (req, res, next) => {
     try {
         const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
@@ -37,8 +55,20 @@ exports.updateOne = Model => async (req, res, next) => {
             }
         });
 
-    } catch (error) {
-        next(error);
+    } catch (err) {
+        if(err instanceof mongoose.Error.ValidationError){
+            let errorOutput = ""
+            Object.keys(err.errors).forEach((key) => {
+                errorOutput+= err.errors[key].message+"\n";
+            });
+
+            next(new AppError(400, "Invalid Input", errorOutput),
+                req,
+                res,
+                next);
+        }else{
+            next(err);
+        }
     }
 };
 
@@ -54,8 +84,20 @@ exports.createOne = Model => async (req, res, next) => {
             }
         });
 
-    } catch (error) {
-        next(error);
+    } catch (err) {
+        if(err instanceof mongoose.Error.ValidationError){
+            let errorOutput = ""
+            Object.keys(err.errors).forEach((key) => {
+                errorOutput+= err.errors[key].message+"\n";
+            });
+
+            next(new AppError(400, "Invalid Input", errorOutput),
+                req,
+                res,
+                next);
+        }else{
+            next(err);
+        }
     }
 };
 
@@ -98,4 +140,33 @@ exports.getAll = Model => async (req, res, next) => {
         next(error);
     }
 
+};
+
+/**
+ * Util function to get a document based on a criteria
+ * @param Model the model to make the request from
+ * @param filter criteria of the search
+ * @returns {function(req, res, next): Promise<Document[]>}
+ */
+exports.getDocumentWithFilter = (Model, filter) => async ( req, res, next) => {
+    let obj = {};
+    obj[filter]=req.params.id;
+    try {
+
+
+        const features = new APIFeatures(Model.find(obj), req.query)
+            .sort()
+            .paginate();
+        const doc = await features.query;
+        if (!doc) {
+            return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
+        }
+
+        res.status(200).json({
+            status: 'success',
+            data: doc
+        });
+    } catch (error) {
+        next(error);
+    }
 };

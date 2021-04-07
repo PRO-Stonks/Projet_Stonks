@@ -4,7 +4,7 @@
   "description": "The best stocks manager application to ever exists",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha \"tests/**/*.js\"",
     "debug": "ndb server.js",
     "start": "nodemon server.js"
   },
@@ -26,6 +26,7 @@
     "jsonwebtoken": "^8.5.1",
     "mocha": "^8.3.2",
     "mongoose": "^5.12.1",
+    "mongoose-unique-validator": "^2.0.3",
     "ndb": "^1.1.5",
     "nodemon": "^2.0.7",
     "validator": "^13.5.2",

@@ -2,7 +2,9 @@
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+const {ConnectionEvent} = require("../models/eventModel");
 const AppError = require("../utils/appError");
+const mongoose = require("mongoose");
 
 const createToken = (id,role) => {
     return jwt.sign(
@@ -45,6 +47,11 @@ exports.login = async (req, res, next) => {
             );
         }
 
+        await ConnectionEvent.create({
+            user: user.id,
+            userAgent: req.headers['user-agent'],
+            ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress
+        });
         // 3) All correct, send jwt to client
         const token = createToken(user.id, user.role);
 
@@ -83,7 +90,19 @@ exports.signup = async (req, res, next) => {
             },
         });
     } catch (err) {
-        next(err);
+        if(err instanceof mongoose.Error.ValidationError){
+            let errorOutput = ""
+            Object.keys(err.errors).forEach((key) => {
+                errorOutput+= err.errors[key].message+"\n";
+            });
+
+            next(new AppError(400, "Invalid Input", errorOutput),
+                req,
+                res,
+                next);
+        }else{
+            next(err);
+        }
     }
 };
 

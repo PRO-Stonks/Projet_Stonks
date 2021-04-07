@@ -14,6 +14,9 @@ const elementRoutes = require('./routes/elementRoutes');
 
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
+
+
+
 const app = express();
 
 // Allow Cross-Origin requests
@@ -46,10 +49,12 @@ app.use(hpp());
 
 
 // Routes
-app.use('/api/v1/users', userRoutes);
+
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/locations', locationRoutes);
 app.use('/api/v1/elements', elementRoutes);
+app.use('/api/v1/users', require('./routes/userRoutes'));
+app.use('/api/v1/events', require('./routes/eventRoutes'));
 
 
 // handle undefined Routes
