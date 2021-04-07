@@ -27,7 +27,7 @@ before(async function () {
         '${MONGO_PASSWORD}', process.env.MONGO_PASSWORD).replace(
         '${MONGO_HOSTNAME}', process.env.MONGO_HOSTNAME).replace(
         '${MONGO_PORT}', process.env.MONGO_PORT).replace(
-        '${MONGO_DB}', process.env.MONGO_DB_TEST);
+        '${MONGO_DB}',process.env.MONGO_DB_TEST);
 
     // Connect DB
     await mongoose.connect(database, {
