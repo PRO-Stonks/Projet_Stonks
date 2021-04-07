@@ -35,9 +35,9 @@ before(async function () {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
-    }).then(() => {
+    }).then(async () => {
         console.log('DB connection Successfully!');
-        mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
+        await mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
         );
     });
 
@@ -174,7 +174,7 @@ describe('productController', function () {
                     console.log(res.body)
                     expect(res.status).to.be.equal(201);
                     expect(res.body.status).to.be.equal('success');
-                    expect(validator.isMongoId(res.body.data.doc._id)).to.be.true;
+                    expect(validator.isMongoId(res.body.data._id)).to.be.true;
                 });
         });
     });
@@ -237,7 +237,7 @@ describe('productController', function () {
                     console.log(res.body);
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.data.doc.name).to.be.equal("oe");
+                    expect(res.body.data.name).to.be.equal("oe");
                 });
         });
     });
@@ -283,14 +283,14 @@ describe('productController', function () {
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
-                    res.body.data.data.forEach((product) => {
+                    res.body.data.forEach((product) => {
                         console.log(product);
                     });
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.results).to.be.equal(2);
-                    expect(res.body.data.data[0].name).to.be.equal("oe");
-                    expect(res.body.data.data[1].name).to.be.equal("eo");
+                    expect(res.body.data[0].name).to.be.equal("oe");
+                    expect(res.body.data[1].name).to.be.equal("eo");
                 });
         });
     });
@@ -381,8 +381,8 @@ describe('productController', function () {
                     console.log(res.body);
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.data.doc.name).to.be.equal("oe");
-                    expect(res.body.data.doc.tag).to.be.equal("potatoe");
+                    expect(res.body.data.name).to.be.equal("oe");
+                    expect(res.body.data.tag).to.be.equal("potatoe");
                 });
         });
     });
@@ -565,7 +565,7 @@ describe('productController', function () {
 
 // Remove the user after each test
 afterEach(async function () {
-    await Product.remove({
+    await Product.deleteMany({
         name: "test"
     }).then(() => {
         console.log("Clean Product")
