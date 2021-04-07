@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Login } from './screens/Login.js';
 import Menu from './screens/Menu.js';
 import Scan from './screens/Scan.js';
+import {Button} from "react-native";
 
 /*
 Créer le stack screen et définit le header pour les screens
@@ -24,7 +25,18 @@ function StackScreen() {
           }}
       >
           <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Menu" component={Menu} options={{headerLeft: null, gestureEnabled: false }}/>
+          <Stack.Screen name="Menu" component={Menu} options={{
+              headerLeft: null,
+              gestureEnabled: false,
+              headerRight: () => (
+                  <Button
+                      onPress={() => alert('Logout button')}
+                      title="Logout"
+                      color="black"
+                  />
+              ),
+          }}
+          />
           <Stack.Screen name="Scan" component={Scan} />
       </Stack.Navigator>
   );
