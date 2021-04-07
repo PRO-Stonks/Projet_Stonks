@@ -173,6 +173,7 @@ exports.getDocumentWithFilter = (Model, filter, param = "id") => async (req, res
 
         res.status(200).json({
             status: 'success',
+            results: doc.length,
             data: doc
         });
     } catch (error) {
