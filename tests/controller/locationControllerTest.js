@@ -35,9 +35,9 @@ before(async function () {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
-    }).then(() => {
+    }).then(async () => {
         console.log('DB connection Successfully!');
-        mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
+        await mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
         );
     });
 
@@ -210,7 +210,7 @@ describe('locationController', function () {
                     console.log(res.body)
                     expect(res.status).to.be.equal(201);
                     expect(res.body.status).to.be.equal('success');
-                    expect(validator.isMongoId(res.body.data.doc._id)).to.be.true;
+                    expect(validator.isMongoId(res.body.data._id)).to.be.true;
                 });
         });
     });
@@ -271,10 +271,10 @@ describe('locationController', function () {
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
-                    console.log(res.body.data.doc.address);
+                    console.log(res.body.data.address);
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.data.doc.name).to.be.equal("oe");
+                    expect(res.body.data.name).to.be.equal("oe");
                 });
         });
     });
@@ -320,14 +320,14 @@ describe('locationController', function () {
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
-                    res.body.data.data.forEach((location) => {
+                    res.body.data.forEach((location) => {
                         console.log(location);
                     });
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.results).to.be.equal(2);
-                    expect(res.body.data.data[0].name).to.be.equal("oe");
-                    expect(res.body.data.data[1].name).to.be.equal("eo");
+                    expect(res.body.data[0].name).to.be.equal("oe");
+                    expect(res.body.data[1].name).to.be.equal("eo");
                 });
         });
     });
@@ -449,8 +449,8 @@ describe('locationController', function () {
                     console.log(res.body);
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.data.doc.name).to.be.equal("oe");
-                    expect(res.body.data.doc.address.npa).to.be.equal(1020);
+                    expect(res.body.data.name).to.be.equal("oe");
+                    expect(res.body.data.address.npa).to.be.equal(1020);
                 });
         });
     });
@@ -552,7 +552,7 @@ describe('locationController', function () {
 
 // Remove the user after each test
 afterEach(async function () {
-    await Location.remove({
+    await Location.deleteMany({
         name: "test"
     }).then(() => {
         console.log("Clean location");

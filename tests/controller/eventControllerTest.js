@@ -71,8 +71,8 @@ describe('EventController', function () {
                 expect(res.body.results).to.be.greaterThan(0);
                 expect(res.status).to.be.equal(200);
                 expect(res.body.status).to.be.equal('success');
-                expect(res.body.data.data[0].kind).to.be.equal("ConnectionEvent");
-                expect(res.body.data.data[0].user).to.be.equal(userData._id);
+                expect(res.body.data[0].kind).to.be.equal("ConnectionEvent");
+                expect(res.body.data[0].user).to.be.equal(userData._id);
 
             });
         });
