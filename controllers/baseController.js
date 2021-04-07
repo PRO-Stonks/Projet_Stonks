@@ -1,6 +1,7 @@
 'use strict';
 const AppError = require('../utils/appError');
 const APIFeatures = require('../utils/apiFeatures');
+const {ElementEvent} = require('../models/eventModel');
 
 exports.deleteOne = Model => async (req, res, next) => {
     try {
@@ -39,13 +40,31 @@ exports.softDeleteOne = Model => async (req, res, next) => {
 
 exports.updateOne = Model => async (req, res, next) => {
     try {
-        const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+
+        let prev = await Model.findById(req.params.id);
+        if (!prev) {
+            return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
+        }
+        let prevLocation;
+        if (prev.hasOwnProperty("idLocation")) {
+            prevLocation = prev.idLocation;
+        }
+
+        const doc = await prev.updateOne(req.body, {
             new: true,
             runValidators: true
         });
-
-        if (!doc) {
-            return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
+        // const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+        //     new: true,
+        //     runValidators: true
+        // });
+        if (Model.modelName === 'Element' && req.body.hasOwnProperty("idLocation")) {
+            await ElementEvent.create({
+                user: user.id,
+                element: req.params.id,
+                change: "Move",
+                oldLocation: prevLocation
+            });
         }
 
         res.status(200).json({
@@ -170,6 +189,7 @@ exports.getDocumentWithFilter = (Model, filter, param = "id") => async (req, res
         if (!doc) {
             return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
         }
+
 
         res.status(200).json({
             status: 'success',
