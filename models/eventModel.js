@@ -24,6 +24,7 @@ const eventConnection = new mongoose.Schema({
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true,
         immutable: true
     }
@@ -32,11 +33,13 @@ const eventConnection = new mongoose.Schema({
 const eventOrder = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true,
         immutable: true
     },
     order: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'Order',
         required: true,
         immutable: true
     }
@@ -45,11 +48,13 @@ const eventOrder = new mongoose.Schema({
 const eventElement = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true,
         immutable: true
     },
     element: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'Element',
         required: true,
         immutable: true
     },
@@ -61,6 +66,7 @@ const eventElement = new mongoose.Schema({
     },
     oldLocation: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'Location',
         required: {
             validator: function () {
                 return this.change === "Move";

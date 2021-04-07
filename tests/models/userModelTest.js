@@ -66,17 +66,6 @@ describe('UserModel', function () {
             })).to.be.rejectedWith(Error);
         });
     });
-    describe('Role', function () {
-        it('should throws when value is not in the enum', async () => {
-            await expect(User.create({
-                firstName: "test",
-                lastName: "test",
-                email: "email@email.test",
-                password: "012345678",
-                role: "NOPE"
-            })).to.be.rejectedWith(Error);
-        });
-    });
     describe('Password', function () {
         it('should throws when the length is too small', async () => {
             await expect(User.create({
@@ -88,7 +77,7 @@ describe('UserModel', function () {
         });
     });
     describe('Email', function () {
-        it('should throws when the string is incorrectly formated', async () => {
+        it('should throws when the string is incorrectly formatted', async () => {
             await expect(User.create({
                 firstName: "test",
                 lastName: "test",
@@ -98,7 +87,7 @@ describe('UserModel', function () {
         });
     });
     describe('Creation', function () {
-        it('should throws when value is not in the enum', async () => {
+        it('should work when everything is valid', async () => {
             await User.create({
                 firstName: "test",
                 lastName: "test",
@@ -137,9 +126,10 @@ describe('UserModel', function () {
     });
 });
 
+
 after(async function () {
     await mongoose.disconnect().then(() => {
         console.log("All connections closed.")
     });
 
-})
+});
