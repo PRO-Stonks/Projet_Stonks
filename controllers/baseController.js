@@ -40,31 +40,13 @@ exports.softDeleteOne = Model => async (req, res, next) => {
 
 exports.updateOne = Model => async (req, res, next) => {
     try {
-
-        let prev = await Model.findById(req.params.id);
-        if (!prev) {
-            return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
-        }
-        let prevLocation;
-        if (prev.hasOwnProperty("idLocation")) {
-            prevLocation = prev.idLocation;
-        }
-
-        const doc = await prev.updateOne(req.body, {
+        const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
         });
-        // const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
-        //     new: true,
-        //     runValidators: true
-        // });
-        if (Model.modelName === 'Element' && req.body.hasOwnProperty("idLocation")) {
-            await ElementEvent.create({
-                user: user.id,
-                element: req.params.id,
-                change: "Move",
-                oldLocation: prevLocation
-            });
+
+        if (!doc) {
+            return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
         }
 
         res.status(200).json({
