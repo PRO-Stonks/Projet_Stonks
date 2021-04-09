@@ -240,6 +240,51 @@ describe('elementController', function () {
             expect(docs[0].change).to.be.equal('Creation');
             console.log(docs);
         });
+
+        it('Non existing Qr code should fail', async () => {
+            // Add Element
+            await chai
+                .request(app)
+                .post(mainRoute + "/elements/add")
+                .set("Authorization", "Bearer " + tokenManager)
+                .send({
+                    code: "Nope",
+                    entryDate: new Date('2021-04-02'),
+                    price: 0,
+                    idProduct: idProduct,
+                    idLocation: idLocation1
+                }).timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body)
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal('fail');
+                });
+            const docs = await ElementEvent.find({}).exec();
+            expect(docs.length).to.be.equal(0);
+            console.log(docs);
+        });
+        it('Already used Qr code should fail', async () => {
+            // Add Element
+            await chai
+                .request(app)
+                .post(mainRoute + "/elements/add")
+                .set("Authorization", "Bearer " + tokenManager)
+                .send({
+                    code: idQR1,
+                    entryDate: new Date('2021-04-02'),
+                    price: 0,
+                    idProduct: idProduct,
+                    idLocation: idLocation1
+                }).timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body)
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal('fail');
+                });
+            const docs = await ElementEvent.find({}).exec();
+            expect(docs.length).to.be.equal(0);
+            console.log(docs);
+        });
     });
 
 
