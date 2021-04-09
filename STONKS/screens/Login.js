@@ -6,12 +6,6 @@ import {Image, Text, TouchableOpacity, TextInput, View, StyleSheet} from 'react-
 
 export default function Login({navigation}) {
 
-    const onLogin = () => {
-        const {email, password} = state;
-        // TO DO: verify in database
-        navigation.navigate('Menu', state.email);
-    };
-
     const loginValidation = yup.object().shape({
         email: yup
             .string()
@@ -24,6 +18,32 @@ export default function Login({navigation}) {
     })
 
 
+    async function getData(url, data){
+        try{
+            const response = await fetch(url, {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                mode: 'cors', // no-cors, *cors, same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                redirect: 'follow', // manual, *follow, error
+                referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                body: JSON.stringify(data) // body data type must match "Content-Type" header
+            });
+            let res = response.json();
+            console.log(response.json());
+            if (res.status === 'fail'){
+                return res;
+            }
+        }catch (e){
+            console.log("Error")
+            console.log(e);
+        }
+    }
+
     return (
         <View style={styles.container}>
             <Image
@@ -33,7 +53,10 @@ export default function Login({navigation}) {
             <Formik
                 validationSchema={loginValidation}
                 initialValues={{email: '', password: ''}}
-                onSubmit={values => console.log(values)}
+                onSubmit={async values => {
+                    const res = await getData("http://192.168.0.59:4000/api/v1/users/login", values);
+                    alert(JSON.stringify(res, null, 2));
+                }}
             >
                 {({
                       handleChange,
@@ -68,7 +91,6 @@ export default function Login({navigation}) {
                         {(errors.email && touched.email) &&
                         <Text style={styles.errorText}>{errors.email}</Text>
                         }
-
                         {(errors.password && touched.password) &&
                         <Text style={styles.errorText}>{errors.password}</Text>
                         }
