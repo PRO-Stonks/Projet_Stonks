@@ -9,7 +9,8 @@ const elementSchema = new mongoose.Schema({
     },
     entryDate: {
         type: Date,
-        required: [true, "Please provide an entry date"]
+        required: [true, "Please provide an entry date"],
+        immutable: true
     },
     exitDate: {
         type: Date,
