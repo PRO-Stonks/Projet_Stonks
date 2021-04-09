@@ -1,6 +1,7 @@
 import logo from './assets/stonks4.png';
 import './App.css';
 import LogInForm2 from "./login/LogInForm2";
+import MainPage from "./MainPage";
 import React, {useState} from "react";
 
 function App() {
@@ -15,7 +16,7 @@ function App() {
                 <img src={logo} className="App-logo" alt="logo"/>
                 <p className="Logo-text-down">Not Stonks</p>
                 <p className="Logo-text-up">Stonks</p>
-                {state.loggedIn ? <div>{state.user.email} {state.token.toString()}</div> :
+                {state.loggedIn ? <MainPage user={state.user} token={state.token}/> :
                     <LogInForm2 handleChangeProps={handleChange}/>}
             </header>
         </div>

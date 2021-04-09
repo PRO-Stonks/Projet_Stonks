@@ -1,5 +1,4 @@
 import {useFormik} from 'formik';
-import logo from "../assets/stonks.png";
 import Spinner from "../Spinner";
 
 function validateEmail(email) {
