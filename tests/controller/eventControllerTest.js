@@ -13,6 +13,7 @@ dotenv.config({
 });
 const app = require("../../app");
 const User = require("../../models/userModel");
+const Location = require("../../models/locationModel");
 const {ConnectionEvent} = require("../../models/eventModel");
 
 before(async function () {
