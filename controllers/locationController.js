@@ -11,5 +11,3 @@ exports.deleteLocation = base.deleteOne(Location);
 exports.softDeleteLocation = base.softDeleteOne(Location);
 exports.deleteAllLocation = base.deleteAll(Location);
 exports.updateLocation = base.updateOne(Location);
-
-exports.updateLocation = base.updateOne(Location);
