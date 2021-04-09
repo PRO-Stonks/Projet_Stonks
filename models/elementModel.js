@@ -2,12 +2,10 @@
 const mongoose = require('mongoose');
 
 const elementSchema = new mongoose.Schema({
-
-    // mongoose put this as PRIMARY KEY unique and NOT NULL, but i choose here to display a custom message if
-    // _id is missing
-    _id: {
-        type: String, // Assumming that QR codes are strings
-        required: [true, "Please use an unique QRCode as _id"]
+    idQR: {
+        type: mongoose.Types.ObjectId,
+        ref: 'QR',
+        required: [true, "Please provide a QR id"]
     },
     entryDate: {
         type: Date,
@@ -15,14 +13,13 @@ const elementSchema = new mongoose.Schema({
     },
     exitDate: {
         type: Date,
-        //min // searching a way to put exit date >= entryDate
     },
     price: {
         type: Number,
         required: [true, "Please provide a price"],
         min: 0
     },
-    idProduct: {    // Foreign key
+    idProduct: {
         type: mongoose.Types.ObjectId,
         ref: 'Product',
         required: [true, "Please provide a Product id"]

@@ -1,6 +1,7 @@
 'use strict';
 const Element = require('../../models/elementModel');
 const Product = require('../../models/productModel');
+const QR = require('../../models/QRModel');
 const Location = require('../../models/locationModel');
 const chai = require('chai');
 const mongoose = require('mongoose');
@@ -41,7 +42,13 @@ describe('ElementModel', function () {
             it('should throws when ' + key + ' is not present', async () => {
                 if (Element.schema.obj[key].hasOwnProperty('required')) {
                     let test = {
-                        _id: "sh456fg56",
+                        idQR: await QR.create(
+                            {
+                                code: "megaQRStrin1234"
+                            }
+                        ).then((data) => {
+                            return data._id;
+                        }),
                         entryDate: new Date(),
                         price: 10,
                         idProduct: await Product.create(
@@ -77,7 +84,13 @@ describe('ElementModel', function () {
     describe('Creation', function () {
         it('should create the correct Element', async () => {
             let test = {
-                _id: "sh456fg56",
+                idQR: await QR.create(
+                    {
+                        code: "megaQRStrin1234"
+                    }
+                ).then((data) => {
+                    return data._id;
+                }),
                 entryDate: new Date('2021-04-02'),
                 exitDate: new Date ('2021-09-28'),
                 price: 10,
@@ -107,8 +120,8 @@ describe('ElementModel', function () {
                 expect(data.price).to.be.equal(10);
                 expect(data.idProduct).to.be.not.empty;
                 expect(data.idLocation).to.be.not.empty;
+                expect(data.idQR).to.be.not.empty;
                 expect(data.active).to.be.true;
-                expect(data.id).to.be.equal("sh456fg56");
             });
         });
     });
