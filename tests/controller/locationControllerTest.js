@@ -455,10 +455,9 @@ describe('locationController', function () {
         });
     });
 
-
-    describe('Delete a location', function () {
+    describe('Soft delete Location', function () {
         it('should fail when not logged in or without token', async () => {
-            // Delete location
+            // Soft delete Location
             await chai
                 .request(app)
                 .delete(mainRoute + "/locations/" + idLocation1)
@@ -474,7 +473,7 @@ describe('locationController', function () {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
-            // Delete location
+            // Soft delete Location
             await chai
                 .request(app)
                 .delete(mainRoute + "/locations/" + idLocation1)
@@ -488,7 +487,7 @@ describe('locationController', function () {
         });
 
         it('should fail with non-admin users', async () => {
-            // Delete location
+            // Soft delete Location
             await chai
                 .request(app)
                 .delete(mainRoute + "/locations/" + idLocation1)
@@ -502,10 +501,104 @@ describe('locationController', function () {
         });
 
         it('should fail with invalid id', async () => {
-            // Delete location
+            // Soft delete Location
             await chai
                 .request(app)
                 .delete(mainRoute + "/locations/" + mongoose.Types.ObjectId.createFromTime(42))
+                .set("Authorization", "Bearer " + tokenAdmin)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body);
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal("fail");
+                    expect(res.body.message).to.be.equal("No document found with that id");
+                });
+        });
+
+        it('should work with correct id', async () => {
+            // Create Location
+            let id = await Location.create({
+                name: "test1",
+                address: {
+                    street: "zzz",
+                    noStreet: 45,
+                    npa: 666,
+                    city: "tzu",
+                    country: "a"
+                }
+            }).then((doc) => {
+                return doc._id
+            });
+
+            // Soft delete previous Location
+            await chai
+                .request(app)
+                .delete(mainRoute + "/locations/" + id)
+                .set("Authorization", "Bearer " + tokenAdmin)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body);
+                    expect(res.status).to.be.equal(204);
+                });
+
+            // Check for the soft deleted Product
+            let doc = await Location.findById(id);
+            expect(doc).to.be.not.null;
+        });
+    });
+
+
+
+    describe('Hard delete Location', function () {
+        it('should fail when not logged in or without token', async () => {
+            // Delete location
+            await chai
+                .request(app)
+                .delete(mainRoute + "/locations/hardDel/" + idLocation1)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body)
+                    expect(res.status).to.be.equal(401);
+                    expect(res.body.status).to.be.equal('fail');
+                });
+        });
+
+        it('should fail with invalid token', async () => {
+            // Fake token
+            let token = "fakeTokenIsNotVeryGentle";
+
+            // Delete location
+            await chai
+                .request(app)
+                .delete(mainRoute + "/locations/hardDel/" + idLocation1)
+                .set("Authorization", "Bearer " + token)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body)
+                    expect(res.status).to.be.equal(500);
+                    expect(res.body.status).to.be.equal('error');
+                })
+        });
+
+        it('should fail with non-admin users', async () => {
+            // Delete location
+            await chai
+                .request(app)
+                .delete(mainRoute + "/locations/hardDel/" + idLocation1)
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body);
+                    expect(res.status).to.be.equal(403);
+                    expect(res.body.status).to.be.equal("fail");
+                });
+        });
+
+        it('should fail with invalid id', async () => {
+            // Delete location
+            await chai
+                .request(app)
+                .delete(mainRoute + "/locations/hardDel/" + mongoose.Types.ObjectId.createFromTime(42))
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -534,7 +627,7 @@ describe('locationController', function () {
             // Delete previous location
             await chai
                 .request(app)
-                .delete(mainRoute + "/locations/" + id)
+                .delete(mainRoute + "/locations/hardDel/" + id)
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
