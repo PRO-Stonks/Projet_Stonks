@@ -6,7 +6,7 @@ const APIFeatures = require('../utils/apiFeatures');
 
 exports.softDeleteElement = base.softDeleteOne(Element);
 
-exports.getAllElementsByLocation =base.getDocumentWithFilter(Element, "idLocation", "location");
+exports.getAllElementsByLocation = base.getDocumentWithFilter(Element, "idLocation", "location");
 
 exports.addElement = base.createOne(Element);
 exports.deleteElement = base.deleteOne(Element);

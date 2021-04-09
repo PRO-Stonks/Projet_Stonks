@@ -3,6 +3,7 @@
 const Element = require("../../models/elementModel");
 const Product = require("../../models/productModel")
 const Location = require("../../models/locationModel");
+const QR = require("../../models/QRModel");
 const User = require("../../models/userModel");
 const app = require("../../app");
 const mongoose = require('mongoose');
@@ -17,13 +18,15 @@ dotenv.config({
     path: './config.env'
 });
 const timeoutDuration = 3000;
-const idElement1 = "strongQRcode1";
-const idElement2 = "strongQRcode2";
 
+let idElement1;
+let idElement2;
 let tokenAdmin;
 let tokenManager;
 let idLocation1;
 let idLocation2;
+let idQR1;
+let idQR2;
 let idProduct;
 before(async function () {
     const database = process.env.DATABASE.replace(
@@ -120,7 +123,19 @@ before(async function () {
         return doc._id;
     });
 
-// Create a product
+    // Create 2 QRcodes
+    idQR1 = await QR.create({
+        code: "QRcode1"
+    }).then((doc) => {
+        return doc._id;
+    });
+    idQR2 = await QR.create({
+        code: "QRcode2"
+    }).then((doc) => {
+        return doc._id;
+    });
+
+    // Create a product
     idProduct = await Product.create({
         name: "pro",
         tag: "bad food"
@@ -128,21 +143,25 @@ before(async function () {
         return doc._id;
     });
 
-// Create 2 elements
-    await Element.create({
-        _id: idElement1,
+    // Create 2 elements
+    idElement1 = await Element.create({
+        idQR: idQR1,
         entryDate: new Date('2021-04-02'),
         price: 4,
         idProduct: idProduct,
         idLocation: idLocation1
+    }).then((doc) => {
+        return doc._id;
     });
-    await Element.create({
-        _id: idElement2,
+    idElement2 = await Element.create({
+        idQR: idQR2,
         entryDate: new Date('2020-04-02'),
         exitDate: new Date('2021-11-13'),
         price: 2,
         idProduct: idProduct,
         idLocation: idLocation1
+    }).then((doc) => {
+        return doc._id;
     });
 });
 
@@ -154,9 +173,9 @@ describe('elementController', function () {
             await chai.request(app)
                 .post(mainRoute + "/elements/add")
                 .send({
-                    _id: "test",
+                    idQR: idQR1,
                     entryDate: new Date('2020-01-01'),
-                    price: 1,
+                    price: 0,
                     idProduct: idProduct,
                     idLocation: idLocation1
                 }).timeout(timeoutDuration)
@@ -177,9 +196,9 @@ describe('elementController', function () {
                 .post(mainRoute + "/elements/add")
                 .set("Authorization", "Bearer " + token)
                 .send({
-                    _id: "test",
+                    idQR: idQR1,
                     entryDate: new Date('2020-01-01'),
-                    price: 1,
+                    price: 0,
                     idProduct: idProduct,
                     idLocation: idLocation1
                 }).timeout(timeoutDuration)
@@ -197,9 +216,9 @@ describe('elementController', function () {
                 .post(mainRoute + "/elements/add")
                 .set("Authorization", "Bearer " + tokenManager)
                 .send({
-                    _id: "test",
+                    idQR: idQR1,
                     entryDate: new Date('2021-04-02'),
-                    price: 4,
+                    price: 0,
                     idProduct: idProduct,
                     idLocation: idLocation1
                 }).timeout(timeoutDuration)
@@ -208,10 +227,6 @@ describe('elementController', function () {
                     expect(res.status).to.be.equal(201);
                     expect(res.body.status).to.be.equal('success');
                 });
-
-            // Check the created Element
-            let doc = await Element.findById("test");
-            expect(doc).to.be.not.null;
         });
     });
 
@@ -251,7 +266,7 @@ describe('elementController', function () {
             // Get Element
             await chai
                 .request(app)
-                .get(mainRoute + "/elements/" + "WhatALife")
+                .get(mainRoute + "/elements/" + mongoose.Types.ObjectId.createFromTime(42))
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -424,7 +439,7 @@ describe('elementController', function () {
             // Update Element
             await chai
                 .request(app)
-                .patch(mainRoute + "/elements/" + "WhoWillSeeThis")
+                .patch(mainRoute + "/elements/" + mongoose.Types.ObjectId.createFromTime(42))
                 .send({
                     price: 666
                 })
@@ -493,7 +508,7 @@ describe('elementController', function () {
             // Soft delete element
             await chai
                 .request(app)
-                .delete(mainRoute + "/elements/" + "YouReBraveToHaveReadThisUntilNow")
+                .delete(mainRoute + "/elements/" + mongoose.Types.ObjectId.createFromTime(42))
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -507,9 +522,9 @@ describe('elementController', function () {
         it('should work with correct id', async () => {
             // Create Element
             let id = await Element.create({
-                _id: "test2",
+                idQR: idQR1,
                 entryDate: new Date('2021-04-02'),
-                price: 0,
+                price: 98,
                 idProduct: idProduct,
                 idLocation: idLocation2
             }).then((doc) => {
@@ -583,7 +598,7 @@ describe('elementController', function () {
             // Delete element
             await chai
                 .request(app)
-                .delete(mainRoute + "/elements/hardDel/" + "IPayYouADrinkIfUFindOut")
+                .delete(mainRoute + "/elements/hardDel/" + mongoose.Types.ObjectId.createFromTime(42))
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -597,9 +612,9 @@ describe('elementController', function () {
         it('should work with correct id', async () => {
             // Create Element
             let id = await Element.create({
-                _id: "test3",
+                idQR: idQR1,
                 entryDate: new Date('2021-04-02'),
-                price: 1,
+                price: 98,
                 idProduct: idProduct,
                 idLocation: idLocation2
             }).then((doc) => {
@@ -622,14 +637,13 @@ describe('elementController', function () {
             expect(doc).to.be.null;
         });
     });
-
 });
 
 
 // Remove the user after each test
 afterEach(async function () {
     await Element.deleteMany({
-        _id: "test"
+        price: 0
     }).then(() => {
         console.log("Clean Element");
     });
