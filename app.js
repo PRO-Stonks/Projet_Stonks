@@ -49,12 +49,12 @@ app.use(hpp());
 
 
 // Routes
-
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/locations', locationRoutes);
 app.use('/api/v1/elements', elementRoutes);
 app.use('/api/v1/users', require('./routes/userRoutes'));
 app.use('/api/v1/events', require('./routes/eventRoutes'));
+app.use('/api/v1/QR', require('./routes/QRRoutes'));
 
 
 // handle undefined Routes
