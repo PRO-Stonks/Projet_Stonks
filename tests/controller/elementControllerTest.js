@@ -180,7 +180,7 @@ before(async function () {
         entryDate: new Date('2021-04-02'),
         price: 4,
         idProduct: idProduct,
-        idLocation: idLocation1,
+        idLocation: idLocation2,
         active: false
     });
 });
@@ -256,6 +256,7 @@ describe('elementController', function () {
 
         it('Non existing Qr code should fail', async () => {
             // Add Element
+            const prev = await ElementEvent.find({}).exec();
             await chai
                 .request(app)
                 .post(mainRoute + "/elements/add")
@@ -272,12 +273,14 @@ describe('elementController', function () {
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal('fail');
                 });
-            const docs = await ElementEvent.find({}).exec();
-            expect(docs.length).to.be.equal(0);
-            console.log(docs);
+            const after = await ElementEvent.find({}).exec();
+            console.log(after);
+            expect(after.length).to.be.equal(prev.length);
+
         });
         it('Already used Qr code should fail', async () => {
             // Add Element
+            const prev = await ElementEvent.find({}).exec();
             await chai
                 .request(app)
                 .post(mainRoute + "/elements/add")
@@ -294,12 +297,13 @@ describe('elementController', function () {
                     expect(res.status).to.be.equal(400);
                     expect(res.body.status).to.be.equal('fail');
                 });
-            const docs = await ElementEvent.find({}).exec();
-            expect(docs.length).to.be.equal(0);
-            console.log(docs);
+            const after = await ElementEvent.find({}).exec();
+            console.log(after);
+            expect(after.length).to.be.equal(prev.length);
         });
         it('Used Qr code in disabled element should work', async () => {
             // Add Element
+            const prev = await ElementEvent.find({}).exec();
             await chai
                 .request(app)
                 .post(mainRoute + "/elements/add")
@@ -315,11 +319,12 @@ describe('elementController', function () {
                     console.log(res.body)
 
                 });
-            const docs = await ElementEvent.find({}).exec();
-            expect(docs.length).to.be.equal(1);
-            expect(docs[0].kind).to.be.equal("ElementEvent");
-            expect(docs[0].change).to.be.equal('Creation');
-            console.log(docs);
+            const after = await ElementEvent.find({}).exec();
+            console.log(after);
+            expect(after.length).to.be.equal(prev.length+1);
+            expect(after[0].kind).to.be.equal("ElementEvent");
+            expect(after[0].change).to.be.equal('Creation');
+            console.log(after);
         });
         // TODO add check with element disable
     });
@@ -433,7 +438,7 @@ describe('elementController', function () {
                     });
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.results).to.be.equal(2);
+                    expect(res.body.results).to.be.equal(3);
                     expect(res.body.data[0].price).to.be.equal(4);
                     expect(res.body.data[1].price).to.be.equal(2);
                 });
