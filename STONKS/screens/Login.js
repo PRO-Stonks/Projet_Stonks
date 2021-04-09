@@ -1,53 +1,60 @@
-import React from 'react';
-import { Image, Text, TouchableOpacity, TextInput, View, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import {Formik} from 'formik';
+import {Image, Text, TouchableOpacity, TextInput, View, StyleSheet} from 'react-native';
 
-export class Login extends React.Component {
+export default function Login({navigation}) {
 
-    state = {
-        email: '',
-        password: '',
+    const onLogin = () => {
+        const {email, password} = state;
+        // TO DO: verify in database
+        navigation.navigate('Menu', state.email);
     };
 
-    onLogin() {
-        const { email, password } = this.state;
-        // TO DO: verify in database
-        this.props.navigation.navigate('Menu', email);
-    }
+    return (
+        <View style={styles.container}>
+            <Image
+                style={{width: 200, height: 200}}
+                source={require('../assets/stonks4.png')}
+            />
+            <Formik
+                initialValues={{email: '', password: ''}}
+                onSubmit={values => console.log(values)}
+            >
+                {({handleChange, handleBlur, handleSubmit, values}) => (
+                    <>
+                        <TextInput
+                            name="email"
+                            value={values.email}
+                            keyboardType='email-address'
+                            onChangeText={handleChange('email')}
+                            onBlur={handleBlur('email')}
+                            placeholder='email'
+                            placeholderTextColor='black'
+                            style={styles.input}
+                        />
+                        <TextInput
+                            name="password"
+                            value={values.password}
+                            onChangeText={handleChange('password')}
+                            onBlur={handleBlur('password')}
+                            placeholder='password'
+                            secureTextEntry={true}
+                            placeholderTextColor='black'
+                            style={styles.input}
+                        />
 
-    render() {
-        return (
-            <View style={styles.container}>
-                <Image
-                    style={{ width: 200, height: 200 }}
-                    source={require('../assets/stonks4.png')}
-                />
-                <TextInput
-                    value={this.state.email}
-                    keyboardType ='email-address'
-                    onChangeText={(email) => this.setState({ email })}
-                    placeholder='email'
-                    placeholderTextColor = 'black'
-                    style={styles.input}
-                />
-                <TextInput
-                    value={this.state.password}
-                    onChangeText={(password) => this.setState({ password })}
-                    placeholder='password'
-                    secureTextEntry={true}
-                    placeholderTextColor = 'black'
-                    style={styles.input}
-                />
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={handleSubmit}
+                        >
+                            <Text style={styles.buttonText}>Login</Text>
+                        </TouchableOpacity>
+                    </>
+                )}
+            </Formik>
+        </View>
+    );
 
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={this.onLogin.bind(this)}
-                >
-                    <Text style={styles.buttonText}>Login</Text>
-                </TouchableOpacity>
-
-            </View>
-        );
-    }
 }
 
 const styles = StyleSheet.create({
@@ -66,7 +73,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginBottom: 10,
     },
-    buttonText:{
+    buttonText: {
         fontSize: 20,
         alignItems: 'center',
         justifyContent: 'center',
