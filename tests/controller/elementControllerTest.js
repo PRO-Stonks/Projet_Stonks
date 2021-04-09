@@ -584,7 +584,7 @@ describe('elementController', function () {
                     expect(res.body.status).to.be.equal("fail");
                 });
         });
-        it('trying to modify the active state by update should fail', async () => {
+        it('trying to modify the location by update should fail', async () => {
             // Update Element
             await chai
                 .request(app)
