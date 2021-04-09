@@ -73,7 +73,6 @@ exports.updateOne = Model => async (req, res, next) => {
 };
 
 exports.createOne = Model => async (req, res, next) => {
-    console.log(req.body);
     try {
         const doc = await Model.create(req.body);
 
