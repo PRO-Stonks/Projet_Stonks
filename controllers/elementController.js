@@ -1,8 +1,6 @@
 'use strict';
 const Element = require("../models/elementModel");
 const base = require("./baseController");
-const AppError = require('../utils/appError');
-const APIFeatures = require('../utils/apiFeatures');
 
 exports.softDeleteElement = base.softDeleteOne(Element);
 

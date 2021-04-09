@@ -4,11 +4,10 @@ const base = require("./baseController");
 
 exports.softDeleteProduct = base.softDeleteOne(Product);
 
-// Need admin perms
+// Admin only
 exports.addProduct = base.createOne(Product);
 exports.deleteProduct = base.deleteOne(Product);
 exports.deleteAllProduct = base.deleteAll(Product);
 exports.updateProduct = base.updateOne(Product);
-
 exports.getProduct = base.getOne(Product);
 exports.getAllProduct = base.getAll(Product);
