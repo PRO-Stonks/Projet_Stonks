@@ -1,18 +1,25 @@
 import logo from './assets/stonks4.png';
 import './App.css';
-import LogInForm from "./login/LogInForm";
+import LogInForm2 from "./login/LogInForm2";
+import React, {useState} from "react";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-            <p className="Logo-text-down">Not Stonks</p>
-              <p className="Logo-text-up">Stonks</p>
-        <LogInForm/>
-      </header>
-    </div>
-  );
+    const [state, setState] = useState({loggedIn: false, user: {}, token: ""});
+    const handleChange = e => {
+        console.log(e)
+        setState(e);
+    };
+    return (
+        <div className="App">
+            <header className="App-header">
+                <img src={logo} className="App-logo" alt="logo"/>
+                <p className="Logo-text-down">Not Stonks</p>
+                <p className="Logo-text-up">Stonks</p>
+                {state.loggedIn ? <div>{state.user.email} {state.token.toString()}</div> :
+                    <LogInForm2 handleChangeProps={handleChange}/>}
+            </header>
+        </div>
+    );
 }
 
 export default App;
