@@ -24,6 +24,10 @@ router.post('/add', locationController.addLocation);
 router
     .route('/:id')
     .patch(locationController.updateLocation)
+    .delete(locationController.softDeleteLocation);
+
+router
+    .route('/hardDel/:id')
     .delete(locationController.deleteLocation);
 
 module.exports = router;
