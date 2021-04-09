@@ -28,6 +28,7 @@ exports.addElement = async (req, res, next) => {
 
         const element = await Element.findOne({
             idQR: QR._id,
+            active: true
         });
         if(element){
             return next(

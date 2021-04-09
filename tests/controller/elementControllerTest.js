@@ -28,9 +28,11 @@ let idLocation1;
 let idLocation2;
 let idQR1;
 let idQR2;
+let idQR4;
 const codeQR1 = "QRcode1";
 const codeQR2 = "QRcode2";
 const codeQR3 = "QRcode3";
+const codeQR4 = "QRcode4";
 let idProduct;
 before(async function () {
     const database = process.env.DATABASE.replace(
@@ -140,7 +142,10 @@ before(async function () {
     });
     await QR.create({
         code: codeQR3
-    })
+    });
+    idQR4 =await QR.create({
+        code: codeQR4
+    });
 
     // Create a product
     idProduct = await Product.create({
@@ -169,6 +174,14 @@ before(async function () {
         idLocation: idLocation1
     }).then((doc) => {
         return doc._id;
+    });
+    await Element.create({
+        idQR: idQR4,
+        entryDate: new Date('2021-04-02'),
+        price: 4,
+        idProduct: idProduct,
+        idLocation: idLocation1,
+        active: false
     });
 });
 
@@ -270,7 +283,7 @@ describe('elementController', function () {
                 .post(mainRoute + "/elements/add")
                 .set("Authorization", "Bearer " + tokenManager)
                 .send({
-                    code: idQR1,
+                    code: codeQR1,
                     entryDate: new Date('2021-04-02'),
                     price: 0,
                     idProduct: idProduct,
@@ -278,13 +291,37 @@ describe('elementController', function () {
                 }).timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
-                    expect(res.status).to.be.equal(404);
+                    expect(res.status).to.be.equal(400);
                     expect(res.body.status).to.be.equal('fail');
                 });
             const docs = await ElementEvent.find({}).exec();
             expect(docs.length).to.be.equal(0);
             console.log(docs);
         });
+        it('Used Qr code in disabled element should work', async () => {
+            // Add Element
+            await chai
+                .request(app)
+                .post(mainRoute + "/elements/add")
+                .set("Authorization", "Bearer " + tokenManager)
+                .send({
+                    code: codeQR4,
+                    entryDate: new Date('2021-04-02'),
+                    price: 0,
+                    idProduct: idProduct,
+                    idLocation: idLocation1
+                }).timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body)
+
+                });
+            const docs = await ElementEvent.find({}).exec();
+            expect(docs.length).to.be.equal(1);
+            expect(docs[0].kind).to.be.equal("ElementEvent");
+            expect(docs[0].change).to.be.equal('Creation');
+            console.log(docs);
+        });
+        // TODO add check with element disable
     });
 
 
