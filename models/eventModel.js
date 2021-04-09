@@ -67,12 +67,12 @@ const eventElement = new mongoose.Schema({
     oldLocation: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Location',
-        required: {
-            validator: function () {
+        required: [
+            function () {
                 return this.change === "Move";
             },
-            message: "Location is required"
-        },
+            "Location is required"
+        ],
         validate: {
             validator: function (v) {
                 return this.change === "Move";
