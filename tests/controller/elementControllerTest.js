@@ -3,6 +3,7 @@
 const Element = require("../../models/elementModel");
 const Product = require("../../models/productModel")
 const Location = require("../../models/locationModel");
+const {ElementEvent} = require("../../models/eventModel");
 const QR = require("../../models/QRModel");
 const User = require("../../models/userModel");
 const app = require("../../app");
@@ -27,6 +28,9 @@ let idLocation1;
 let idLocation2;
 let idQR1;
 let idQR2;
+const codeQR1 = "QRcode1";
+const codeQR2 = "QRcode2";
+const codeQR3 = "QRcode3";
 let idProduct;
 before(async function () {
     const database = process.env.DATABASE.replace(
@@ -125,15 +129,18 @@ before(async function () {
 
     // Create 2 QRcodes
     idQR1 = await QR.create({
-        code: "QRcode1"
+        code: codeQR1
     }).then((doc) => {
         return doc._id;
     });
     idQR2 = await QR.create({
-        code: "QRcode2"
+        code: codeQR2
     }).then((doc) => {
         return doc._id;
     });
+    await QR.create({
+        code: codeQR3
+    })
 
     // Create a product
     idProduct = await Product.create({
@@ -154,7 +161,7 @@ before(async function () {
         return doc._id;
     });
     idElement2 = await Element.create({
-        idQR: idQR2,
+        idQR: idQR1,
         entryDate: new Date('2020-04-02'),
         exitDate: new Date('2021-11-13'),
         price: 2,
@@ -173,7 +180,7 @@ describe('elementController', function () {
             await chai.request(app)
                 .post(mainRoute + "/elements/add")
                 .send({
-                    idQR: idQR1,
+                    code: codeQR1,
                     entryDate: new Date('2020-01-01'),
                     price: 0,
                     idProduct: idProduct,
@@ -196,7 +203,7 @@ describe('elementController', function () {
                 .post(mainRoute + "/elements/add")
                 .set("Authorization", "Bearer " + token)
                 .send({
-                    idQR: idQR1,
+                    code: codeQR1,
                     entryDate: new Date('2020-01-01'),
                     price: 0,
                     idProduct: idProduct,
@@ -216,7 +223,7 @@ describe('elementController', function () {
                 .post(mainRoute + "/elements/add")
                 .set("Authorization", "Bearer " + tokenManager)
                 .send({
-                    idQR: idQR1,
+                    code: codeQR3,
                     entryDate: new Date('2021-04-02'),
                     price: 0,
                     idProduct: idProduct,
@@ -227,6 +234,11 @@ describe('elementController', function () {
                     expect(res.status).to.be.equal(201);
                     expect(res.body.status).to.be.equal('success');
                 });
+            const docs = await ElementEvent.find({}).exec();
+            expect(docs.length).to.be.equal(1);
+            expect(docs[0].kind).to.be.equal("ElementEvent");
+            expect(docs[0].change).to.be.equal('Creation');
+            console.log(docs);
         });
     });
 
