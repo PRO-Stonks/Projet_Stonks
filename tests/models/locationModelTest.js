@@ -36,20 +36,22 @@ before(async function () {
 describe('LocationModel', function () {
     describe('Missing Element', function () {
         Object.keys(Location.schema.obj).forEach((key) => {
-            let test = {
-                name: "test",
-                address: {
-                    street: "sirTest",
-                    noStreet: 42,
-                    npa: 95,
-                    city: "Roosevelt",
-                    country: "Moon"
-                }
-            };
-            delete test[key];
-            it('should throws when ' + key + ' is not present', async () => {
-                await expect(Location.create(test)).to.be.rejectedWith(Error);
-            });
+            if (Location.schema.obj[key].hasOwnProperty('required')) {
+                let test = {
+                    name: "test",
+                    address: {
+                        street: "sirTest",
+                        noStreet: 42,
+                        npa: 95,
+                        city: "Roosevelt",
+                        country: "Moon"
+                    }
+                };
+                delete test[key];
+                it('should throws when ' + key + ' is not present', async () => {
+                    await expect(Location.create(test)).to.be.rejectedWith(Error);
+                });
+            }
         });
     });
 
