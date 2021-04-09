@@ -39,10 +39,13 @@ exports.softDeleteOne = Model => async (req, res, next) => {
 
 exports.updateOne = Model => async (req, res, next) => {
     try {
+        if (req.body.active){
+            return next(new AppError(404, 'fail', 'Do not modify active in an update. Use softDelete instead'), req, res, next);
+        }
         const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
-        });
+        });git 
 
         if (!doc) {
             return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
