@@ -326,7 +326,6 @@ describe('elementController', function () {
             expect(after[0].change).to.be.equal('Creation');
             console.log(after);
         });
-        // TODO add check with element disable
     });
 
 
@@ -568,6 +567,57 @@ describe('elementController', function () {
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.data.price).to.be.equal(666);
                 });
+        });
+        it('trying to modify the active state by update should fail', async () => {
+            // Update Element
+            await chai
+                .request(app)
+                .patch(mainRoute + "/elements/" + idElement2)
+                .send({
+                    active: false
+                })
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body);
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal("fail");
+                });
+        });
+        it('trying to modify the active state by update should fail', async () => {
+            // Update Element
+            await chai
+                .request(app)
+                .patch(mainRoute + "/elements/" + idElement2)
+                .send({
+                    idLocation: idLocation2
+                })
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body);
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal("fail");
+                });
+        });
+        it('changing location should work', async () => {
+            // Update Element
+            const prev = await ElementEvent.find({}).exec();
+            await chai
+                .request(app)
+                .patch(mainRoute + "/elements/move/" + idElement2+"/"+idLocation2)
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body);
+                    expect(res.status).to.be.equal(204);
+                });
+            const after = await ElementEvent.find({}).exec();
+            console.log(after);
+            expect(after.length).to.be.equal(prev.length+1);
+            expect(after[0].kind).to.be.equal("ElementEvent");
+            expect(after[0].change).to.be.equal('Move');
+            expect(after[0].oldLocation.toString()).to.be.equal(idLocation1.toString());
         });
     });
 

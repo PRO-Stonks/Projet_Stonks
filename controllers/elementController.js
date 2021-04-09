@@ -1,15 +1,17 @@
 'use strict';
 const Element = require("../models/elementModel");
 const QRModel = require("../models/QRModel");
+const Location = require("../models/locationModel");
 const {ElementEvent} = require("../models/eventModel");
 const base = require("./baseController");
 const AppError = require("../utils/appError");
 const mongoose = require("mongoose");
+const {promisify} = require("util");
 
 exports.softDeleteElement = async (req, res, next) => {
     try {
         const session = await mongoose.startSession();
-        const doc = await session.withTransaction(async () => {
+        await session.withTransaction(async () => {
             const doc = await Element.findByIdAndUpdate(req.params.id, {
                 active: false
             });
@@ -30,10 +32,7 @@ exports.softDeleteElement = async (req, res, next) => {
             });
         }).catch(err =>{
             return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
-        })
-
-
-
+        });
     } catch (error) {
         next(error);
     } finally {
@@ -109,7 +108,60 @@ exports.addElement = async (req, res, next) => {
     }
 };
 
+exports.moveElement = async (req, res, next) => {
+    if(!req.params.location){
+        return next(new AppError(400, 'fail', 'IdLocation is missing'), req, res, next);
+    }
+    const location = await Location.findById(
+        req.params.location
+    );
+    if(!location){
+        return next(new AppError(404, 'fail', 'IdLocation not found'), req, res, next);
+    }
+    try {
+        const session = await mongoose.startSession();
+        let doc = {}
+        await session.withTransaction(async () => {
+            doc = await Element.findByIdAndUpdate(req.params.id, {
+                idLocation: req.body.idLocation
+            });
+            if (!doc) {
+                throw Error;
+            }
+
+            await ElementEvent.create({
+                user: req.user.id,
+                element: doc._id,
+                change: "Move",
+                oldLocation: doc.idLocation
+
+            });
+        }).then(dat => {
+            doc.idLocation = req.params.location;
+            res.status(204).json({
+                status: 'success',
+                data: doc
+            });
+        }).catch(err =>{
+            return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
+        });
+
+    } catch (error) {
+        next(error);
+    } finally {
+        session.endSession();
+    }
+};
+
+
+exports.updateElement = async (req, res, next) => {
+    if (req.body.hasOwnProperty("idLocation")){
+        return next(new AppError(404, 'fail', 'Do not modify idLocation in an update. Use Move instead'), req, res, next);
+    }
+    return base.updateOne(Element)(req, res, next);
+};
+
 exports.deleteElement = base.deleteOne(Element);
-exports.updateElement = base.updateOne(Element);
+
 exports.getElement = base.getOne(Element);
 exports.getAllElements = base.getAll(Element);
