@@ -137,52 +137,6 @@ describe('EventController', function () {
     });
 });
 
-describe('ElementEvent', function () {
-    let admin;
-    let adminToken;
-    let location;
-    before(async ()=>{
-        await mongoose.connection.db.dropDatabase(() => {
-            console.log(`${mongoose.connection.db.databaseName} database dropped.`);
-        });
-         const user = await User.create({
-            firstName: "test",
-            lastName: "test",
-            email: "email@email.test",
-            password: "012345678",
-            role: "admin"
-        });
-
-        const requester = chai.request(app)
-        let res = await requester.post("/api/v1/users/login").send({
-            "email": "email@email.test",
-            "password": "012345678"
-        });
-
-        const body = res.body;
-        admin = body.data.user;
-        adminToken = body.token;
-        location = await Location.create({
-            name: "oe",
-            address: {
-                street: "sirTest",
-                noStreet: 42,
-                npa: 95,
-                city: "Roosevelt",
-                country: "Moon"
-            }
-        });
-    })
-
-    it("Element event is added when product is set", async () => {
-        console.log(admin)
-        console.log(adminToken)
-        expect(true).to.be.true;
-        // TODO waiting for further specification  about Element
-    });
-
-});
-
 after(async function () {
     await mongoose.disconnect().then(() => {
         console.log("All connections closed.")
