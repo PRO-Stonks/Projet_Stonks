@@ -161,9 +161,8 @@ describe('QRController', function () {
                 .request(app)
                 .post(mainRoute + "/QR/add")
                 .set("Authorization", "Bearer " + tokenAdmin)
-                .send({
-                    code: "test"
-                }).timeout(timeoutDuration)
+                .send(
+                ).timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
                     expect(res.status).to.be.equal(201);
@@ -283,7 +282,7 @@ describe('QRController', function () {
                     });
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.results).to.be.equal(2);
+                    expect(res.body.results).to.be.equal(3);
                 });
         });
     });

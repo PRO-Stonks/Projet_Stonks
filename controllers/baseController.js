@@ -1,7 +1,6 @@
 'use strict';
 const AppError = require('../utils/appError');
 const APIFeatures = require('../utils/apiFeatures');
-const {ElementEvent} = require('../models/eventModel');
 
 exports.deleteOne = Model => async (req, res, next) => {
     try {
