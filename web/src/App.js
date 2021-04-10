@@ -2,14 +2,39 @@ import logo from './assets/stonks4.png';
 import './App.css';
 import LogInForm2 from "./login/LogInForm2";
 import MainPage from "./MainPage";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 function App() {
     const [state, setState] = useState({loggedIn: false, user: {}, token: ""});
     const handleChange = e => {
         console.log(e)
         setState(e);
-    };
+
+        localStorage.setItem("token", e.token);
+        localStorage.setItem("user", JSON.stringify(e.user));
+    }
+
+
+    useEffect(() => {
+        let token = localStorage.getItem("token");
+        if (token) {
+            token = token.split('.');
+            const payload = JSON.parse(atob(token[1]));
+            const current_time = Date.now().valueOf() / 1000;
+            if(payload.exp < current_time){
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+            }else{
+                setState(
+                    {
+                        token,
+                        user: JSON.parse(localStorage.getItem("user")),
+                        loggedIn: true
+                    }
+                )
+            }
+        }
+    }, []);
     return (
         <div className="App">
             <header className="App-header">
@@ -21,6 +46,7 @@ function App() {
             </header>
         </div>
     );
+
 }
 
 export default App;
