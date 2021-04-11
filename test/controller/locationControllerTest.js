@@ -1,14 +1,12 @@
 'use strict';
 
-const Element = require("../../models/elementModel");
-const Product = require("../../models/productModel")
 const Location = require("../../models/locationModel");
-const {ElementEvent} = require("../../models/eventModel");
-const QR = require("../../models/QRModel");
 const User = require("../../models/userModel");
 const app = require("../../app");
+const validator = require("validator");
 const mongoose = require('mongoose');
 const mainRoute = "/api/v1";
+const {ConnectionEvent} = require("../../models/eventModel");
 
 const chai = require('chai');
 const expect = chai.expect;
@@ -20,20 +18,12 @@ dotenv.config({
 });
 const timeoutDuration = 3000;
 
-let idElement1;
-let idElement2;
 let tokenAdmin;
+let idAdmin;
 let tokenManager;
+let idManager;
 let idLocation1;
 let idLocation2;
-let idQR1;
-let idQR2;
-let idQR4;
-const codeQR1 = "QRcode1";
-const codeQR2 = "QRcode2";
-const codeQR3 = "QRcode3";
-const codeQR4 = "QRcode4";
-let idProduct;
 before(async function () {
     const database = process.env.DATABASE.replace(
         '${MONGO_USERNAME}', process.env.MONGO_USERNAME).replace(
@@ -48,30 +38,27 @@ before(async function () {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
-    }).then(async con => {
-        console.log('DB connection Successfully!');
-        await mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
-        );
     });
 
     // Create manager/admin accounts, log in and get their tokens
     tokenManager = await User.create({
-        firstName: "test",
+        firstName: "testLocation",
         lastName: "test",
-        email: "manager@email.tests",
+        email: "managerLocation@email.tests",
         password: "012345678",
     }).then(() => {
         console.log("Manager account created");
         return chai.request(app)
             .post(mainRoute + "/users/login")
             .send({
-                "email": "manager@email.tests",
+                "email": "managerLocation@email.tests",
                 "password": "012345678"
             })
             .timeout(timeoutDuration)
             .then((res) => {
                 if (res.status === 200) {
                     console.log("Log in successfully");
+                    idManager = res.body.data.user._id;
                     return res.body.token;
                 } else {
                     throw "failed to log in";
@@ -79,9 +66,9 @@ before(async function () {
             });
     });
     tokenAdmin = await User.create({
-        firstName: "test",
+        firstName: "testLocation",
         lastName: "test",
-        email: "admin@email.tests",
+        email: "adminLocation@email.tests",
         password: "012345678",
         role: "admin"
     }).then(() => {
@@ -89,13 +76,14 @@ before(async function () {
         return chai.request(app)
             .post(mainRoute + "/users/login")
             .send({
-                "email": "admin@email.tests",
+                "email": "adminLocation@email.tests",
                 "password": "012345678"
             })
             .timeout(timeoutDuration)
             .then((res) => {
                 if (res.status === 200) {
                     console.log("Log in successfully");
+                    idAdmin = res.body.data.user._id;
                     return res.body.token;
                 } else {
                     throw "failed to log in";
@@ -103,9 +91,9 @@ before(async function () {
             });
     });
 
-    // Create 2 locations
+    // Create 2 products
     idLocation1 = await Location.create({
-        name: "oe",
+        name: "testLocation",
         address: {
             street: "sirTest",
             noStreet: 42,
@@ -117,7 +105,7 @@ before(async function () {
         return doc._id
     });
     idLocation2 = await Location.create({
-        name: "eo",
+        name: "testLocation",
         address: {
             street: "tseTris",
             noStreet: 24,
@@ -126,80 +114,26 @@ before(async function () {
             country: "nooM"
         }
     }).then((doc) => {
-        return doc._id;
-    });
-
-    // Create 2 QRcodes
-    idQR1 = await QR.create({
-        code: codeQR1
-    }).then((doc) => {
-        return doc._id;
-    });
-    idQR2 = await QR.create({
-        code: codeQR2
-    }).then((doc) => {
-        return doc._id;
-    });
-    await QR.create({
-        code: codeQR3
-    });
-    idQR4 =await QR.create({
-        code: codeQR4
-    }).then((doc) => {
-        return doc._id;
-    });;
-
-    // Create a product
-    idProduct = await Product.create({
-        name: "pro",
-        tag: "bad food"
-    }).then((doc) => {
-        return doc._id;
-    });
-
-    // Create 2 elements
-    idElement1 = await Element.create({
-        idQR: idQR1,
-        entryDate: new Date('2021-04-02'),
-        price: 4,
-        idProduct: idProduct,
-        idLocation: idLocation1
-    }).then((doc) => {
-        return doc._id;
-    });
-    idElement2 = await Element.create({
-        idQR: idQR1,
-        entryDate: new Date('2020-04-02'),
-        exitDate: new Date('2021-11-13'),
-        price: 2,
-        idProduct: idProduct,
-        idLocation: idLocation1
-    }).then((doc) => {
-        return doc._id;
-    });
-    await Element.create({
-        idQR: idQR4,
-        entryDate: new Date('2021-04-02'),
-        price: 4,
-        idProduct: idProduct,
-        idLocation: idLocation2,
-        active: false
+        return doc._id
     });
 });
 
 
-describe('elementController', function () {
-    describe('Add element', function () {
+describe('locationController', function () {
+    describe('Add location', function () {
         it('should fail when not logged in or without token', async () => {
-            // Add Element
+            // Add Location
             await chai.request(app)
-                .post(mainRoute + "/elements/add")
+                .post(mainRoute + "/locations/add")
                 .send({
-                    code: codeQR1,
-                    entryDate: new Date('2020-01-01'),
-                    price: 0,
-                    idProduct: idProduct,
-                    idLocation: idLocation1
+                    name: "testLocationTest",
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 0,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 }).timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -212,17 +146,20 @@ describe('elementController', function () {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle"
 
-            // Add Element
+            // Add Location
             await chai
                 .request(app)
-                .post(mainRoute + "/elements/add")
+                .post(mainRoute + "/locations/add")
                 .set("Authorization", "Bearer " + token)
                 .send({
-                    code: codeQR1,
-                    entryDate: new Date('2020-01-01'),
-                    price: 0,
-                    idProduct: idProduct,
-                    idLocation: idLocation1
+                    name: "testLocationTest",
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 0,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 }).timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -231,112 +168,61 @@ describe('elementController', function () {
                 });
         });
 
-        it('should work', async () => {
-            // Add Element
+        it('should fail as non-admin user', async () => {
+            // Add Location
             await chai
                 .request(app)
-                .post(mainRoute + "/elements/add")
+                .post(mainRoute + "/locations/add")
                 .set("Authorization", "Bearer " + tokenManager)
                 .send({
-                    code: codeQR3,
-                    entryDate: new Date('2021-04-02'),
-                    price: 0,
-                    idProduct: idProduct,
-                    idLocation: idLocation1
+                    name: "testLocationTest",
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 0,
+                        city: "cty",
+                        country: "lnd"
+                    }
+                }).timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body)
+                    expect(res.status).to.be.equal(403);
+                    expect(res.body.status).to.be.equal('fail');
+                });
+        });
+
+        it('should work as admin', async () => {
+            // Add Location
+            await chai
+                .request(app)
+                .post(mainRoute + "/locations/add")
+                .set("Authorization", "Bearer " + tokenAdmin)
+                .send({
+                    name: "testLocationTest",
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 0,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 }).timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
                     expect(res.status).to.be.equal(201);
                     expect(res.body.status).to.be.equal('success');
+                    expect(validator.isMongoId(res.body.data._id)).to.be.true;
                 });
-            const docs = await ElementEvent.find({}).exec();
-            expect(docs.length).to.be.equal(1);
-            expect(docs[0].kind).to.be.equal("ElementEvent");
-            expect(docs[0].change).to.be.equal('Creation');
-            console.log(docs);
-        });
-
-        it('Non existing Qr code should fail', async () => {
-            // Add Element
-            const prev = await ElementEvent.find({}).exec();
-            await chai
-                .request(app)
-                .post(mainRoute + "/elements/add")
-                .set("Authorization", "Bearer " + tokenManager)
-                .send({
-                    code: "Nope",
-                    entryDate: new Date('2021-04-02'),
-                    price: 0,
-                    idProduct: idProduct,
-                    idLocation: idLocation1
-                }).timeout(timeoutDuration)
-                .then((res) => {
-                    console.log(res.body)
-                    expect(res.status).to.be.equal(404);
-                    expect(res.body.status).to.be.equal('fail');
-                });
-            const after = await ElementEvent.find({}).exec();
-            console.log(after);
-            expect(after.length).to.be.equal(prev.length);
-
-        });
-        it('Already used Qr code should fail', async () => {
-            // Add Element
-            const prev = await ElementEvent.find({}).exec();
-            await chai
-                .request(app)
-                .post(mainRoute + "/elements/add")
-                .set("Authorization", "Bearer " + tokenManager)
-                .send({
-                    code: codeQR1,
-                    entryDate: new Date('2021-04-02'),
-                    price: 0,
-                    idProduct: idProduct,
-                    idLocation: idLocation1
-                }).timeout(timeoutDuration)
-                .then((res) => {
-                    console.log(res.body)
-                    expect(res.status).to.be.equal(400);
-                    expect(res.body.status).to.be.equal('fail');
-                });
-            const after = await ElementEvent.find({}).exec();
-            console.log(after);
-            expect(after.length).to.be.equal(prev.length);
-        });
-        it('Used Qr code in disabled element should work', async () => {
-            // Add Element
-            const prev = await ElementEvent.find({}).exec();
-            await chai
-                .request(app)
-                .post(mainRoute + "/elements/add")
-                .set("Authorization", "Bearer " + tokenManager)
-                .send({
-                    code: codeQR4,
-                    entryDate: new Date('2021-04-02'),
-                    price: 0,
-                    idProduct: idProduct,
-                    idLocation: idLocation1
-                }).timeout(timeoutDuration)
-                .then((res) => {
-                    console.log(res.body)
-
-                });
-            const after = await ElementEvent.find({}).exec();
-            console.log(after);
-            expect(after.length).to.be.equal(prev.length+1);
-            expect(after[0].kind).to.be.equal("ElementEvent");
-            expect(after[0].change).to.be.equal('Creation');
-            console.log(after);
         });
     });
 
 
-    describe('Get element', function () {
+    describe('Get location', function () {
         it('should fail when not logged in or without token', async () => {
-            // Get Element
+            // Get Location
             await chai
                 .request(app)
-                .get(mainRoute + "/elements/" + idElement1)
+                .get(mainRoute + "/locations/" + idLocation1)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -349,10 +235,10 @@ describe('elementController', function () {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
-            // Get element
+            // Get location
             await chai
                 .request(app)
-                .get(mainRoute + "/elements/" + idElement1)
+                .get(mainRoute + "/locations/" + idLocation1)
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -363,10 +249,10 @@ describe('elementController', function () {
         });
 
         it('should fail with invalid id', async () => {
-            // Get Element
+            // Get Location
             await chai
                 .request(app)
-                .get(mainRoute + "/elements/" + mongoose.Types.ObjectId.createFromTime(42))
+                .get(mainRoute + "/locations/" + mongoose.Types.ObjectId.createFromTime(42))
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -378,28 +264,29 @@ describe('elementController', function () {
         });
 
         it('should work with correct id', async () => {
-            // Get Element
+            // Get location
             await chai
                 .request(app)
-                .get(mainRoute + "/elements/" + idElement1)
+                .get(mainRoute + "/locations/" + idLocation1)
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
+                    console.log(res.body.data.address);
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.data.price).to.be.equal(4);
+                    expect(res.body.data.name).to.be.equal("testLocation");
                 });
         });
     });
 
 
-    describe('Get all elements', function () {
+    describe('Get all locations', function () {
         it('should fail when not logged in or without token', async () => {
-            // Get Elements
+            // Get locations
             await chai
                 .request(app)
-                .get(mainRoute + "/elements/")
+                .get(mainRoute + "/locations/")
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -412,10 +299,10 @@ describe('elementController', function () {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
-            // Get Elements
+            // Get locations
             await chai
                 .request(app)
-                .get(mainRoute + "/elements/")
+                .get(mainRoute + "/locations/")
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -426,86 +313,40 @@ describe('elementController', function () {
         });
 
         it('should work', async () => {
-            // Get Elements
+            // Get locations
+            const prev = await Location.find({}).exec();
             await chai
                 .request(app)
-                .get(mainRoute + "/elements/")
+                .get(mainRoute + "/locations/")
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
-                    res.body.data.forEach((element) => {
-                        console.log(element);
+                    res.body.data.forEach((location) => {
+                        console.log(location);
                     });
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.results).to.be.equal(3);
-                    expect(res.body.data[0].price).to.be.equal(4);
-                    expect(res.body.data[1].price).to.be.equal(2);
+                    expect(res.body.results).to.be.equal(prev.length);
                 });
         });
     });
 
 
-    describe('Get all elements in given location', function () {
-        it('should fail when not logged in or without token', async () => {
-            // Get Elements
-            await chai
-                .request(app)
-                .get(mainRoute + "/elements/local/" + idLocation2 + "/")
-                .timeout(timeoutDuration)
-                .then((res) => {
-                    console.log(res.body)
-                    expect(res.status).to.be.equal(401);
-                    expect(res.body.status).to.be.equal('fail');
-                });
-        });
-
-        it('should fail with invalid token', async () => {
-            // Fake token
-            let token = "fakeTokenIsNotVeryGentle";
-
-            // Get Elements
-            await chai
-                .request(app)
-                .get(mainRoute + "/elements/local/" + idLocation2 + "/")
-                .set("Authorization", "Bearer " + token)
-                .timeout(timeoutDuration)
-                .then((res) => {
-                    console.log(res.body)
-                    expect(res.status).to.be.equal(500);
-                    expect(res.body.status).to.be.equal('error');
-                })
-        });
-
-        it('should work', async () => {
-            // Get Elements
-            await chai
-                .request(app)
-                .get(mainRoute + "/elements/local/" + idLocation1 + "/")
-                .set("Authorization", "Bearer " + tokenManager)
-                .timeout(timeoutDuration)
-                .then((res) => {
-                    console.log(res.body);
-                    res.body.data.forEach((element) => {
-                        console.log(element);
-                    });
-                    expect(res.status).to.be.equal(200);
-                    expect(res.body.status).to.be.equal("success");
-                    expect(res.body.results).to.be.equal(2);
-                });
-        });
-    });
-
-
-    describe('Update element', function () {
+    describe('Update location', function () {
         it('should fail when not logged in or without token', async () => {
             // Update location
             await chai
                 .request(app)
-                .patch(mainRoute + "/elements/" + idElement2)
+                .patch(mainRoute + "/locations/" + idLocation1)
                 .send({
-                    price: 666
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 1020,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 })
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -519,12 +360,18 @@ describe('elementController', function () {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
-            // Update Element
+            // Update location
             await chai
                 .request(app)
-                .patch(mainRoute + "/elements/" + idElement2)
+                .patch(mainRoute + "/locations/" + idLocation1)
                 .send({
-                    price: 666
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 1020,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 })
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
@@ -535,15 +382,44 @@ describe('elementController', function () {
                 })
         });
 
-        it('should fail with invalid id', async () => {
-            // Update Element
+        it('should fail with non-admin users', async () => {
+            // Update location
             await chai
                 .request(app)
-                .patch(mainRoute + "/elements/" + mongoose.Types.ObjectId.createFromTime(42))
+                .patch(mainRoute + "/locations/" + idLocation1)
                 .send({
-                    price: 666
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 1020,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 })
                 .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body);
+                    expect(res.status).to.be.equal(403);
+                    expect(res.body.status).to.be.equal("fail");
+                });
+        });
+
+        it('should fail with invalid id', async () => {
+            // Update location
+            await chai
+                .request(app)
+                .patch(mainRoute + "/locations/" + mongoose.Types.ObjectId.createFromTime(42))
+                .send({
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 1020,
+                        city: "cty",
+                        country: "lnd"
+                    }
+                })
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -554,82 +430,37 @@ describe('elementController', function () {
         });
 
         it('should work with correct id', async () => {
-            // Update Element
+            // Update location
             await chai
                 .request(app)
-                .patch(mainRoute + "/elements/" + idElement2)
+                .patch(mainRoute + "/locations/" + idLocation1)
                 .send({
-                    price: 666
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 1020,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 })
-                .set("Authorization", "Bearer " + tokenManager)
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.data.price).to.be.equal(666);
+                    expect(res.body.data.name).to.be.equal("testLocation");
+                    expect(res.body.data.address.npa).to.be.equal(1020);
                 });
-        });
-        it('trying to modify the active state by update should fail', async () => {
-            // Update Element
-            await chai
-                .request(app)
-                .patch(mainRoute + "/elements/" + idElement2)
-                .send({
-                    active: false
-                })
-                .set("Authorization", "Bearer " + tokenManager)
-                .timeout(timeoutDuration)
-                .then((res) => {
-                    console.log(res.body);
-                    expect(res.status).to.be.equal(404);
-                    expect(res.body.status).to.be.equal("fail");
-                });
-        });
-        it('trying to modify the location by update should fail', async () => {
-            // Update Element
-            await chai
-                .request(app)
-                .patch(mainRoute + "/elements/" + idElement2)
-                .send({
-                    idLocation: idLocation2
-                })
-                .set("Authorization", "Bearer " + tokenManager)
-                .timeout(timeoutDuration)
-                .then((res) => {
-                    console.log(res.body);
-                    expect(res.status).to.be.equal(404);
-                    expect(res.body.status).to.be.equal("fail");
-                });
-        });
-        it('changing location should work', async () => {
-            // Update Element
-            const prev = await ElementEvent.find({}).exec();
-            await chai
-                .request(app)
-                .patch(mainRoute + "/elements/move/" + idElement2+"/"+idLocation2)
-                .set("Authorization", "Bearer " + tokenManager)
-                .timeout(timeoutDuration)
-                .then((res) => {
-                    console.log(res.body);
-                    expect(res.status).to.be.equal(204);
-                });
-            const after = await ElementEvent.find({change: "Move"}).exec();
-            console.log(after);
-            expect(after.length).to.be.equal(1);
-            expect(after[0].kind).to.be.equal("ElementEvent");
-            expect(after[0].change).to.be.equal('Move');
-            expect(after[0].oldLocation.toString()).to.be.equal(idLocation1.toString());
         });
     });
 
-
-    describe('Soft delete element', function () {
+    describe('Soft delete Location', function () {
         it('should fail when not logged in or without token', async () => {
-            // Soft delete Element
+            // Soft delete Location
             await chai
                 .request(app)
-                .delete(mainRoute + "/elements/" + idElement1)
+                .delete(mainRoute + "/locations/" + idLocation1)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -642,10 +473,10 @@ describe('elementController', function () {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
-            // Soft delete
+            // Soft delete Location
             await chai
                 .request(app)
-                .delete(mainRoute + "/elements/" + idElement1)
+                .delete(mainRoute + "/locations/" + idLocation1)
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -655,12 +486,26 @@ describe('elementController', function () {
                 })
         });
 
-        it('should fail with invalid id', async () => {
-            // Soft delete element
+        it('should fail with non-admin users', async () => {
+            // Soft delete Location
             await chai
                 .request(app)
-                .delete(mainRoute + "/elements/" + mongoose.Types.ObjectId.createFromTime(42))
+                .delete(mainRoute + "/locations/" + idLocation1)
                 .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body);
+                    expect(res.status).to.be.equal(403);
+                    expect(res.body.status).to.be.equal("fail");
+                });
+        });
+
+        it('should fail with invalid id', async () => {
+            // Soft delete Location
+            await chai
+                .request(app)
+                .delete(mainRoute + "/locations/" + mongoose.Types.ObjectId.createFromTime(42))
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
@@ -671,41 +516,45 @@ describe('elementController', function () {
         });
 
         it('should work with correct id', async () => {
-            // Create Element
-            let id = await Element.create({
-                idQR: idQR1,
-                entryDate: new Date('2021-04-02'),
-                price: 98,
-                idProduct: idProduct,
-                idLocation: idLocation2
+            // Create Location
+            let id = await Location.create({
+                name: "testLocation",
+                address: {
+                    street: "zzz",
+                    noStreet: 45,
+                    npa: 666,
+                    city: "tzu",
+                    country: "a"
+                }
             }).then((doc) => {
                 return doc._id
             });
 
-            // Delete previous element
+            // Soft delete previous Location
             await chai
                 .request(app)
-                .delete(mainRoute + "/elements/" + id)
-                .set("Authorization", "Bearer " + tokenManager)
+                .delete(mainRoute + "/locations/" + id)
+                .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body);
                     expect(res.status).to.be.equal(204);
                 });
 
-            // Check for the deleted location
-            let doc = await Element.findById(id);
+            // Check for the soft deleted Product
+            let doc = await Location.findById(id);
             expect(doc).to.be.not.null;
         });
     });
 
 
-    describe('Hard delete element', function () {
+
+    describe('Hard delete Location', function () {
         it('should fail when not logged in or without token', async () => {
-            // Delete Element
+            // Delete location
             await chai
                 .request(app)
-                .delete(mainRoute + "/elements/hardDel/" + idElement2)
+                .delete(mainRoute + "/locations/hardDel/" + idLocation1)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -718,10 +567,10 @@ describe('elementController', function () {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
-            // Hard delete element
+            // Delete location
             await chai
                 .request(app)
-                .delete(mainRoute + "/elements/hardDel/" + idElement2)
+                .delete(mainRoute + "/locations/hardDel/" + idLocation1)
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -735,7 +584,7 @@ describe('elementController', function () {
             // Delete location
             await chai
                 .request(app)
-                .delete(mainRoute + "/elements/hardDel/" + idElement2)
+                .delete(mainRoute + "/locations/hardDel/" + idLocation1)
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -746,10 +595,10 @@ describe('elementController', function () {
         });
 
         it('should fail with invalid id', async () => {
-            // Delete element
+            // Delete location
             await chai
                 .request(app)
-                .delete(mainRoute + "/elements/hardDel/" + mongoose.Types.ObjectId.createFromTime(42))
+                .delete(mainRoute + "/locations/hardDel/" + mongoose.Types.ObjectId.createFromTime(42))
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -761,13 +610,16 @@ describe('elementController', function () {
         });
 
         it('should work with correct id', async () => {
-            // Create Element
-            let id = await Element.create({
-                idQR: idQR1,
-                entryDate: new Date('2021-04-02'),
-                price: 98,
-                idProduct: idProduct,
-                idLocation: idLocation2
+            // Create Location
+            let id = await Location.create({
+                name: "test2",
+                address: {
+                    street: "zzz",
+                    noStreet: 45,
+                    npa: 666,
+                    city: "tzu",
+                    country: "a"
+                }
             }).then((doc) => {
                 return doc._id
             });
@@ -775,7 +627,7 @@ describe('elementController', function () {
             // Delete previous location
             await chai
                 .request(app)
-                .delete(mainRoute + "/elements/hardDel/" + id)
+                .delete(mainRoute + "/locations/hardDel/" + id)
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -783,8 +635,8 @@ describe('elementController', function () {
                     expect(res.status).to.be.equal(204);
                 });
 
-            // Check for the deleted element
-            let doc = await Element.findById(id);
+            // Check for the deleted location
+            let doc = await Location.findById(id);
             expect(doc).to.be.null;
         });
     });
@@ -793,17 +645,36 @@ describe('elementController', function () {
 
 // Remove the user after each test
 afterEach(async function () {
-    await Element.deleteMany({
-        price: 0
+    await Location.deleteMany({
+        name: "testLocationTest"
     }).then(() => {
-        console.log("Clean Element");
+        console.log("Clean location");
     });
 });
 
 
 // Disconnect the DB at the end
 after(async function () {
-    await mongoose.disconnect().then(() => {
-        console.log("All connections closed.");
+    await User.deleteMany({
+        firstName: "testLocation"
+    }).then(() => {
+        console.log("Clean User in auth");
+    });
+
+    await ConnectionEvent.deleteMany({
+        user: idAdmin
+    }).then(() => {
+        console.log("Clean Event");
+    });
+    await ConnectionEvent.deleteMany({
+        user: idManager
+    }).then(() => {
+        console.log("Clean Event");
+    });
+
+    await Location.deleteMany({
+        name: "testLocation"
+    }).then(() => {
+        console.log("Clean Location");
     });
 });

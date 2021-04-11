@@ -13,9 +13,9 @@ dotenv.config({
 });
 const app = require("../../app");
 const User = require("../../models/userModel");
-const Location = require("../../models/locationModel");
 const {ConnectionEvent} = require("../../models/eventModel");
 
+let user;
 before(async function () {
     const database = process.env.DATABASE.replace(
         '${MONGO_USERNAME}', process.env.MONGO_USERNAME).replace(
@@ -32,35 +32,24 @@ before(async function () {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
-    }).then(async con => {
-        console.log('DB connection Successfully!');
-        await mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
-        );
     });
 
+    user = await User.create({
+        firstName: "testEvent",
+        lastName: "test",
+        email: "emailEvent@email.test",
+        password: "012345678",
+        role: "admin"
+    });
 });
 
 describe('EventController', function () {
-    beforeEach(function (done) {
-        mongoose.connection.db.dropDatabase(() => {
-            console.log(`${mongoose.connection.db.databaseName} database dropped.`);
-            done();
-        });
-    });
     describe('ConnectionEvent', function () {
         describe('Get All', function () {
             it("Return all connection event", async () => {
-                const user = await User.create({
-                    firstName: "test",
-                    lastName: "test",
-                    email: "email@email.test",
-                    password: "012345678",
-                    role: "admin"
-                });
-
                 const requester = chai.request(app).keepOpen()
                 let res = await requester.post("/api/v1/users/login").send({
-                    "email": "email@email.test",
+                    "email": "emailEvent@email.test",
                     "password": "012345678"
                 });
 
@@ -74,24 +63,15 @@ describe('EventController', function () {
                 expect(res.status).to.be.equal(200);
                 expect(res.body.status).to.be.equal('success');
                 expect(res.body.data[0].kind).to.be.equal("ConnectionEvent");
-                expect(res.body.data[0].user).to.be.equal(userData._id);
                 requester.close();
 
             });
         });
         describe('Get one', function () {
             it("Return nothing if the id specified is non existant", async () => {
-                let user = await User.create({
-                    firstName: "test",
-                    lastName: "test",
-                    email: "email@email.test",
-                    password: "012345678",
-                    role: "admin"
-                });
-
                 const requester = chai.request(app).keepOpen();
                 let query = await requester.post("/api/v1/users/login").send({
-                    "email": "email@email.test",
+                    "email": "emailEvent@email.test",
                     "password": "012345678"
                 });
                 const body = query.body;
@@ -109,17 +89,9 @@ describe('EventController', function () {
         });
         describe('Get event made by user', function () {
             it("Return the event made by the user", async () => {
-                let user = await User.create({
-                    firstName: "test",
-                    lastName: "test",
-                    email: "email@email.test",
-                    password: "012345678",
-                    role: "admin"
-                });
-
                 const requester = chai.request(app).keepOpen();
                 let query = await requester.post("/api/v1/users/login").send({
-                    "email": "email@email.test",
+                    "email": "emailEvent@email.test",
                     "password": "012345678"
                 });
                 const body = query.body;
@@ -141,7 +113,14 @@ describe('EventController', function () {
 });
 
 after(async function () {
-    await mongoose.disconnect().then(() => {
-        console.log("All connections closed.")
+    await User.deleteMany({
+        firstName: "testEvent"
+    }).then(() => {
+        console.log("Clean User in auth");
+    });
+    await ConnectionEvent.deleteMany({
+        user: user._id
+    }).then(() => {
+        console.log("Clean Element");
     });
 });

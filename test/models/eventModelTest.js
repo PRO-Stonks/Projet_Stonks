@@ -26,21 +26,11 @@ before(async function () {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
-    }).then(async con => {
-        console.log('DB connection Successfully!');
-        await mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
-        );
     });
 
 });
 // 606afdb5aa09d43a84b6181a
 describe('EventModel', function () {
-    beforeEach(function (done) {
-        mongoose.connection.db.dropDatabase(() => {
-            console.log(`${mongoose.connection.db.databaseName} database dropped.`);
-            done();
-        });
-    });
     describe('Connection event', function () {
         describe('Missing elements', function () {
             Object.keys(ConnectionEvent.schema.obj).forEach((key) => {
@@ -78,6 +68,11 @@ describe('EventModel', function () {
     });
     describe('Order event', function () {
         describe('Missing elements', function () {
+            after(async function () {
+                await OrderEvent.deleteMany({}).then(() => {
+                    console.log("Clean Element");
+                });
+            });
             Object.keys(OrderEvent.schema.obj).forEach((key) => {
                 if (OrderEvent.schema.obj[key].hasOwnProperty('required')) {
                     let test = {
@@ -113,7 +108,7 @@ describe('EventModel', function () {
             console.log(Object.keys(ElementEvent.schema.obj));
             Object.keys(ElementEvent.schema.obj).forEach((key) => {
                 if (ElementEvent.schema.obj[key].hasOwnProperty('required')) {
-                    if(key !== 'change' && key !== 'oldLocation') {
+                    if (key !== 'change' && key !== 'oldLocation') {
                         let test = {
                             element: "606afdb5aa09d43a84b6181a",
                             user: "606afdb5aa09d43a84b6181a",
