@@ -1,3 +1,6 @@
+/**
+ * File managing user authentication
+ */
 'use strict';
 const {promisify} = require("util");
 const jwt = require("jsonwebtoken");
@@ -6,6 +9,12 @@ const {ConnectionEvent} = require("../models/eventModel");
 const AppError = require("../utils/appError");
 const mongoose = require("mongoose");
 
+/**
+ * Create a JWT token for the user
+ * @param id the id of the user
+ * @param role the role of the user
+ * @returns function to sign the token
+ */
 const createToken = (id, role) => {
     return jwt.sign(
         {
@@ -19,6 +28,13 @@ const createToken = (id, role) => {
     );
 };
 
+/**
+ * Login behaviour
+ * @param req request
+ * @param res response
+ * @param next handler
+ * @returns {Promise<*>}
+ */
 exports.login = async (req, res, next) => {
     try {
         const {email, password} = req.body;
@@ -70,6 +86,14 @@ exports.login = async (req, res, next) => {
     }
 };
 
+/**
+ * Create a new user and hash the password
+ * @behaviour hash the password and check data according to specs
+ * @param req request
+ * @param res response
+ * @param next handler
+ * @returns {Promise<void>}
+ */
 exports.signup = async (req, res, next) => {
     try {
         const user = await User.create({
@@ -79,8 +103,7 @@ exports.signup = async (req, res, next) => {
             password: req.body.password,
             role: req.body.role,
         });
-
-
+        // We don't return the user password
         user.password = undefined;
 
         res.status(201).json({
@@ -106,6 +129,15 @@ exports.signup = async (req, res, next) => {
     }
 };
 
+/**
+ * Protection handler
+ *
+ * @behaviour Restrict access to authenticated user
+ * @param req request
+ * @param res response
+ * @param next handler
+ * @returns {Promise<*>}
+ */
 exports.protect = async (req, res, next) => {
     try {
         // 1) check if the token is there
@@ -131,8 +163,10 @@ exports.protect = async (req, res, next) => {
 
         // 2) Verify token
         const decode = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
         // 3) check if the user exist (not deleted)
         const user = await User.findById(decode.id);
+
         if (!user) {
             return next(
                 new AppError(401, "fail", "This user no longer exist"),
@@ -149,7 +183,12 @@ exports.protect = async (req, res, next) => {
     }
 };
 
-// Authorization check if the user have rights to do this action
+/**
+ * Authorisation handler
+ * @behaviour Restrict access to certain user category
+ * @param roles
+ * @returns {(function(*=, *=, *=): (*|undefined))|*}
+ */
 exports.restrictTo = (...roles) => {
     return (req, res, next) => {
         if (!roles.includes(req.user.role)) {

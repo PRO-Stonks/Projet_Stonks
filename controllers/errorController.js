@@ -1,3 +1,6 @@
+/**
+ * Basic class to simplify error handling
+ */
 'use strict';
 
 module.exports = (err, req, res, next) => {
@@ -10,5 +13,4 @@ module.exports = (err, req, res, next) => {
         message: err.message,
         stack: err.stack
     });
-
 };

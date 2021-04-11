@@ -1,3 +1,6 @@
+/**
+ * Behaviour for Element access
+ */
 'use strict';
 const Element = require("../models/elementModel");
 const QRModel = require("../models/QRModel");
@@ -6,11 +9,19 @@ const {ElementEvent} = require("../models/eventModel");
 const base = require("./baseController");
 const AppError = require("../utils/appError");
 const mongoose = require("mongoose");
-const {promisify} = require("util");
 
+/**
+ * Soft delete handler
+ * @behaviour Disable an element, and create an event to journal it
+ * @param req user request
+ * @param res response
+ * @param next handler
+ * @returns {Promise<void>}
+ */
 exports.softDeleteElement = async (req, res, next) => {
     try {
         const session = await mongoose.startSession();
+        // Transaction to revert all in case of error (I hate BDR)
         await session.withTransaction(async () => {
             const doc = await Element.findByIdAndUpdate(req.params.id, {
                 active: false
@@ -40,11 +51,17 @@ exports.softDeleteElement = async (req, res, next) => {
     }
 };
 
-exports.getAllElementsByLocation = base.getDocumentWithFilter(Element, "idLocation", "location");
-
+/**
+ * Creation handler
+ *
+ * @behaviour Check that QR code was created, check if not used and then create the new element
+ * @param req user request
+ * @param res response
+ * @param next handler
+ * @returns {Promise<*>}
+ */
 exports.addElement = async (req, res, next) => {
     try {
-        // TODO Add to documentation that client need to send the data of the qr and not the database id
         const QR = await QRModel.findOne({
             code: req.body.code,
         });
@@ -108,6 +125,13 @@ exports.addElement = async (req, res, next) => {
     }
 };
 
+/**
+ * Change location handler
+ * @param req user request
+ * @param res response
+ * @param next handler
+ * @returns {Promise<*>}
+ */
 exports.moveElement = async (req, res, next) => {
     if(!req.params.location){
         return next(new AppError(400, 'fail', 'IdLocation is missing'), req, res, next);
@@ -156,7 +180,14 @@ exports.moveElement = async (req, res, next) => {
     }
 };
 
-
+/**
+ * Update handler
+ * @behaviour Standard update but disable updating location
+ * @param req user request
+ * @param res response
+ * @param next handler
+ * @returns {Promise<*|undefined>}
+ */
 exports.updateElement = async (req, res, next) => {
     if (req.body.hasOwnProperty("idLocation")){
         return next(new AppError(404, 'fail', 'Do not modify idLocation in an update. Use Move instead'), req, res, next);
@@ -164,7 +195,26 @@ exports.updateElement = async (req, res, next) => {
     return base.updateOne(Element)(req, res, next);
 };
 
+/**
+ * Get All handler
+ * @type {function(Response.req, res, next): Promise<Document[]>}
+ */
+exports.getAllElementsByLocation = base.getDocumentWithFilter(Element, "idLocation", "location");
+
+/**
+ * Hard delete element handler
+ * @type {(function(Response.req=, res=, handler=): Promise<*|undefined>)|*}
+ */
 exports.deleteElement = base.deleteOne(Element);
 
+/**
+ * Standard getElement handler
+ * @type {(function(Response.req=, res=, handler=): Promise<*|undefined>)|*}
+ */
 exports.getElement = base.getOne(Element);
+
+/**
+ * Standard getAllElement handler
+ * @type {(function(Response.req=, res=, handler=): Promise<*|undefined>)|*}
+ */
 exports.getAllElements = base.getAll(Element);

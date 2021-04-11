@@ -1,7 +1,16 @@
+/**
+ * Base controller to handle basic and repeated function
+ */
 'use strict';
 const AppError = require('../utils/appError');
 const APIFeatures = require('../utils/apiFeatures');
 
+/**
+ * Hard delete handler
+ * @behaviour Expects params.id to exist
+ * @param Model The data model to use the request on
+ * @returns {(function(req=, res=, handler=): Promise<*|undefined>)|*}
+ */
 exports.deleteOne = Model => async (req, res, next) => {
     try {
         const doc = await Model.findByIdAndDelete(req.params.id);
@@ -19,6 +28,12 @@ exports.deleteOne = Model => async (req, res, next) => {
     }
 };
 
+/**
+ * Soft delete handler
+ * @behaviour Expects params.id to exist
+ * @param Model The data model to use the request on
+ * @returns {(function(req=, res=, handler=): Promise<*|undefined>)|*}
+ */
 exports.softDeleteOne = Model => async (req, res, next) => {
     try {
         const doc = await Model.findByIdAndUpdate(req.params.id, {
@@ -37,9 +52,16 @@ exports.softDeleteOne = Model => async (req, res, next) => {
     }
 };
 
+/**
+ * Update Handler
+ *
+ * @behaviour Expects params.id to exist
+ * @param Model The data model to use the request on
+ * @returns {(function(req=, res=, handler=): Promise<*|undefined>)|*}
+ */
 exports.updateOne = Model => async (req, res, next) => {
     try {
-        if (req.body.hasOwnProperty("active")){
+        if (req.body.hasOwnProperty("active")) {
             return next(new AppError(404, 'fail', 'Do not modify active in an update. Use softDelete instead'), req, res, next);
         }
         const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
@@ -74,6 +96,11 @@ exports.updateOne = Model => async (req, res, next) => {
     }
 };
 
+/**
+ * Creation handler
+ * @param Model The data model to use the request on
+ * @returns {(function(req=, res=, handler=): Promise<*|undefined>)|*}
+ */
 exports.createOne = Model => async (req, res, next) => {
     try {
         const doc = await Model.create(req.body);
@@ -101,6 +128,12 @@ exports.createOne = Model => async (req, res, next) => {
     }
 };
 
+/**
+ * Find handler
+ * @behaviour Expects params.id to exist
+ * @param Model The data model to use the request on
+ * @returns {(function(req=, res=, handler=): Promise<*|undefined>)|*}
+ */
 exports.getOne = Model => async (req, res, next) => {
     try {
         const doc = await Model.findById(req.params.id);
@@ -118,6 +151,11 @@ exports.getOne = Model => async (req, res, next) => {
     }
 };
 
+/**
+ * FindAll handler
+ * @param Model The data model to use the request on
+ * @returns {(function(req=, res=, handler=): Promise<*|undefined>)|*}
+ */
 exports.getAll = Model => async (req, res, next) => {
     try {
         const features = new APIFeatures(Model.find(), req.query)
@@ -138,6 +176,11 @@ exports.getAll = Model => async (req, res, next) => {
 
 };
 
+/**
+ * HardDeleteAll handler
+ * @param Model The data model to use the request on
+ * @returns {(function(req=, res=, handler=): Promise<*|undefined>)|*}
+ */
 exports.deleteAll = Model => async (req, res, next) => {
     try {
         await Model.deleteMany({});
@@ -162,8 +205,6 @@ exports.getDocumentWithFilter = (Model, filter, param = "id") => async (req, res
     let obj = {};
     obj[filter] = req.params[param];
     try {
-
-
         const features = new APIFeatures(Model.find(obj), req.query)
             .sort()
             .paginate();
