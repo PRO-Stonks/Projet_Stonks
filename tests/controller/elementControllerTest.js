@@ -145,7 +145,9 @@ before(async function () {
     });
     idQR4 =await QR.create({
         code: codeQR4
-    });
+    }).then((doc) => {
+        return doc._id;
+    });;
 
     // Create a product
     idProduct = await Product.create({
@@ -615,9 +617,9 @@ describe('elementController', function () {
             const after = await ElementEvent.find({}).exec();
             console.log(after);
             expect(after.length).to.be.equal(prev.length+1);
-            expect(after[0].kind).to.be.equal("ElementEvent");
-            expect(after[0].change).to.be.equal('Move');
-            expect(after[0].oldLocation.toString()).to.be.equal(idLocation1.toString());
+            expect(after[2].kind).to.be.equal("ElementEvent");
+            expect(after[2].change).to.be.equal('Move');
+            expect(after[2].oldLocation.toString()).to.be.equal(idLocation1.toString());
         });
     });
 
