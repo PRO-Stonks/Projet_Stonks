@@ -56,7 +56,7 @@ exports.login = async (req, res, next) => {
 
         if (!user || !(await user.correctPassword(password, user.password))) {
             return next(
-                new AppError(401, "fail", "Email or Password is wrong"),
+                new AppError(401, "fail", "Email or Password is invalid"),
                 req,
                 res,
                 next,

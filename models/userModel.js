@@ -1,3 +1,9 @@
+/**
+ * Manage User representation in the db
+ * See specs and EA schema for more details
+ *
+ * Password encryption is made with bcrypt (12 rounds)
+ */
 'use strict';
 const mongoose = require("mongoose");
 const validator = require("validator");
@@ -18,7 +24,7 @@ const userSchema = new mongoose.Schema({
         required: [true, "Please fill your email"],
         unique: true,
         lowercase: true,
-        validate: [validator.isEmail, " Please provide a valid email"],
+        validate: [validator.isEmail, "Please provide a valid email"],
     },
     password: {
         type: String,
@@ -42,6 +48,7 @@ userSchema.plugin(uniqueValidator);
 
 // encrypt the password using 'bcryptjs'
 // Mongoose -> Document Middleware
+// this will be executed after the validator
 userSchema.pre("save", async function (next) {
     // check the password if it is modified
     if (!this.isModified("password")) {
@@ -53,7 +60,12 @@ userSchema.pre("save", async function (next) {
     next();
 });
 
-// This is Instance Method that is gonna be available on all documents in a certain collection
+/**
+ * Verify if the two password are identical
+ * @param typedPassword the input password
+ * @param originalPassword the password to check against
+ * @returns {Promise<*>}
+ */
 userSchema.methods.correctPassword = async function (
     typedPassword,
     originalPassword,

@@ -1,7 +1,15 @@
+/**
+ * Manage event representation in the db
+ * See specs and EA schema for more details
+ *
+ *
+ * These models use discriminator to simulate inheritance
+ */
 'use strict';
 const mongoose = require("mongoose");
 const validator = require("validator");
 
+// Base schema
 const eventSchema = new mongoose.Schema({
     time: {
         type: Date,

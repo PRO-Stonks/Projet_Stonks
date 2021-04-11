@@ -1,3 +1,7 @@
+/**
+ * Manage Location representation in the db
+ * See specs and EA schema for more details
+ */
 'use strict';
 const mongoose = require('mongoose');
 
