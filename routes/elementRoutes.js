@@ -17,6 +17,10 @@ router
     .get(elementController.getAllElementsByLocation);
 
 router
+    .route('/move/:id/:location')
+    .patch(elementController.moveElement);
+
+router
     .route('/')
     .get(elementController.getAllElements);
 

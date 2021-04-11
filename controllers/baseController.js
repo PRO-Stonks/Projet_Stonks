@@ -39,6 +39,9 @@ exports.softDeleteOne = Model => async (req, res, next) => {
 
 exports.updateOne = Model => async (req, res, next) => {
     try {
+        if (req.body.hasOwnProperty("active")){
+            return next(new AppError(404, 'fail', 'Do not modify active in an update. Use softDelete instead'), req, res, next);
+        }
         const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
@@ -72,7 +75,6 @@ exports.updateOne = Model => async (req, res, next) => {
 };
 
 exports.createOne = Model => async (req, res, next) => {
-    console.log(req.body);
     try {
         const doc = await Model.create(req.body);
 
@@ -110,7 +112,6 @@ exports.getOne = Model => async (req, res, next) => {
         res.status(200).json({
             status: 'success',
             data: doc
-
         });
     } catch (error) {
         next(error);

@@ -3,6 +3,7 @@
 const Element = require("../../models/elementModel");
 const Product = require("../../models/productModel")
 const Location = require("../../models/locationModel");
+const {ElementEvent} = require("../../models/eventModel");
 const QR = require("../../models/QRModel");
 const User = require("../../models/userModel");
 const app = require("../../app");
@@ -27,6 +28,11 @@ let idLocation1;
 let idLocation2;
 let idQR1;
 let idQR2;
+let idQR4;
+const codeQR1 = "QRcode1";
+const codeQR2 = "QRcode2";
+const codeQR3 = "QRcode3";
+const codeQR4 = "QRcode4";
 let idProduct;
 before(async function () {
     const database = process.env.DATABASE.replace(
@@ -125,15 +131,23 @@ before(async function () {
 
     // Create 2 QRcodes
     idQR1 = await QR.create({
-        code: "QRcode1"
+        code: codeQR1
     }).then((doc) => {
         return doc._id;
     });
     idQR2 = await QR.create({
-        code: "QRcode2"
+        code: codeQR2
     }).then((doc) => {
         return doc._id;
     });
+    await QR.create({
+        code: codeQR3
+    });
+    idQR4 =await QR.create({
+        code: codeQR4
+    }).then((doc) => {
+        return doc._id;
+    });;
 
     // Create a product
     idProduct = await Product.create({
@@ -154,7 +168,7 @@ before(async function () {
         return doc._id;
     });
     idElement2 = await Element.create({
-        idQR: idQR2,
+        idQR: idQR1,
         entryDate: new Date('2020-04-02'),
         exitDate: new Date('2021-11-13'),
         price: 2,
@@ -162,6 +176,14 @@ before(async function () {
         idLocation: idLocation1
     }).then((doc) => {
         return doc._id;
+    });
+    await Element.create({
+        idQR: idQR4,
+        entryDate: new Date('2021-04-02'),
+        price: 4,
+        idProduct: idProduct,
+        idLocation: idLocation2,
+        active: false
     });
 });
 
@@ -173,7 +195,7 @@ describe('elementController', function () {
             await chai.request(app)
                 .post(mainRoute + "/elements/add")
                 .send({
-                    idQR: idQR1,
+                    code: codeQR1,
                     entryDate: new Date('2020-01-01'),
                     price: 0,
                     idProduct: idProduct,
@@ -196,7 +218,7 @@ describe('elementController', function () {
                 .post(mainRoute + "/elements/add")
                 .set("Authorization", "Bearer " + token)
                 .send({
-                    idQR: idQR1,
+                    code: codeQR1,
                     entryDate: new Date('2020-01-01'),
                     price: 0,
                     idProduct: idProduct,
@@ -216,7 +238,7 @@ describe('elementController', function () {
                 .post(mainRoute + "/elements/add")
                 .set("Authorization", "Bearer " + tokenManager)
                 .send({
-                    idQR: idQR1,
+                    code: codeQR3,
                     entryDate: new Date('2021-04-02'),
                     price: 0,
                     idProduct: idProduct,
@@ -227,6 +249,84 @@ describe('elementController', function () {
                     expect(res.status).to.be.equal(201);
                     expect(res.body.status).to.be.equal('success');
                 });
+            const docs = await ElementEvent.find({}).exec();
+            expect(docs.length).to.be.equal(1);
+            expect(docs[0].kind).to.be.equal("ElementEvent");
+            expect(docs[0].change).to.be.equal('Creation');
+            console.log(docs);
+        });
+
+        it('Non existing Qr code should fail', async () => {
+            // Add Element
+            const prev = await ElementEvent.find({}).exec();
+            await chai
+                .request(app)
+                .post(mainRoute + "/elements/add")
+                .set("Authorization", "Bearer " + tokenManager)
+                .send({
+                    code: "Nope",
+                    entryDate: new Date('2021-04-02'),
+                    price: 0,
+                    idProduct: idProduct,
+                    idLocation: idLocation1
+                }).timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body)
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal('fail');
+                });
+            const after = await ElementEvent.find({}).exec();
+            console.log(after);
+            expect(after.length).to.be.equal(prev.length);
+
+        });
+        it('Already used Qr code should fail', async () => {
+            // Add Element
+            const prev = await ElementEvent.find({}).exec();
+            await chai
+                .request(app)
+                .post(mainRoute + "/elements/add")
+                .set("Authorization", "Bearer " + tokenManager)
+                .send({
+                    code: codeQR1,
+                    entryDate: new Date('2021-04-02'),
+                    price: 0,
+                    idProduct: idProduct,
+                    idLocation: idLocation1
+                }).timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body)
+                    expect(res.status).to.be.equal(400);
+                    expect(res.body.status).to.be.equal('fail');
+                });
+            const after = await ElementEvent.find({}).exec();
+            console.log(after);
+            expect(after.length).to.be.equal(prev.length);
+        });
+        it('Used Qr code in disabled element should work', async () => {
+            // Add Element
+            const prev = await ElementEvent.find({}).exec();
+            await chai
+                .request(app)
+                .post(mainRoute + "/elements/add")
+                .set("Authorization", "Bearer " + tokenManager)
+                .send({
+                    code: codeQR4,
+                    entryDate: new Date('2021-04-02'),
+                    price: 0,
+                    idProduct: idProduct,
+                    idLocation: idLocation1
+                }).timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body)
+
+                });
+            const after = await ElementEvent.find({}).exec();
+            console.log(after);
+            expect(after.length).to.be.equal(prev.length+1);
+            expect(after[0].kind).to.be.equal("ElementEvent");
+            expect(after[0].change).to.be.equal('Creation');
+            console.log(after);
         });
     });
 
@@ -339,7 +439,7 @@ describe('elementController', function () {
                     });
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.results).to.be.equal(2);
+                    expect(res.body.results).to.be.equal(3);
                     expect(res.body.data[0].price).to.be.equal(4);
                     expect(res.body.data[1].price).to.be.equal(2);
                 });
@@ -469,6 +569,57 @@ describe('elementController', function () {
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.data.price).to.be.equal(666);
                 });
+        });
+        it('trying to modify the active state by update should fail', async () => {
+            // Update Element
+            await chai
+                .request(app)
+                .patch(mainRoute + "/elements/" + idElement2)
+                .send({
+                    active: false
+                })
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body);
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal("fail");
+                });
+        });
+        it('trying to modify the location by update should fail', async () => {
+            // Update Element
+            await chai
+                .request(app)
+                .patch(mainRoute + "/elements/" + idElement2)
+                .send({
+                    idLocation: idLocation2
+                })
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body);
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal("fail");
+                });
+        });
+        it('changing location should work', async () => {
+            // Update Element
+            const prev = await ElementEvent.find({}).exec();
+            await chai
+                .request(app)
+                .patch(mainRoute + "/elements/move/" + idElement2+"/"+idLocation2)
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body);
+                    expect(res.status).to.be.equal(204);
+                });
+            const after = await ElementEvent.find({change: "Move"}).exec();
+            console.log(after);
+            expect(after.length).to.be.equal(1);
+            expect(after[0].kind).to.be.equal("ElementEvent");
+            expect(after[0].change).to.be.equal('Move');
+            expect(after[0].oldLocation.toString()).to.be.equal(idLocation1.toString());
         });
     });
 
