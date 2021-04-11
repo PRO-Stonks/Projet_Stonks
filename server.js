@@ -1,3 +1,8 @@
+/**
+ * Specify parameter to start the server on a machine
+ * @type {module:mongoose}
+ */
+'use strict';
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config({
@@ -27,9 +32,11 @@ mongoose.connect(database, {
     useCreateIndex: true,
     useFindAndModify: false,
     useUnifiedTopology: true
-}).then(con => {
-    console.log('DB connection Successfully!');
 });
+
+mongoose.connection.on('connected', () => {
+    console.log('DB connection Successfully!');
+})
 
 // Start the server
 const port = process.env.PORT;

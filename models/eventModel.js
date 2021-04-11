@@ -70,6 +70,7 @@ const eventElement = new mongoose.Schema({
         type: String,
         enum: ["Creation", "Move", "Remove"],
         default: "Creation",
+        required: true,
         immutable: true
     },
     oldLocation: {

@@ -26,10 +26,11 @@ before(async function () {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
-    }).then(con => {
+    });
+
+    mongoose.connection.on('connected', () => {
         console.log('DB connection Successfully!');
-        mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
-        );
+        mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`));
     });
 
 });
@@ -110,16 +111,20 @@ describe('EventModel', function () {
     });
     describe('element event', function () {
         describe('Missing elements', function () {
+            console.log(Object.keys(ElementEvent.schema.obj));
             Object.keys(ElementEvent.schema.obj).forEach((key) => {
                 if (ElementEvent.schema.obj[key].hasOwnProperty('required')) {
-                    let test = {
-                        element: "606afdb5aa09d43a84b6181a",
-                        user: "606afdb5aa09d43a84b6181a",
-                    };
-                    delete test[key];
-                    it('should throws when ' + key + ' is not present', async () => {
-                        await expect(ElementEvent.create(test)).to.be.rejectedWith(Error);
-                    });
+                    if(key !== 'change' && key !== 'oldLocation') {
+                        let test = {
+                            element: "606afdb5aa09d43a84b6181a",
+                            user: "606afdb5aa09d43a84b6181a",
+                            change: 'Creation',
+                        };
+                        delete test[key];
+                        it('should throws when ' + key + ' is not present', async () => {
+                            await expect(ElementEvent.create(test)).to.be.rejectedWith(Error);
+                        });
+                    }
                 }
             });
         });

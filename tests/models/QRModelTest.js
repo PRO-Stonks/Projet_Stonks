@@ -25,10 +25,11 @@ before(async function () {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
-    }).then(con => {
+    });
+
+    mongoose.connection.on('connected', () => {
         console.log('DB connection Successfully!');
-        mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
-        );
+        mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`));
     });
 
 })
@@ -37,7 +38,7 @@ describe('QRModel', function () {
     describe('Missing Element', function () {
         Object.keys(QR.schema.obj).forEach((key) => {
             let test = {
-                code: "test"
+                code: new mongoose.Types.ObjectId()
             };
             delete test[key];
             it('should throws when ' + key + ' is not present', async () => {
@@ -47,11 +48,12 @@ describe('QRModel', function () {
     });
     describe('Code', function (){
         it('should throws when same value is used both time', async () => {
+            const value = new mongoose.Types.ObjectId();
             await QR.create({
-                code: "test"
+                code: value
             }).then(async (res) => {
                 await QR.create({
-                    code: "test"
+                    code: value
                 }).catch(err => {
                     if (err instanceof mongoose.Error.ValidationError) {
                         expect(err.errors.hasOwnProperty("code")).to.be.true;
@@ -63,11 +65,12 @@ describe('QRModel', function () {
     });
     describe('Creation', function () {
         it('should create the correct Location', async () => {
+            const value = new mongoose.Types.ObjectId();
             await QR.create({
-                code: "test"
+                code: value
             }).then((data) => {
                 console.log(data);
-                expect(data.code).to.be.equal("test");
+                expect(data.code).to.be.equal(value.toString());
                 expect(data.id).to.be.not.empty;
             });
         });
