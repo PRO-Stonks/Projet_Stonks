@@ -33,21 +33,17 @@ before(async function () {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
-    }).then(async con => {
-        console.log('DB connection Successfully!');
-        await mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
-        );
     });
 });
 
-
+let userData = {}
 describe('AuthControler', function () {
     describe('Sign Up', function () {
         it("Fail sign up a new user with invalid parameter", async () => {
             const res = await chai
                 .request(app)
                 .post("/api/v1/users/signup").send({
-                    firstName: "test",
+                    firstName: "testAuth",
                     lastName: "test",
                     email: "email@emai",
                     password: "0123",
@@ -59,9 +55,9 @@ describe('AuthControler', function () {
             const res = await chai
                 .request(app)
                 .post("/api/v1/users/signup").send({
-                    firstName: "test",
+                    firstName: "testAuth",
                     lastName: "test",
-                    email: "email@email.test",
+                    email: "manager11@email.test",
                     password: "012345678",
                 });
             expect(res.status).to.be.equal(201);
@@ -76,7 +72,7 @@ describe('AuthControler', function () {
             const res = await chai
                 .request(app)
                 .post("/api/v1/users/signup").send({
-                    firstName: "test",
+                    firstName: "testAuth",
                     lastName: "test",
                     email: "admin@email.test",
                     password: "012345678",
@@ -95,7 +91,7 @@ describe('AuthControler', function () {
     describe('Login', function () {
         it("Wrong email fails the login process", async () => {
             const user = await User.create({
-                firstName: "test",
+                firstName: "testAuth",
                 lastName: "test",
                 email: "manager@email.test",
                 password: "012345678",
@@ -112,7 +108,7 @@ describe('AuthControler', function () {
         });
         it("Wrong password fails the login process", async () => {
             const user = await User.create({
-                firstName: "test",
+                firstName: "testAuth",
                 lastName: "test",
                 email: "manager7@email.test",
                 password: "012345678",
@@ -129,7 +125,7 @@ describe('AuthControler', function () {
         });
         it("Login with valid parameter works", async () => {
             const user = await User.create({
-                firstName: "test",
+                firstName: "testAuth",
                 lastName: "test",
                 email: "manager8@email.test",
                 password: "012345678",
@@ -142,21 +138,28 @@ describe('AuthControler', function () {
                 });
             expect(res.status).to.be.equal(200);
             expect(res.body.status).to.be.equal('success');
+            await ConnectionEvent.deleteMany({
+                user: res.body.data.user._id
+            }).then(() => {
+                console.log("Clean Element");
+            });
             expect(res.body.token).to.exist;
             expect(res.body.data.user.hasOwnProperty("password")).to.be.false;
             expect(res.body.data.user.role).to.be.equal("manager");
             expect(validator.isMongoId(res.body.data.user._id)).to.be.true;
             expect(validator.isJWT(res.body.token)).to.be.true;
 
+
         });
+
         it("Successful login Create a ConnectionEvent Entry", async () => {
             const user = await User.create({
-                firstName: "test",
-                lastName: "test",
+                firstName: "testAuth",
+                lastName: "test1234",
                 email: "manager2@email.test",
                 password: "012345678",
             });
-            const res = await chai
+            userData = await chai
                 .request(app)
                 .post("/api/v1/users/login").send({
                     "email": "manager2@email.test",
@@ -165,10 +168,23 @@ describe('AuthControler', function () {
             const docs = await ConnectionEvent.find({}).exec();
             expect(docs.length).to.be.not.equal(0);
             expect(docs[0].kind).to.be.equal("ConnectionEvent");
+
+        });
+        after(async function () {
+            try{
+                await ConnectionEvent.deleteMany({
+                    user: userData.body.data.user._id
+                }).then(() => {
+                    console.log("Clean Event");
+                });
+            }catch (e) {
+                console.log(e)
+            }
+
         });
         it("Protected route need an authorisation token", async () => {
             const user = await User.create({
-                firstName: "test",
+                firstName: "testAuth",
                 lastName: "test",
                 email: "manager3@email.test",
                 password: "012345678",
@@ -179,11 +195,14 @@ describe('AuthControler', function () {
                     "email": "manager3@email.test",
                     "password": "012345678"
                 });
-            console.log(res.body);
+            await ConnectionEvent.deleteMany({
+                user: res.body.data.user._id
+            }).then(() => {
+                console.log("Clean Element");
+            });
             res = await chai
                 .request(app)
                 .get("/api/v1/events/connections/").send();
-            console.log(res.body);
             expect(res.status).to.be.equal(401);
             expect(res.body.status).to.be.equal('fail');
             expect(res.body.message).to.be.equal("You are not logged in! Please login in to continue");
@@ -191,7 +210,7 @@ describe('AuthControler', function () {
 
         it("Admin only route need token", async () => {
             let user = await User.create({
-                firstName: "test",
+                firstName: "testAuth",
                 lastName: "test",
                 email: "manager4@email.test",
                 password: "012345678",
@@ -200,6 +219,11 @@ describe('AuthControler', function () {
             let res = await requester.post("/api/v1/users/login").send({
                 "email": "manager4@email.test",
                 "password": "012345678"
+            });
+            await ConnectionEvent.deleteMany({
+                user: res.body.data.user._id
+            }).then(() => {
+                console.log("Clean Element");
             });
             res = await requester
                 .get("/api/v1/events/connections/")
@@ -212,7 +236,7 @@ describe('AuthControler', function () {
         });
         it("Admin can access admin only route", async () => {
             let user = await User.create({
-                firstName: "test",
+                firstName: "testAuth",
                 lastName: "test",
                 email: "admin1@email.test",
                 password: "012345678",
@@ -223,11 +247,15 @@ describe('AuthControler', function () {
                 "email": "admin1@email.test",
                 "password": "012345678"
             });
+            await ConnectionEvent.deleteMany({
+                user: res.body.data.user._id
+            }).then(() => {
+                console.log("Clean Element");
+            });
             res = await requester
                 .get("/api/v1/events/connections/")
                 .set('Authorization', 'Bearer ' + res.body.token)
                 .send();
-            console.log(res.body)
             expect(res.body.results).to.be.greaterThan(0);
             expect(res.status).to.be.equal(200);
             expect(res.body.status).to.be.equal('success');
@@ -237,9 +265,9 @@ describe('AuthControler', function () {
 });
 
 after(async function () {
-    await mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`));
-    console.log(mongoose.connection.toString());
-    await mongoose.disconnect().then(() => {
-        console.log("All connections closed.")
+    await User.deleteMany({
+        firstName: "testAuth"
+    }).then(() => {
+        console.log("Clean User in auth");
     });
 });

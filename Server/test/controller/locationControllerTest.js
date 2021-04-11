@@ -1,11 +1,12 @@
 'use strict';
 
-const QR = require("../../models/QRModel");
+const Location = require("../../models/locationModel");
 const User = require("../../models/userModel");
 const app = require("../../app");
 const validator = require("validator");
 const mongoose = require('mongoose');
 const mainRoute = "/api/v1";
+const {ConnectionEvent} = require("../../models/eventModel");
 
 const chai = require('chai');
 const expect = chai.expect;
@@ -18,9 +19,11 @@ dotenv.config({
 const timeoutDuration = 3000;
 
 let tokenAdmin;
+let idAdmin;
 let tokenManager;
-let idQR1;
-let idQR2;
+let idManager;
+let idLocation1;
+let idLocation2;
 before(async function () {
     const database = process.env.DATABASE.replace(
         '${MONGO_USERNAME}', process.env.MONGO_USERNAME).replace(
@@ -35,30 +38,27 @@ before(async function () {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
-    }).then(async con => {
-        console.log('DB connection Successfully!');
-        await mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
-        );
     });
 
     // Create manager/admin accounts, log in and get their tokens
     tokenManager = await User.create({
-        firstName: "test",
+        firstName: "testLocation",
         lastName: "test",
-        email: "manager@email.tests",
+        email: "managerLocation@email.tests",
         password: "012345678",
     }).then(() => {
         console.log("Manager account created");
         return chai.request(app)
             .post(mainRoute + "/users/login")
             .send({
-                "email": "manager@email.tests",
+                "email": "managerLocation@email.tests",
                 "password": "012345678"
             })
             .timeout(timeoutDuration)
             .then((res) => {
                 if (res.status === 200) {
                     console.log("Log in successfully");
+                    idManager = res.body.data.user._id;
                     return res.body.token;
                 } else {
                     throw "failed to log in";
@@ -66,9 +66,9 @@ before(async function () {
             });
     });
     tokenAdmin = await User.create({
-        firstName: "test",
+        firstName: "testLocation",
         lastName: "test",
-        email: "admin@email.tests",
+        email: "adminLocation@email.tests",
         password: "012345678",
         role: "admin"
     }).then(() => {
@@ -76,13 +76,14 @@ before(async function () {
         return chai.request(app)
             .post(mainRoute + "/users/login")
             .send({
-                "email": "admin@email.tests",
+                "email": "adminLocation@email.tests",
                 "password": "012345678"
             })
             .timeout(timeoutDuration)
             .then((res) => {
                 if (res.status === 200) {
                     console.log("Log in successfully");
+                    idAdmin = res.body.data.user._id;
                     return res.body.token;
                 } else {
                     throw "failed to log in";
@@ -90,28 +91,49 @@ before(async function () {
             });
     });
 
-    // Create 2 QR
-    idQR1 = await QR.create({
-        code: "oe"
+    // Create 2 products
+    idLocation1 = await Location.create({
+        name: "testLocation",
+        address: {
+            street: "sirTest",
+            noStreet: 42,
+            npa: 95,
+            city: "Roosevelt",
+            country: "Moon"
+        }
     }).then((doc) => {
         return doc._id
     });
-    idQR2 = await QR.create({
-        code: "eo"
+    idLocation2 = await Location.create({
+        name: "testLocation",
+        address: {
+            street: "tseTris",
+            noStreet: 24,
+            npa: 59,
+            city: "tlevesooR",
+            country: "nooM"
+        }
     }).then((doc) => {
         return doc._id
     });
 });
 
 
-describe('QRController', function () {
-    describe('Add QR', function () {
+describe('locationController', function () {
+    describe('Add location', function () {
         it('should fail when not logged in or without token', async () => {
             // Add Location
             await chai.request(app)
-                .post(mainRoute + "/QR/add")
+                .post(mainRoute + "/locations/add")
                 .send({
-                    code: "test"
+                    name: "testLocationTest",
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 0,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 }).timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -124,13 +146,20 @@ describe('QRController', function () {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle"
 
-            // Add QR
+            // Add Location
             await chai
                 .request(app)
-                .post(mainRoute + "/QR/add")
+                .post(mainRoute + "/locations/add")
                 .set("Authorization", "Bearer " + token)
                 .send({
-                    code: "test"
+                    name: "testLocationTest",
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 0,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 }).timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -140,13 +169,20 @@ describe('QRController', function () {
         });
 
         it('should fail as non-admin user', async () => {
-            // Add QR
+            // Add Location
             await chai
                 .request(app)
-                .post(mainRoute + "/QR/add")
+                .post(mainRoute + "/locations/add")
                 .set("Authorization", "Bearer " + tokenManager)
                 .send({
-                    code: "test"
+                    name: "testLocationTest",
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 0,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 }).timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -156,13 +192,21 @@ describe('QRController', function () {
         });
 
         it('should work as admin', async () => {
-            // Add QR
+            // Add Location
             await chai
                 .request(app)
-                .post(mainRoute + "/QR/add")
+                .post(mainRoute + "/locations/add")
                 .set("Authorization", "Bearer " + tokenAdmin)
-                .send(
-                ).timeout(timeoutDuration)
+                .send({
+                    name: "testLocationTest",
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 0,
+                        city: "cty",
+                        country: "lnd"
+                    }
+                }).timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
                     expect(res.status).to.be.equal(201);
@@ -173,12 +217,12 @@ describe('QRController', function () {
     });
 
 
-    describe('Get QR', function () {
+    describe('Get location', function () {
         it('should fail when not logged in or without token', async () => {
-            // Get QR
+            // Get Location
             await chai
                 .request(app)
-                .get(mainRoute + "/QR/" + idQR1)
+                .get(mainRoute + "/locations/" + idLocation1)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -191,10 +235,10 @@ describe('QRController', function () {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
-            // Get QR
+            // Get location
             await chai
                 .request(app)
-                .get(mainRoute + "/QR/" + idQR1)
+                .get(mainRoute + "/locations/" + idLocation1)
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -205,10 +249,10 @@ describe('QRController', function () {
         });
 
         it('should fail with invalid id', async () => {
-            // Get QR
+            // Get Location
             await chai
                 .request(app)
-                .get(mainRoute + "/QR/" + mongoose.Types.ObjectId.createFromTime(42))
+                .get(mainRoute + "/locations/" + mongoose.Types.ObjectId.createFromTime(42))
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -220,10 +264,10 @@ describe('QRController', function () {
         });
 
         it('should work with correct id', async () => {
-            // Get QR
+            // Get location
             await chai
                 .request(app)
-                .get(mainRoute + "/QR/" + idQR1)
+                .get(mainRoute + "/locations/" + idLocation1)
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -231,18 +275,18 @@ describe('QRController', function () {
                     console.log(res.body.data.address);
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.data.code).to.be.equal("oe");
+                    expect(res.body.data.name).to.be.equal("testLocation");
                 });
         });
     });
 
 
-    describe('Get all QR', function () {
+    describe('Get all locations', function () {
         it('should fail when not logged in or without token', async () => {
-            // Get QR
+            // Get locations
             await chai
                 .request(app)
-                .get(mainRoute + "/QR/")
+                .get(mainRoute + "/locations/")
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -255,10 +299,10 @@ describe('QRController', function () {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
-            // Get QR
+            // Get locations
             await chai
                 .request(app)
-                .get(mainRoute + "/QR/")
+                .get(mainRoute + "/locations/")
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -269,10 +313,11 @@ describe('QRController', function () {
         });
 
         it('should work', async () => {
-            // Get QR
+            // Get locations
+            const prev = await Location.find({}).exec();
             await chai
                 .request(app)
-                .get(mainRoute + "/QR/")
+                .get(mainRoute + "/locations/")
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -282,20 +327,26 @@ describe('QRController', function () {
                     });
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.results).to.be.equal(3);
+                    expect(res.body.results).to.be.equal(prev.length);
                 });
         });
     });
 
 
-    describe('Update QR', function () {
+    describe('Update location', function () {
         it('should fail when not logged in or without token', async () => {
-            // Update QR
+            // Update location
             await chai
                 .request(app)
-                .patch(mainRoute + "/QR/" + idQR1)
+                .patch(mainRoute + "/locations/" + idLocation1)
                 .send({
-                    code: "updatedQRcode"
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 1020,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 })
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -309,12 +360,18 @@ describe('QRController', function () {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
-            // Update QR
+            // Update location
             await chai
                 .request(app)
-                .patch(mainRoute + "/QR/" + idQR1)
+                .patch(mainRoute + "/locations/" + idLocation1)
                 .send({
-                    code: "updatedQRcode"
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 1020,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 })
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
@@ -326,12 +383,18 @@ describe('QRController', function () {
         });
 
         it('should fail with non-admin users', async () => {
-            // Update QR
+            // Update location
             await chai
                 .request(app)
-                .patch(mainRoute + "/QR/" + idQR1)
+                .patch(mainRoute + "/locations/" + idLocation1)
                 .send({
-                    code: "updatedQRcode"
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 1020,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 })
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
@@ -343,12 +406,18 @@ describe('QRController', function () {
         });
 
         it('should fail with invalid id', async () => {
-            // Update QR
+            // Update location
             await chai
                 .request(app)
-                .patch(mainRoute + "/QR/" + mongoose.Types.ObjectId.createFromTime(42))
+                .patch(mainRoute + "/locations/" + mongoose.Types.ObjectId.createFromTime(42))
                 .send({
-                    code: "updatedQRcode"
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 1020,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 })
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
@@ -361,12 +430,18 @@ describe('QRController', function () {
         });
 
         it('should work with correct id', async () => {
-            // Update QR
+            // Update location
             await chai
                 .request(app)
-                .patch(mainRoute + "/QR/" + idQR1)
+                .patch(mainRoute + "/locations/" + idLocation1)
                 .send({
-                    code: "updatedQRcode"
+                    address: {
+                        street: "str",
+                        noStreet: 0,
+                        npa: 1020,
+                        city: "cty",
+                        country: "lnd"
+                    }
                 })
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
@@ -374,18 +449,18 @@ describe('QRController', function () {
                     console.log(res.body);
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.data.code).to.be.equal("updatedQRcode");
+                    expect(res.body.data.name).to.be.equal("testLocation");
+                    expect(res.body.data.address.npa).to.be.equal(1020);
                 });
         });
     });
 
-
-    describe('Delete QR', function () {
+    describe('Soft delete Location', function () {
         it('should fail when not logged in or without token', async () => {
-            // Delete QR
+            // Soft delete Location
             await chai
                 .request(app)
-                .delete(mainRoute + "/QR/" + idQR1)
+                .delete(mainRoute + "/locations/" + idLocation1)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     console.log(res.body)
@@ -398,10 +473,10 @@ describe('QRController', function () {
             // Fake token
             let token = "fakeTokenIsNotVeryGentle";
 
-            // Delete QR
+            // Soft delete Location
             await chai
                 .request(app)
-                .delete(mainRoute + "/QR/" + idQR1)
+                .delete(mainRoute + "/locations/" + idLocation1)
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -412,10 +487,10 @@ describe('QRController', function () {
         });
 
         it('should fail with non-admin users', async () => {
-            // Delete QR
+            // Soft delete Location
             await chai
                 .request(app)
-                .delete(mainRoute + "/QR/" + idQR1)
+                .delete(mainRoute + "/locations/" + idLocation1)
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -426,10 +501,10 @@ describe('QRController', function () {
         });
 
         it('should fail with invalid id', async () => {
-            // Delete QR
+            // Soft delete Location
             await chai
                 .request(app)
-                .delete(mainRoute + "/QR/" + mongoose.Types.ObjectId.createFromTime(42))
+                .delete(mainRoute + "/locations/" + mongoose.Types.ObjectId.createFromTime(42))
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -441,17 +516,118 @@ describe('QRController', function () {
         });
 
         it('should work with correct id', async () => {
-            // Create QR
-            let id = await QR.create({
-                code : "WhatAnewCode"
+            // Create Location
+            let id = await Location.create({
+                name: "testLocation",
+                address: {
+                    street: "zzz",
+                    noStreet: 45,
+                    npa: 666,
+                    city: "tzu",
+                    country: "a"
+                }
             }).then((doc) => {
                 return doc._id
             });
 
-            // Delete previous QR
+            // Soft delete previous Location
             await chai
                 .request(app)
-                .delete(mainRoute + "/QR/" + id)
+                .delete(mainRoute + "/locations/" + id)
+                .set("Authorization", "Bearer " + tokenAdmin)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body);
+                    expect(res.status).to.be.equal(204);
+                });
+
+            // Check for the soft deleted Product
+            let doc = await Location.findById(id);
+            expect(doc).to.be.not.null;
+        });
+    });
+
+
+
+    describe('Hard delete Location', function () {
+        it('should fail when not logged in or without token', async () => {
+            // Delete location
+            await chai
+                .request(app)
+                .delete(mainRoute + "/locations/hardDel/" + idLocation1)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body)
+                    expect(res.status).to.be.equal(401);
+                    expect(res.body.status).to.be.equal('fail');
+                });
+        });
+
+        it('should fail with invalid token', async () => {
+            // Fake token
+            let token = "fakeTokenIsNotVeryGentle";
+
+            // Delete location
+            await chai
+                .request(app)
+                .delete(mainRoute + "/locations/hardDel/" + idLocation1)
+                .set("Authorization", "Bearer " + token)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body)
+                    expect(res.status).to.be.equal(500);
+                    expect(res.body.status).to.be.equal('error');
+                })
+        });
+
+        it('should fail with non-admin users', async () => {
+            // Delete location
+            await chai
+                .request(app)
+                .delete(mainRoute + "/locations/hardDel/" + idLocation1)
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body);
+                    expect(res.status).to.be.equal(403);
+                    expect(res.body.status).to.be.equal("fail");
+                });
+        });
+
+        it('should fail with invalid id', async () => {
+            // Delete location
+            await chai
+                .request(app)
+                .delete(mainRoute + "/locations/hardDel/" + mongoose.Types.ObjectId.createFromTime(42))
+                .set("Authorization", "Bearer " + tokenAdmin)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    console.log(res.body);
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal("fail");
+                    expect(res.body.message).to.be.equal("No document found with that id");
+                });
+        });
+
+        it('should work with correct id', async () => {
+            // Create Location
+            let id = await Location.create({
+                name: "test2",
+                address: {
+                    street: "zzz",
+                    noStreet: 45,
+                    npa: 666,
+                    city: "tzu",
+                    country: "a"
+                }
+            }).then((doc) => {
+                return doc._id
+            });
+
+            // Delete previous location
+            await chai
+                .request(app)
+                .delete(mainRoute + "/locations/hardDel/" + id)
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
@@ -460,7 +636,7 @@ describe('QRController', function () {
                 });
 
             // Check for the deleted location
-            let doc = await QR.findById(id);
+            let doc = await Location.findById(id);
             expect(doc).to.be.null;
         });
     });
@@ -469,17 +645,36 @@ describe('QRController', function () {
 
 // Remove the user after each test
 afterEach(async function () {
-    await QR.deleteMany({
-        code: "test"
+    await Location.deleteMany({
+        name: "testLocationTest"
     }).then(() => {
-        console.log("Clean QR");
+        console.log("Clean location");
     });
 });
 
 
 // Disconnect the DB at the end
 after(async function () {
-    await mongoose.disconnect().then(() => {
-        console.log("All connections closed.");
+    await User.deleteMany({
+        firstName: "testLocation"
+    }).then(() => {
+        console.log("Clean User in auth");
+    });
+
+    await ConnectionEvent.deleteMany({
+        user: idAdmin
+    }).then(() => {
+        console.log("Clean Event");
+    });
+    await ConnectionEvent.deleteMany({
+        user: idManager
+    }).then(() => {
+        console.log("Clean Event");
+    });
+
+    await Location.deleteMany({
+        name: "testLocation"
+    }).then(() => {
+        console.log("Clean Location");
     });
 });
