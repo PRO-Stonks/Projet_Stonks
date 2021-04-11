@@ -123,7 +123,7 @@ exports.moveElement = async (req, res, next) => {
         let doc = {}
         await session.withTransaction(async () => {
             doc = await Element.findByIdAndUpdate(req.params.id, {
-                idLocation: req.body.idLocation
+                idLocation: req.params.location
             });
             if (!doc) {
                 throw Error;
@@ -143,6 +143,7 @@ exports.moveElement = async (req, res, next) => {
                 data: doc
             });
         }).catch(err =>{
+            console.log(err);
             return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
         });
 
