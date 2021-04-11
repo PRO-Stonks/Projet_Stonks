@@ -124,6 +124,8 @@ exports.moveElement = async (req, res, next) => {
         await session.withTransaction(async () => {
             doc = await Element.findByIdAndUpdate(req.params.id, {
                 idLocation: req.params.location
+            }, {
+                runValidators: true
             });
             if (!doc) {
                 throw Error;
