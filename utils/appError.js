@@ -1,3 +1,6 @@
+/**
+ * Error class to improve error handling
+ */
 'use strict';
 
 class AppError extends Error {
