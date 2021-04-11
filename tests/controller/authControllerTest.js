@@ -33,17 +33,10 @@ before(async function () {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
-    });
-
-    mongoose.connection.on('connected', () => {
+    }).then(async con => {
         console.log('DB connection Successfully!');
-        mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`));
-    });
-});
-beforeEach(function (done) {
-    mongoose.connection.db.dropDatabase(() => {
-        console.log(`${mongoose.connection.db.databaseName} database dropped.`);
-        done();
+        await mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
+        );
     });
 });
 
@@ -85,7 +78,7 @@ describe('AuthControler', function () {
                 .post("/api/v1/users/signup").send({
                     firstName: "test",
                     lastName: "test",
-                    email: "email@email.test",
+                    email: "admin@email.test",
                     password: "012345678",
                     role: "admin"
                 });
@@ -104,7 +97,7 @@ describe('AuthControler', function () {
             const user = await User.create({
                 firstName: "test",
                 lastName: "test",
-                email: "email@email.test",
+                email: "manager@email.test",
                 password: "012345678",
             });
             const res = await chai
@@ -121,13 +114,13 @@ describe('AuthControler', function () {
             const user = await User.create({
                 firstName: "test",
                 lastName: "test",
-                email: "email@email.test",
+                email: "manager7@email.test",
                 password: "012345678",
             });
             const res = await chai
                 .request(app)
                 .post("/api/v1/users/login").send({
-                    "email": "email@email.test",
+                    "email": "manager7@email.test",
                     "password": "0123456789"
                 });
             expect(res.status).to.be.equal(401);
@@ -138,13 +131,13 @@ describe('AuthControler', function () {
             const user = await User.create({
                 firstName: "test",
                 lastName: "test",
-                email: "email@email.test",
+                email: "manager8@email.test",
                 password: "012345678",
             });
             const res = await chai
                 .request(app)
                 .post("/api/v1/users/login").send({
-                    "email": "email@email.test",
+                    "email": "manager8@email.test",
                     "password": "012345678"
                 });
             expect(res.status).to.be.equal(200);
@@ -160,13 +153,13 @@ describe('AuthControler', function () {
             const user = await User.create({
                 firstName: "test",
                 lastName: "test",
-                email: "email@email.test",
+                email: "manager2@email.test",
                 password: "012345678",
             });
             const res = await chai
                 .request(app)
                 .post("/api/v1/users/login").send({
-                    "email": "email@email.test",
+                    "email": "manager2@email.test",
                     "password": "012345678"
                 });
             const docs = await ConnectionEvent.find({}).exec();
@@ -177,13 +170,13 @@ describe('AuthControler', function () {
             const user = await User.create({
                 firstName: "test",
                 lastName: "test",
-                email: "email@email.test",
+                email: "manager3@email.test",
                 password: "012345678",
             });
             let res = await chai
                 .request(app)
                 .post("/api/v1/users/login").send({
-                    "email": "email@email.test",
+                    "email": "manager3@email.test",
                     "password": "012345678"
                 });
             console.log(res.body);
@@ -200,12 +193,12 @@ describe('AuthControler', function () {
             let user = await User.create({
                 firstName: "test",
                 lastName: "test",
-                email: "email@email.test",
+                email: "manager4@email.test",
                 password: "012345678",
             });
             const requester = chai.request(app).keepOpen()
             let res = await requester.post("/api/v1/users/login").send({
-                "email": "email@email.test",
+                "email": "manager4@email.test",
                 "password": "012345678"
             });
             res = await requester
@@ -215,18 +208,19 @@ describe('AuthControler', function () {
             expect(res.status).to.be.equal(403);
             expect(res.body.status).to.be.equal('fail');
             expect(res.body.message).to.be.equal("You are not allowed to do this action");
+            requester.close();
         });
-        it("Admin can acces admin only route", async () => {
+        it("Admin can access admin only route", async () => {
             let user = await User.create({
                 firstName: "test",
                 lastName: "test",
-                email: "email@email.test",
+                email: "admin1@email.test",
                 password: "012345678",
                 role: "admin"
             });
             const requester = chai.request(app).keepOpen()
             let res = await requester.post("/api/v1/users/login").send({
-                "email": "email@email.test",
+                "email": "admin1@email.test",
                 "password": "012345678"
             });
             res = await requester
@@ -237,11 +231,14 @@ describe('AuthControler', function () {
             expect(res.body.results).to.be.greaterThan(0);
             expect(res.status).to.be.equal(200);
             expect(res.body.status).to.be.equal('success');
+            requester.close();
         });
     });
 });
 
 after(async function () {
+    await mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`));
+    console.log(mongoose.connection.toString());
     await mongoose.disconnect().then(() => {
         console.log("All connections closed.")
     });

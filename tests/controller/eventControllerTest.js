@@ -32,11 +32,10 @@ before(async function () {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
-    });
-
-    mongoose.connection.on('connected', () => {
+    }).then(async con => {
         console.log('DB connection Successfully!');
-        mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`));
+        await mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
+        );
     });
 
 });
@@ -76,6 +75,7 @@ describe('EventController', function () {
                 expect(res.body.status).to.be.equal('success');
                 expect(res.body.data[0].kind).to.be.equal("ConnectionEvent");
                 expect(res.body.data[0].user).to.be.equal(userData._id);
+                requester.close();
 
             });
         });
@@ -104,6 +104,7 @@ describe('EventController', function () {
                 expect(query.status).to.be.equal(404);
                 expect(query.body.status).to.be.equal('fail');
                 expect(query.body.message).to.be.equal('No document found with that id');
+                requester.close();
             });
         });
         describe('Get event made by user', function () {
@@ -133,6 +134,7 @@ describe('EventController', function () {
                 expect(query.body.status).to.be.equal('success');
                 expect(query.body.data[0].kind).to.be.equal("ConnectionEvent");
                 expect(query.body.data[0].user).to.be.equal(userData._id);
+                requester.close();
             });
         });
     });

@@ -35,11 +35,10 @@ before(async function () {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
-    });
-
-    mongoose.connection.on('connected', () => {
+    }).then(async con => {
         console.log('DB connection Successfully!');
-        mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`));
+        await mongoose.connection.db.dropDatabase(console.log(`${mongoose.connection.db.databaseName} database dropped.`)
+        );
     });
 
     // Create manager/admin accounts, log in and get their tokens
