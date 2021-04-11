@@ -1,3 +1,7 @@
+/**
+ * API endpoints
+ * See API document to see how to use them
+ */
 'use strict';
 const express = require('express');
 const router = express.Router();
