@@ -2,11 +2,11 @@
   "name": "stonks_server",
   "version": "1.0.0",
   "description": "The best stocks manager application to ever exists",
-  "main": "index.js",
+  "main": "Server/server.js",
   "scripts": {
-    "test": "mocha \"test/**/*.js\"",
-    "debug": "ndb server.js",
-    "start": "PORT=4000 nodemon server.js"
+    "test-server": "cd Server && mocha \"test/**/*.js\"",
+    "debug-server": "cd Server && ndb server.js",
+    "start-server": "cd Server && PORT=4000 nodemon server.js"
   },
   "keywords": [],
   "author": "",
