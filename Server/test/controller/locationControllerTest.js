@@ -47,7 +47,6 @@ before(async function () {
         email: "managerLocation@email.tests",
         password: "012345678",
     }).then(() => {
-        console.log("Manager account created");
         return chai.request(app)
             .post(mainRoute + "/users/login")
             .send({
@@ -57,7 +56,6 @@ before(async function () {
             .timeout(timeoutDuration)
             .then((res) => {
                 if (res.status === 200) {
-                    console.log("Log in successfully");
                     idManager = res.body.data.user._id;
                     return res.body.token;
                 } else {
@@ -72,7 +70,6 @@ before(async function () {
         password: "012345678",
         role: "admin"
     }).then(() => {
-        console.log("Admin account created");
         return chai.request(app)
             .post(mainRoute + "/users/login")
             .send({
@@ -82,7 +79,6 @@ before(async function () {
             .timeout(timeoutDuration)
             .then((res) => {
                 if (res.status === 200) {
-                    console.log("Log in successfully");
                     idAdmin = res.body.data.user._id;
                     return res.body.token;
                 } else {
@@ -136,7 +132,6 @@ describe('locationController', function () {
                     }
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -162,7 +157,6 @@ describe('locationController', function () {
                     }
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 });
@@ -185,7 +179,7 @@ describe('locationController', function () {
                     }
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+
                     expect(res.status).to.be.equal(403);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -208,7 +202,7 @@ describe('locationController', function () {
                     }
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+
                     expect(res.status).to.be.equal(201);
                     expect(res.body.status).to.be.equal('success');
                     expect(validator.isMongoId(res.body.data._id)).to.be.true;
@@ -225,7 +219,7 @@ describe('locationController', function () {
                 .get(mainRoute + "/locations/" + idLocation1)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -242,7 +236,7 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -256,7 +250,7 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
+                    ;
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -271,8 +265,6 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
-                    console.log(res.body.data.address);
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.data.name).to.be.equal("testLocation");
@@ -289,7 +281,7 @@ describe('locationController', function () {
                 .get(mainRoute + "/locations/")
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -306,7 +298,7 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -321,10 +313,6 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
-                    res.body.data.forEach((location) => {
-                        console.log(location);
-                    });
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.results).to.be.equal(prev.length);
@@ -350,7 +338,7 @@ describe('locationController', function () {
                 })
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -376,7 +364,7 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -399,7 +387,7 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
+
                     expect(res.status).to.be.equal(403);
                     expect(res.body.status).to.be.equal("fail");
                 });
@@ -422,7 +410,6 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -446,7 +433,6 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.data.name).to.be.equal("testLocation");
@@ -463,7 +449,6 @@ describe('locationController', function () {
                 .delete(mainRoute + "/locations/" + idLocation1)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -480,7 +465,6 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -494,7 +478,6 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(403);
                     expect(res.body.status).to.be.equal("fail");
                 });
@@ -508,7 +491,6 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -537,7 +519,6 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(204);
                 });
 
@@ -548,7 +529,6 @@ describe('locationController', function () {
     });
 
 
-
     describe('Hard delete Location', function () {
         it('should fail when not logged in or without token', async () => {
             // Delete location
@@ -557,7 +537,6 @@ describe('locationController', function () {
                 .delete(mainRoute + "/locations/hardDel/" + idLocation1)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -574,7 +553,6 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -588,7 +566,6 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(403);
                     expect(res.body.status).to.be.equal("fail");
                 });
@@ -602,7 +579,6 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -631,7 +607,6 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(204);
                 });
 
@@ -647,34 +622,21 @@ describe('locationController', function () {
 afterEach(async function () {
     await Location.deleteMany({
         name: "testLocationTest"
-    }).then(() => {
-        console.log("Clean location");
     });
 });
 
 
-// Disconnect the DB at the end
+
 after(async function () {
-    await User.deleteMany({
-        firstName: "testLocation"
-    }).then(() => {
-        console.log("Clean User in auth");
-    });
-
-    await ConnectionEvent.deleteMany({
-        user: idAdmin
-    }).then(() => {
-        console.log("Clean Event");
-    });
-    await ConnectionEvent.deleteMany({
-        user: idManager
-    }).then(() => {
-        console.log("Clean Event");
-    });
-
-    await Location.deleteMany({
-        name: "testLocation"
-    }).then(() => {
-        console.log("Clean Location");
-    });
+    const q = Promise.all([
+        User.deleteMany({
+            firstName: "testLocation"
+        }), ConnectionEvent.deleteMany({
+            user: idAdmin
+        }), ConnectionEvent.deleteMany({
+            user: idManager
+        }), Location.deleteMany({
+            name: "testLocation"
+        })]
+    );
 });

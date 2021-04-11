@@ -17,7 +17,6 @@ before(async function () {
         '${MONGO_PORT}', process.env.MONGO_PORT).replace(
         '${MONGO_DB}', process.env.MONGO_DB_TEST);
 
-    console.log(database);
 
     // Connect the database
     await mongoose.connect(database, {
@@ -33,7 +32,7 @@ describe('ProductModel', function () {
         Object.keys(Product.schema.obj).forEach((key) => {
             if (Product.schema.obj[key].hasOwnProperty('required')) {
                 let test = {
-                    name: "stonks",
+                    name: "ProducttestTest",
                     tag: "philosophical ignorance"
                 };
                 delete test[key];
@@ -47,11 +46,10 @@ describe('ProductModel', function () {
     describe('Creation', function () {
         it('should create the correct Product', async () => {
             await Product.create({
-                name: "stonks",
+                name: "ProducttestTest",
                 tag: "philosophical ignorance"
             }).then((data) => {
-                console.log(data);
-                expect(data.name).to.be.equal("stonks");
+                expect(data.name).to.be.equal("ProducttestTest");
                 expect(data.tag).to.be.equal("philosophical ignorance");
                 expect(data.active).to.be.true;
                 expect(data.id).to.be.not.empty;
@@ -59,6 +57,13 @@ describe('ProductModel', function () {
         });
     });
 });
+
+after(async function () {
+    await Product.deleteMany({
+        name: "ProducttestTest"
+    });
+});
+
 
 
 

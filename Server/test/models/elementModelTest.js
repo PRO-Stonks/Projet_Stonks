@@ -20,8 +20,6 @@ before(async function () {
         '${MONGO_PORT}', process.env.MONGO_PORT).replace(
         '${MONGO_DB}', process.env.MONGO_DB_TEST);
 
-    console.log(database);
-
     // Connect the database
     await mongoose.connect(database, {
         useNewUrlParser: true,
@@ -111,7 +109,6 @@ describe('ElementModel', function () {
                 ).then((data) => {return data._id; })
             };
             await Element.create(test).then((data) => {
-                console.log(data);
                 expect(data.entryDate.toDateString()).to.be.equal(new Date('2021-04-02').toDateString());
                 expect(data.exitDate.toDateString()).to.be.equal(new Date ('2021-09-28').toDateString());
                 expect(data.price).to.be.equal(10080808);
@@ -124,17 +121,15 @@ describe('ElementModel', function () {
     });
 });
 
-after(async function () {
-    Promise.all(Element.deleteMany({
+after( async function () {
+     const p = await Promise.all([Element.deleteMany({
             price: 10080808
         }), Product.deleteMany({
             name: "MODEL"
-        }), await Location.deleteMany({
+        }),  Location.deleteMany({
             name: "MODEL"
-        }), await QR.deleteMany({
+        }),  QR.deleteMany({
             code: "MODEL"
-        })
-    ).then(() => {
-        console.log("Clean done");
-    });
+        })]
+    );
 });

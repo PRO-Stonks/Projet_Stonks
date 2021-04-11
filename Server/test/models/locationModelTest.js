@@ -17,8 +17,6 @@ before(async function () {
         '${MONGO_PORT}', process.env.MONGO_PORT).replace(
         '${MONGO_DB}', process.env.MONGO_DB_TEST);
 
-    console.log(database);
-
     // Connect the database
     await mongoose.connect(database, {
         useNewUrlParser: true,
@@ -34,7 +32,7 @@ describe('LocationModel', function () {
         Object.keys(Location.schema.obj).forEach((key) => {
             if (Location.schema.obj[key].hasOwnProperty('required')) {
                 let test = {
-                    name: "test",
+                    name: "testLocationAAA",
                     address: {
                         street: "sirTest",
                         noStreet: 42,
@@ -55,7 +53,7 @@ describe('LocationModel', function () {
         Object.keys(Location.schema.obj.address).forEach((key) => {
             if (Location.schema.obj.address[key].hasOwnProperty('required')) {
                 let test = {
-                    name: "test",
+                    name: "testLocationAAA",
                     address: {
                         street: "sirTest",
                         noStreet: 42,
@@ -75,7 +73,7 @@ describe('LocationModel', function () {
     describe('Creation', function () {
         it('should create the correct Location', async () => {
             await Location.create({
-                name: "test",
+                name: "testLocationAAA",
                 address: {
                     street: "sirTest",
                     noStreet: 42,
@@ -84,8 +82,7 @@ describe('LocationModel', function () {
                     country: "Moon"
                 }
             }).then((data) => {
-                console.log(data);
-                expect(data.name).to.be.equal("test");
+                expect(data.name).to.be.equal("testLocationAAA");
                 expect(data.address.street).to.be.equal("sirTest");
                 expect(data.address.noStreet).to.be.equal(42);
                 expect(data.address.npa).to.be.equal(95);
@@ -94,6 +91,12 @@ describe('LocationModel', function () {
                 expect(data.id).to.be.not.empty;
             });
         });
+    });
+});
+
+after(async function () {
+    await Location.deleteMany({
+        name: "testLocationAAA"
     });
 });
 

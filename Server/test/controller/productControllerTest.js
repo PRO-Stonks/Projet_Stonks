@@ -47,7 +47,6 @@ before(async function () {
         email: "managerProduct@email.tests",
         password: "012345678",
     }).then(() => {
-        console.log("Manager account created");
         return chai.request(app)
             .post(mainRoute + "/users/login")
             .send({
@@ -57,7 +56,6 @@ before(async function () {
             .timeout(timeoutDuration)
             .then((res) => {
                 if (res.status === 200) {
-                    console.log("Log in successfully");
                     idManager = res.body.data.user._id;
                     return res.body.token;
                 } else {
@@ -72,7 +70,6 @@ before(async function () {
         password: "012345678",
         role: "admin"
     }).then(() => {
-        console.log("Admin account created");
         return chai.request(app)
             .post(mainRoute + "/users/login")
             .send({
@@ -82,7 +79,6 @@ before(async function () {
             .timeout(timeoutDuration)
             .then((res) => {
                 if (res.status === 200) {
-                    console.log("Log in successfully");
                     idAdmin = res.body.data.user._id;
                     return res.body.token;
                 } else {
@@ -118,7 +114,7 @@ describe('productController', function () {
                     tag: "junk food"
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+                    
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -138,7 +134,7 @@ describe('productController', function () {
                     tag: "junk food"
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+                    
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 });
@@ -155,7 +151,7 @@ describe('productController', function () {
                     tag: "junk food"
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+                    
                     expect(res.status).to.be.equal(403);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -172,7 +168,7 @@ describe('productController', function () {
                     tag: "junk food"
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+                    
                     expect(res.status).to.be.equal(201);
                     expect(res.body.status).to.be.equal('success');
                     expect(validator.isMongoId(res.body.data._id)).to.be.true;
@@ -189,7 +185,7 @@ describe('productController', function () {
                 .get(mainRoute + "/products/" + idProduct1)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+                    
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -206,7 +202,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+                    
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -220,7 +216,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
+                    
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -235,7 +231,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
+                    
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.data.name).to.be.equal("testProductA");
@@ -253,7 +249,7 @@ describe('productController', function () {
                 .get(mainRoute + "/products/")
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+                    
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -270,7 +266,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+                    
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -285,10 +281,6 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
-                    res.body.data.forEach((product) => {
-                        console.log(product);
-                    });
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.results).to.be.equal(prev.length);
@@ -308,7 +300,7 @@ describe('productController', function () {
                 })
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+                    
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -327,7 +319,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+                    
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -344,7 +336,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
+                    
                     expect(res.status).to.be.equal(403);
                     expect(res.body.status).to.be.equal("fail");
                 });
@@ -361,7 +353,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
+                    
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -379,7 +371,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
+                    
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.data.name).to.be.equal("testProductA");
@@ -397,7 +389,7 @@ describe('productController', function () {
                 .delete(mainRoute + "/products/" + idProduct1)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+                    
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -414,7 +406,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+                    
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -428,7 +420,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
+                    
                     expect(res.status).to.be.equal(403);
                     expect(res.body.status).to.be.equal("fail");
                 });
@@ -442,7 +434,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
+                    
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -465,7 +457,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
+                    
                     expect(res.status).to.be.equal(204);
                 });
 
@@ -484,7 +476,7 @@ describe('productController', function () {
                 .delete(mainRoute + "/products/hardDel/" + idProduct1)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+                    
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -501,7 +493,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
+                    
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -515,7 +507,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
+                    
                     expect(res.status).to.be.equal(403);
                     expect(res.body.status).to.be.equal("fail");
                 });
@@ -529,7 +521,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
+                    
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -552,7 +544,7 @@ describe('productController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
+                    
                     expect(res.status).to.be.equal(204);
                 });
 
@@ -568,33 +560,22 @@ describe('productController', function () {
 afterEach(async function () {
     await Product.deleteMany({
         name: "testProduct"
-    }).then(() => {
-        console.log("Clean Product")
     });
 });
 
 
-// Disconnect the DB at the end
-after(async function () {
-    await User.deleteMany({
-        firstName: "testProduct"
-    }).then(() => {
-        console.log("Clean User");
-    });
 
-    await ConnectionEvent.deleteMany({
+after(async function () {
+    const q = Promise.all([User.deleteMany({
+        firstName: "testProduct"
+    }),
+     ConnectionEvent.deleteMany({
         user: idAdmin
-    }).then(() => {
-        console.log("Clean Event");
-    });
-    await ConnectionEvent.deleteMany({
+    }),
+     ConnectionEvent.deleteMany({
         user: idManager
-    }).then(() => {
-        console.log("Clean Event");
-    });
-    await Product.deleteMany({
+    }),
+     Product.deleteMany({
         name: "testProductA"
-    }).then(() => {
-        console.log("Clean Product")
-    });
+    })]);
 });
