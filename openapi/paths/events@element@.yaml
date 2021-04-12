@@ -1,0 +1,29 @@
+get:
+  tags:
+    - Event
+  summary: Get All ElementEvent
+  description: Only possible as admin
+  operationId: getAllElementEvent
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              results:
+                type: number
+                description: The number of results
+              data:
+                type: array
+                items:
+                  $ref: ../components/schemas/ElementEvent.yaml
+    '404':
+      description: No document found with that id
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml

@@ -1,0 +1,29 @@
+get:
+  tags:
+    - Event
+  summary: Get All OrderEvent
+  description: Only possible as admin
+  operationId: getAllOrderEvent
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              results:
+                type: number
+                description: The number of results
+              data:
+                type: array
+                items:
+                  $ref: ../components/schemas/OrderEvent.yaml
+    '404':
+      description: No document found with that id
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml

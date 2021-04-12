@@ -1,0 +1,103 @@
+get:
+  tags:
+    - QR
+  summary: Get QR by id
+  operationId: getQRById
+  parameters:
+    - name: id
+      in: path
+      description: The id that needs to be fetched
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              data:
+                $ref: ../components/schemas/QR.yaml
+    '404':
+      description: No document found with that id
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml
+put:
+  tags:
+    - QR
+  summary: Update QR
+  description: This can only be done by the admin
+  operationId: updateQR
+  parameters:
+    - name: id
+      in: path
+      description: QR that need to be updated
+      required: true
+      schema:
+        type: string
+  requestBody:
+    description: Updated QR object
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/QR.yaml
+    required: true
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              data:
+                $ref: ../components/schemas/QR.yaml
+    '400':
+      description: Use of active in request or Invalid Input
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml
+    '404':
+      description: No document found with that id
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml
+delete:
+  tags:
+    - QR
+  summary: Delete QR
+  description: This can only be done by the admin.
+  operationId: deleteQR
+  parameters:
+    - name: id
+      in: path
+      description: The QR that needs to be deleted
+      required: true
+      schema:
+        type: string
+  responses:
+    '204':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+    '404':
+      description: No document found with that id
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml

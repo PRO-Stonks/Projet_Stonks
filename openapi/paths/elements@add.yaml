@@ -1,0 +1,35 @@
+post:
+  tags:
+    - Element
+  summary: add Element
+  operationId: AddElement
+  requestBody:
+    description: Creat Element object
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/ElementAdd.yaml
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              data:
+                $ref: ../components/schemas/Element.yaml
+    '400':
+      description: QR code already in use or Invalid Input
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml
+    '404':
+      description: QR code not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml

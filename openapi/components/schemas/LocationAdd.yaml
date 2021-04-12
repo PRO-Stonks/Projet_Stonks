@@ -1,0 +1,17 @@
+type: object
+properties:
+  name:
+    type: string
+  address:
+    type: object
+    properties:
+      street:
+        type: string
+      noStreet:
+        type: number
+      npa:
+        type: number
+      city:
+        type: string
+      country:
+        type: string
