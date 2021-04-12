@@ -567,7 +567,7 @@ describe('elementController', function () {
                 .timeout(timeoutDuration)
                 .then((res) => {
                     ;
-                    expect(res.status).to.be.equal(404);
+                    expect(res.status).to.be.equal(400);
                     expect(res.body.status).to.be.equal("fail");
                 });
         });
@@ -597,7 +597,7 @@ describe('elementController', function () {
                 .timeout(timeoutDuration)
                 .then((res) => {
                     ;
-                    expect(res.status).to.be.equal(204);
+                    expect(res.status).to.be.equal(200);
                 });
             const after = await ElementEvent.find({change: "Move"}).exec();
             expect(after.length).to.be.equal(1);
