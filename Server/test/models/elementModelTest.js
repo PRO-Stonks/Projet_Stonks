@@ -20,8 +20,6 @@ before(async function () {
         '${MONGO_PORT}', process.env.MONGO_PORT).replace(
         '${MONGO_DB}', process.env.MONGO_DB_TEST);
 
-    console.log(database);
-
     // Connect the database
     await mongoose.connect(database, {
         useNewUrlParser: true,
@@ -89,14 +87,16 @@ describe('ElementModel', function () {
                     return data._id;
                 }),
                 entryDate: new Date('2021-04-02'),
-                exitDate: new Date ('2021-09-28'),
+                exitDate: new Date('2021-09-28'),
                 price: 10080808,
                 idProduct: await Product.create(
                     {
                         name: "MODEL",
                         tag: "philosophical ignorance"
                     }
-                ).then((data) => { return data._id; }),
+                ).then((data) => {
+                    return data._id;
+                }),
                 idLocation: await Location.create(
                     {
                         name: "MODEL",
@@ -108,12 +108,13 @@ describe('ElementModel', function () {
                             country: "Moon"
                         }
                     }
-                ).then((data) => {return data._id; })
+                ).then((data) => {
+                    return data._id;
+                })
             };
             await Element.create(test).then((data) => {
-                console.log(data);
                 expect(data.entryDate.toDateString()).to.be.equal(new Date('2021-04-02').toDateString());
-                expect(data.exitDate.toDateString()).to.be.equal(new Date ('2021-09-28').toDateString());
+                expect(data.exitDate.toDateString()).to.be.equal(new Date('2021-09-28').toDateString());
                 expect(data.price).to.be.equal(10080808);
                 expect(data.idProduct).to.be.not.empty;
                 expect(data.idLocation).to.be.not.empty;
@@ -125,16 +126,14 @@ describe('ElementModel', function () {
 });
 
 after(async function () {
-    Promise.all(Element.deleteMany({
+    const p = await Promise.all([Element.deleteMany({
             price: 10080808
         }), Product.deleteMany({
             name: "MODEL"
-        }), await Location.deleteMany({
+        }), Location.deleteMany({
             name: "MODEL"
-        }), await QR.deleteMany({
+        }), QR.deleteMany({
             code: "MODEL"
-        })
-    ).then(() => {
-        console.log("Clean done");
-    });
+        })]
+    );
 });

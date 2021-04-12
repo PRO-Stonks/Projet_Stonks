@@ -18,6 +18,7 @@ const {ConnectionEvent} = require("../../models/eventModel");
 const timeoutDuration = 3000;
 
 let user;
+let admin;
 before(async function () {
     const database = process.env.DATABASE.replace(
         '${MONGO_USERNAME}', process.env.MONGO_USERNAME).replace(
@@ -25,8 +26,6 @@ before(async function () {
         '${MONGO_HOSTNAME}', process.env.MONGO_HOSTNAME).replace(
         '${MONGO_PORT}', process.env.MONGO_PORT).replace(
         '${MONGO_DB}', process.env.MONGO_DB_TEST);
-
-    console.log(database);
 
 // Connect the database
     await mongoose.connect(database, {
@@ -86,6 +85,7 @@ describe('AuthControler', function () {
                     password: "012345678",
                     role: "admin"
                 });
+            admin = res;
             expect(res.status).to.be.equal(201);
             expect(res.body.status).to.be.equal('success');
             expect(res.body.data.user.hasOwnProperty("password")).to.be.false;
@@ -131,8 +131,6 @@ describe('AuthControler', function () {
             expect(res.body.status).to.be.equal('success');
             await ConnectionEvent.deleteMany({
                 user: res.body.data.user._id
-            }).then(() => {
-                console.log("Clean Element");
             });
             expect(res.body.token).to.exist;
             expect(res.body.data.user.hasOwnProperty("password")).to.be.false;
@@ -156,13 +154,11 @@ describe('AuthControler', function () {
 
         });
         after(async function () {
-            try{
+            try {
                 await ConnectionEvent.deleteMany({
                     user: userData.body.data.user._id
-                }).then(() => {
-                    console.log("Clean Event");
                 });
-            }catch (e) {
+            } catch (e) {
                 console.log(e)
             }
 
@@ -176,8 +172,6 @@ describe('AuthControler', function () {
                 });
             await ConnectionEvent.deleteMany({
                 user: res.body.data.user._id
-            }).then(() => {
-                console.log("Clean Element");
             });
             res = await chai
                 .request(app)
@@ -195,8 +189,6 @@ describe('AuthControler', function () {
             });
             await ConnectionEvent.deleteMany({
                 user: res.body.data.user._id
-            }).then(() => {
-                console.log("Clean Element");
             });
             res = await requester
                 .get("/api/v1/events/connections/")
@@ -208,23 +200,14 @@ describe('AuthControler', function () {
             requester.close();
         });
         it("Admin can access admin only route", async () => {
-            let user = await User.create({
-                firstName: "testAuth",
-                lastName: "test",
-                email: "admin1@email.test",
-                password: "012345678",
-                role: "admin"
-            });
             const requester = chai.request(app).keepOpen()
             let res = await requester.post("/api/v1/users/login").send({
-                "email": "admin1@email.test",
+                "email": "admin@email.test",
                 "password": "012345678"
             });
             await ConnectionEvent.deleteMany({
                 user: res.body.data.user._id
-            }).then(() => {
-                console.log("Clean Element");
-            });
+            })
             res = await requester
                 .get("/api/v1/events/connections/")
                 .set('Authorization', 'Bearer ' + res.body.token)
@@ -240,7 +223,5 @@ describe('AuthControler', function () {
 after(async function () {
     await User.deleteMany({
         firstName: "testAuth"
-    }).then(() => {
-        console.log("Clean User in auth");
     });
 });

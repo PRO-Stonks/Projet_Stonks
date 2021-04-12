@@ -18,8 +18,6 @@ before(async function () {
         '${MONGO_PORT}', process.env.MONGO_PORT).replace(
         '${MONGO_DB}', process.env.MONGO_DB_TEST);
 
-    console.log(database);
-
 // Connect the database
     await mongoose.connect(database, {
         useNewUrlParser: true,
@@ -68,11 +66,6 @@ describe('EventModel', function () {
     });
     describe('Order event', function () {
         describe('Missing elements', function () {
-            after(async function () {
-                await OrderEvent.deleteMany({}).then(() => {
-                    console.log("Clean Element");
-                });
-            });
             Object.keys(OrderEvent.schema.obj).forEach((key) => {
                 if (OrderEvent.schema.obj[key].hasOwnProperty('required')) {
                     let test = {
@@ -105,7 +98,7 @@ describe('EventModel', function () {
     });
     describe('element event', function () {
         describe('Missing elements', function () {
-            console.log(Object.keys(ElementEvent.schema.obj));
+
             Object.keys(ElementEvent.schema.obj).forEach((key) => {
                 if (ElementEvent.schema.obj[key].hasOwnProperty('required')) {
                     if (key !== 'change' && key !== 'oldLocation') {
@@ -191,4 +184,17 @@ describe('EventModel', function () {
         });
     });
 });
+
+after(async function () {
+    const p = Promise.all([ConnectionEvent.deleteMany({
+            user: "606afdb5aa09d43a84b6181a"
+        }), OrderEvent.deleteMany({
+            user: "606afdb5aa09d43a84b6181a"
+        }), ElementEvent.deleteMany({
+            user: "606afdb5aa09d43a84b6181a"
+        })]
+    );
+});
+
+
 

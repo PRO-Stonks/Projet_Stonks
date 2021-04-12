@@ -8,7 +8,8 @@ const dotenv = require('dotenv');
 dotenv.config({
     path: './config.env'
 });
-
+let value;
+let value1;
 before(async function () {
     const database = process.env.DATABASE.replace(
         '${MONGO_USERNAME}', process.env.MONGO_USERNAME).replace(
@@ -17,7 +18,6 @@ before(async function () {
         '${MONGO_PORT}', process.env.MONGO_PORT).replace(
         '${MONGO_DB}', process.env.MONGO_DB_TEST);
 
-    console.log(database);
 
     // Connect the database
     await mongoose.connect(database, {
@@ -41,14 +41,14 @@ describe('QRModel', function () {
             });
         });
     });
-    describe('Code', function (){
+    describe('Code', function () {
         it('should throws when same value is used both time', async () => {
-            const value = new mongoose.Types.ObjectId();
+            value1 = new mongoose.Types.ObjectId();
             await QR.create({
-                code: value
+                code: value1
             }).then(async (res) => {
                 await QR.create({
-                    code: value
+                    code: value1
                 }).catch(err => {
                     if (err instanceof mongoose.Error.ValidationError) {
                         expect(err.errors.hasOwnProperty("code")).to.be.true;
@@ -60,15 +60,23 @@ describe('QRModel', function () {
     });
     describe('Creation', function () {
         it('should create the correct Location', async () => {
-            const value = new mongoose.Types.ObjectId();
+            value = new mongoose.Types.ObjectId();
             await QR.create({
                 code: value
             }).then((data) => {
-                console.log(data);
                 expect(data.code).to.be.equal(value.toString());
                 expect(data.id).to.be.not.empty;
             });
         });
+    });
+});
+
+after(async function () {
+    await QR.deleteMany({
+        code: value
+    });
+    await QR.deleteMany({
+        code: value1
     });
 });
 

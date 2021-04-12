@@ -146,7 +146,7 @@ before(async function () {
     }).then((doc) => {
         return doc._id;
     });
-    ;
+
 
     // Create a product
     idProduct = await Product.create({
@@ -223,7 +223,7 @@ describe('elementController', function () {
                     idLocation: idLocation1
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 });
@@ -243,7 +243,7 @@ describe('elementController', function () {
                     idLocation: idLocation1
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(201);
                     expect(res.body.status).to.be.equal('success');
                 });
@@ -268,7 +268,7 @@ describe('elementController', function () {
                     idLocation: idLocation1
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -291,7 +291,7 @@ describe('elementController', function () {
                     idLocation: idLocation1
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(400);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -313,7 +313,7 @@ describe('elementController', function () {
                     idLocation: idLocation1
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    
+
 
                 });
             const after = await ElementEvent.find({}).exec();
@@ -332,7 +332,7 @@ describe('elementController', function () {
                 .get(mainRoute + "/elements/" + idElement1)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -349,7 +349,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -363,7 +363,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -378,7 +378,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.data.price).to.be.equal(4);
@@ -395,7 +395,7 @@ describe('elementController', function () {
                 .get(mainRoute + "/elements/")
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -412,7 +412,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -444,7 +444,7 @@ describe('elementController', function () {
                 .get(mainRoute + "/elements/local/" + idLocation2 + "/")
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -461,7 +461,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -494,7 +494,7 @@ describe('elementController', function () {
                 })
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -514,7 +514,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -531,7 +531,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -549,7 +549,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.data.price).to.be.equal(666);
@@ -566,8 +566,8 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
-                    expect(res.status).to.be.equal(404);
+
+                    expect(res.status).to.be.equal(400);
                     expect(res.body.status).to.be.equal("fail");
                 });
         });
@@ -582,7 +582,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                 });
@@ -596,8 +596,8 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
-                    expect(res.status).to.be.equal(204);
+
+                    expect(res.status).to.be.equal(200);
                 });
             const after = await ElementEvent.find({change: "Move"}).exec();
             expect(after.length).to.be.equal(1);
@@ -616,7 +616,7 @@ describe('elementController', function () {
                 .delete(mainRoute + "/elements/" + idElement1)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -633,7 +633,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -647,7 +647,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -673,7 +673,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(204);
                 });
 
@@ -692,7 +692,7 @@ describe('elementController', function () {
                 .delete(mainRoute + "/elements/hardDel/" + idElement2)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -709,7 +709,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    
+
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -723,7 +723,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(403);
                     expect(res.body.status).to.be.equal("fail");
                 });
@@ -737,7 +737,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -763,7 +763,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(204);
                 });
 
@@ -779,19 +779,17 @@ describe('elementController', function () {
 afterEach(async function () {
     await Element.deleteMany({
         price: 989898
-    }).then(() => {
-        console.log("Clean Element");
     });
 });
 
 
 // Disconnect the DB at the end
 after(async function () {
-    Promise.all(Element.deleteMany({
+    const q = Promise.all([Element.deleteMany({
             idProduct: idProduct
         }), Product.deleteMany({
             name: "ElementTest"
-        }), await Location.deleteMany({
+        }), Location.deleteMany({
             name: "ElementTest"
         }), ElementEvent.deleteMany({
             user: idAdmin
@@ -801,13 +799,14 @@ after(async function () {
             user: idManager
         }), ConnectionEvent.deleteMany({
             user: idAdmin
-        }), await User.deleteMany({
+        }), User.deleteMany({
             firstName: "testElement"
         }), QR.findByIdAndDelete(idQR1),
-        QR.findByIdAndDelete(idQR2),
-        QR.findByIdAndDelete(idQR3),
-        QR.findByIdAndDelete(idQR4),
-    ).then(() => {
-        console.log("Clean done");
-    });
+            QR.findByIdAndDelete(idQR2),
+            QR.findByIdAndDelete(idQR3),
+            QR.findByIdAndDelete(idQR4),
+            User.deleteMany({
+                firstName: "testElement"
+            })]
+    );
 });

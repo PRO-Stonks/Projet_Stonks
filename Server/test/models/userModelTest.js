@@ -18,8 +18,6 @@ before(async function () {
         '${MONGO_PORT}', process.env.MONGO_PORT).replace(
         '${MONGO_DB}', process.env.MONGO_DB_TEST);
 
-    console.log(database);
-
 // Connect the database
     await mongoose.connect(database, {
         useNewUrlParser: true,
@@ -31,16 +29,11 @@ before(async function () {
 });
 
 describe('UserModel', function () {
-    beforeEach(function (done) {
-        mongoose.connection.db.dropDatabase(() => {
-            done();
-        });
-    });
     describe('Missing Element', function () {
         Object.keys(User.schema.obj).forEach((key) => {
             if (User.schema.obj[key].hasOwnProperty('required')) {
                 let test = {
-                    firstName: "test",
+                    firstName: "testUserModel",
                     lastName: "test",
                     email: "email@email.test",
                     password: "012345678",
@@ -55,7 +48,7 @@ describe('UserModel', function () {
     describe('Role', function () {
         it('should throws when value is not in the enum', async () => {
             await expect(User.create({
-                firstName: "test",
+                firstName: "testUserModel",
                 lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
@@ -66,7 +59,7 @@ describe('UserModel', function () {
     describe('Password', function () {
         it('should throws when the length is too small', async () => {
             await expect(User.create({
-                firstName: "test",
+                firstName: "testUserModel",
                 lastName: "test",
                 email: "email@email.test",
                 password: "0123456",
@@ -76,7 +69,7 @@ describe('UserModel', function () {
     describe('Email', function () {
         it('should throws when the string is incorrectly formatted', async () => {
             await expect(User.create({
-                firstName: "test",
+                firstName: "testUserModel",
                 lastName: "test",
                 email: "email@emailtest",
                 password: "012345678",
@@ -86,29 +79,29 @@ describe('UserModel', function () {
     describe('Creation', function () {
         it('should work when everything is valid', async () => {
             await User.create({
-                firstName: "test",
+                firstName: "testUserModel",
                 lastName: "test",
-                email: "email@email.test",
+                email: "emailmodelqqqq@email.test",
                 password: "012345678",
             }).then((data) => {
                 expect(data.active).to.be.true;
                 expect(data.role).to.be.equal("manager");
-                expect(data.firstName).to.be.equal("test");
+                expect(data.firstName).to.be.equal("testUserModel");
                 expect(data.lastName).to.be.equal("test");
-                expect(data.email).to.be.equal("email@email.test");
+                expect(data.email).to.be.equal("emailmodelqqqq@email.test");
                 expect(data.password).to.not.be.equal("012345678");
                 expect(data.id).to.be.not.empty;
             });
         });
         it('should throws when same email is used both time', async () => {
             await User.create({
-                firstName: "test",
+                firstName: "testUserModel",
                 lastName: "test",
                 email: "email@email.test",
                 password: "012345678",
             }).then(async (res) => {
                 await User.create({
-                    firstName: "test",
+                    firstName: "testUserModel",
                     lastName: "test",
                     email: "email@email.test",
                     password: "012345678",
@@ -123,8 +116,12 @@ describe('UserModel', function () {
     });
 });
 
-
+// Must be the only one if executed with all files
 after(async function () {
+    // To be sure
+    await User.deleteMany({
+        firstName: "testUserModel"
+    });
     await mongoose.disconnect().then(() => {
         console.log("All connections closed.")
     });

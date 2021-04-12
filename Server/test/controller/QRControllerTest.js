@@ -25,6 +25,7 @@ let idManager;
 let idQR1;
 let idQR2;
 let idQR3;
+let idRandom;
 before(async function () {
     const database = process.env.DATABASE.replace(
         '${MONGO_USERNAME}', process.env.MONGO_USERNAME).replace(
@@ -48,7 +49,6 @@ before(async function () {
         email: "managerQR@email.tests",
         password: "012345678",
     }).then(() => {
-        console.log("Manager account created");
         return chai.request(app)
             .post(mainRoute + "/users/login")
             .send({
@@ -58,7 +58,6 @@ before(async function () {
             .timeout(timeoutDuration)
             .then((res) => {
                 if (res.status === 200) {
-                    console.log("Log in successfully");
                     idManager = res.body.data.user._id;
                     return res.body.token;
                 } else {
@@ -73,7 +72,6 @@ before(async function () {
         password: "012345678",
         role: "admin"
     }).then(() => {
-        console.log("Admin account created");
         return chai.request(app)
             .post(mainRoute + "/users/login")
             .send({
@@ -83,7 +81,6 @@ before(async function () {
             .timeout(timeoutDuration)
             .then((res) => {
                 if (res.status === 200) {
-                    console.log("Log in successfully");
                     idAdmin = res.body.data.user._id;
                     return res.body.token;
                 } else {
@@ -116,7 +113,6 @@ describe('QRController', function () {
                     code: "test"
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -135,7 +131,6 @@ describe('QRController', function () {
                     code: "test"
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 });
@@ -151,7 +146,6 @@ describe('QRController', function () {
                     code: "test"
                 }).timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(403);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -166,8 +160,7 @@ describe('QRController', function () {
                 .send(
                 ).timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
-                    idQR3= res.body.data._id;
+                    idQR3 = res.body.data._id;
                     expect(res.status).to.be.equal(201);
                     expect(res.body.status).to.be.equal('success');
                     expect(validator.isMongoId(res.body.data._id)).to.be.true;
@@ -184,7 +177,6 @@ describe('QRController', function () {
                 .get(mainRoute + "/QR/" + idQR1)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -201,7 +193,6 @@ describe('QRController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -215,7 +206,6 @@ describe('QRController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -230,8 +220,6 @@ describe('QRController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
-                    console.log(res.body.data.address);
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.data.code).to.be.equal("oe");
@@ -248,7 +236,6 @@ describe('QRController', function () {
                 .get(mainRoute + "/QR/")
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -265,7 +252,6 @@ describe('QRController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -280,10 +266,6 @@ describe('QRController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
-                    res.body.data.forEach((location) => {
-                        console.log(location);
-                    });
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.results).to.be.equal(prev.length);
@@ -303,7 +285,6 @@ describe('QRController', function () {
                 })
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -323,7 +304,6 @@ describe('QRController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -340,7 +320,6 @@ describe('QRController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(403);
                     expect(res.body.status).to.be.equal("fail");
                 });
@@ -357,7 +336,6 @@ describe('QRController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -375,7 +353,6 @@ describe('QRController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.data.code).to.be.equal("updatedQRcode");
@@ -392,7 +369,6 @@ describe('QRController', function () {
                 .delete(mainRoute + "/QR/" + idQR1)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(401);
                     expect(res.body.status).to.be.equal('fail');
                 });
@@ -409,7 +385,6 @@ describe('QRController', function () {
                 .set("Authorization", "Bearer " + token)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(500);
                     expect(res.body.status).to.be.equal('error');
                 })
@@ -423,7 +398,6 @@ describe('QRController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(403);
                     expect(res.body.status).to.be.equal("fail");
                 });
@@ -437,7 +411,6 @@ describe('QRController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -447,7 +420,7 @@ describe('QRController', function () {
         it('should work with correct id', async () => {
             // Create QR
             let id = await QR.create({
-                code : "test"
+                code: "test"
             }).then((doc) => {
                 return doc._id
             });
@@ -459,7 +432,6 @@ describe('QRController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body);
                     expect(res.status).to.be.equal(204);
                 });
 
@@ -475,39 +447,25 @@ describe('QRController', function () {
 afterEach(async function () {
     await QR.deleteMany({
         code: "test"
-    }).then(() => {
-        console.log("Clean QR");
     });
 });
 
 
-// Disconnect the DB at the end
 after(async function () {
-    await User.deleteMany({
-        firstName: "testQR"
-    }).then(() => {
-        console.log("Clean User");
-    });
-
-    await ConnectionEvent.deleteMany({
-        user: idAdmin
-    }).then(() => {
-        console.log("Clean Event");
-    });
-    await ConnectionEvent.deleteMany({
-        user: idManager
-    }).then(() => {
-        console.log("Clean Event");
-    });
-
-    await QR.findByIdAndDelete(idQR1).then(() => {
-        console.log("Clean QR");
-    });
-    await QR.findByIdAndDelete(idQR2).then(() => {
-        console.log("Clean QR");
-    });
-    await QR.findByIdAndDelete(idQR3).then(() => {
-        console.log("Clean QR");
-    });
-
+    const p = Promise.all([
+        User.deleteMany({
+            firstName: "testQR"
+        }),
+        ConnectionEvent.deleteMany({
+            user: idAdmin
+        }), ConnectionEvent.deleteMany({
+            user: idManager
+        }),
+        QR.findByIdAndDelete(idQR1),
+        QR.findByIdAndDelete(idQR2),
+        QR.findByIdAndDelete(idQR3),
+        QR.findByIdAndDelete(idRandom),
+        QR.deleteMany({
+            code: "updatedQRcode"
+        })]);
 });
