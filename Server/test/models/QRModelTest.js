@@ -45,10 +45,10 @@ describe('QRModel', function () {
         it('should throws when same value is used both time', async () => {
             value1 = new mongoose.Types.ObjectId();
             await QR.create({
-                code: value
+                code: value1
             }).then(async (res) => {
                 await QR.create({
-                    code: value
+                    code: value1
                 }).catch(err => {
                     if (err instanceof mongoose.Error.ValidationError) {
                         expect(err.errors.hasOwnProperty("code")).to.be.true;
