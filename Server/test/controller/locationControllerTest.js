@@ -250,7 +250,7 @@ describe('locationController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -624,7 +624,6 @@ afterEach(async function () {
         name: "testLocationTest"
     });
 });
-
 
 
 after(async function () {

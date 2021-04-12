@@ -87,14 +87,16 @@ describe('ElementModel', function () {
                     return data._id;
                 }),
                 entryDate: new Date('2021-04-02'),
-                exitDate: new Date ('2021-09-28'),
+                exitDate: new Date('2021-09-28'),
                 price: 10080808,
                 idProduct: await Product.create(
                     {
                         name: "MODEL",
                         tag: "philosophical ignorance"
                     }
-                ).then((data) => { return data._id; }),
+                ).then((data) => {
+                    return data._id;
+                }),
                 idLocation: await Location.create(
                     {
                         name: "MODEL",
@@ -106,11 +108,13 @@ describe('ElementModel', function () {
                             country: "Moon"
                         }
                     }
-                ).then((data) => {return data._id; })
+                ).then((data) => {
+                    return data._id;
+                })
             };
             await Element.create(test).then((data) => {
                 expect(data.entryDate.toDateString()).to.be.equal(new Date('2021-04-02').toDateString());
-                expect(data.exitDate.toDateString()).to.be.equal(new Date ('2021-09-28').toDateString());
+                expect(data.exitDate.toDateString()).to.be.equal(new Date('2021-09-28').toDateString());
                 expect(data.price).to.be.equal(10080808);
                 expect(data.idProduct).to.be.not.empty;
                 expect(data.idLocation).to.be.not.empty;
@@ -121,14 +125,14 @@ describe('ElementModel', function () {
     });
 });
 
-after( async function () {
-     const p = await Promise.all([Element.deleteMany({
+after(async function () {
+    const p = await Promise.all([Element.deleteMany({
             price: 10080808
         }), Product.deleteMany({
             name: "MODEL"
-        }),  Location.deleteMany({
+        }), Location.deleteMany({
             name: "MODEL"
-        }),  QR.deleteMany({
+        }), QR.deleteMany({
             code: "MODEL"
         })]
     );

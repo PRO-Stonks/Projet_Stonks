@@ -9,6 +9,7 @@ dotenv.config({
     path: './config.env'
 });
 let value;
+let value1;
 before(async function () {
     const database = process.env.DATABASE.replace(
         '${MONGO_USERNAME}', process.env.MONGO_USERNAME).replace(
@@ -40,9 +41,9 @@ describe('QRModel', function () {
             });
         });
     });
-    describe('Code', function (){
+    describe('Code', function () {
         it('should throws when same value is used both time', async () => {
-            const value = new mongoose.Types.ObjectId();
+            value1 = new mongoose.Types.ObjectId();
             await QR.create({
                 code: value
             }).then(async (res) => {
@@ -72,7 +73,10 @@ describe('QRModel', function () {
 
 after(async function () {
     await QR.deleteMany({
-        code:value
+        code: value
+    });
+    await QR.deleteMany({
+        code: value1
     });
 });
 

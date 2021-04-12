@@ -25,6 +25,7 @@ let idManager;
 let idQR1;
 let idQR2;
 let idQR3;
+let idRandom;
 before(async function () {
     const database = process.env.DATABASE.replace(
         '${MONGO_USERNAME}', process.env.MONGO_USERNAME).replace(
@@ -450,8 +451,7 @@ afterEach(async function () {
 });
 
 
-
-after( async function () {
+after(async function () {
     const p = Promise.all([
         User.deleteMany({
             firstName: "testQR"
@@ -463,5 +463,9 @@ after( async function () {
         }),
         QR.findByIdAndDelete(idQR1),
         QR.findByIdAndDelete(idQR2),
-        QR.findByIdAndDelete(idQR3)]);
+        QR.findByIdAndDelete(idQR3),
+        QR.findByIdAndDelete(idRandom),
+        QR.deleteMany({
+            code: "updatedQRcode"
+        })]);
 });

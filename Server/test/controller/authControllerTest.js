@@ -154,11 +154,11 @@ describe('AuthControler', function () {
 
         });
         after(async function () {
-            try{
+            try {
                 await ConnectionEvent.deleteMany({
                     user: userData.body.data.user._id
                 });
-            }catch (e) {
+            } catch (e) {
                 console.log(e)
             }
 

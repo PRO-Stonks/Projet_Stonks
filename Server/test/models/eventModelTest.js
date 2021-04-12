@@ -190,7 +190,7 @@ after(async function () {
             user: "606afdb5aa09d43a84b6181a"
         }), OrderEvent.deleteMany({
             user: "606afdb5aa09d43a84b6181a"
-        }),  ElementEvent.deleteMany({
+        }), ElementEvent.deleteMany({
             user: "606afdb5aa09d43a84b6181a"
         })]
     );

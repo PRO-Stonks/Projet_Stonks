@@ -41,7 +41,7 @@ exports.softDeleteElement = async (req, res, next) => {
                 status: 'success',
                 data: null
             });
-        }).catch(err =>{
+        }).catch(err => {
             return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
         });
     } catch (error) {
@@ -133,13 +133,13 @@ exports.addElement = async (req, res, next) => {
  * @returns {Promise<*>}
  */
 exports.moveElement = async (req, res, next) => {
-    if(!req.params.location){
+    if (!req.params.location) {
         return next(new AppError(400, 'fail', 'IdLocation is missing'), req, res, next);
     }
     const location = await Location.findById(
         req.params.location
     );
-    if(!location){
+    if (!location) {
         return next(new AppError(404, 'fail', 'IdLocation not found'), req, res, next);
     }
     try {
@@ -168,7 +168,7 @@ exports.moveElement = async (req, res, next) => {
                 status: 'success',
                 data: doc
             });
-        }).catch(err =>{
+        }).catch(err => {
             console.log(err);
             return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
         });
@@ -189,7 +189,7 @@ exports.moveElement = async (req, res, next) => {
  * @returns {Promise<*|undefined>}
  */
 exports.updateElement = async (req, res, next) => {
-    if (req.body.hasOwnProperty("idLocation")){
+    if (req.body.hasOwnProperty("idLocation")) {
         return next(new AppError(404, 'fail', 'Do not modify idLocation in an update. Use Move instead'), req, res, next);
     }
     return base.updateOne(Element)(req, res, next);

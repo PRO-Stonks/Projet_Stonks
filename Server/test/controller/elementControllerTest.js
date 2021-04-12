@@ -146,7 +146,7 @@ before(async function () {
     }).then((doc) => {
         return doc._id;
     });
-    ;
+
 
     // Create a product
     idProduct = await Product.create({
@@ -363,7 +363,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -378,7 +378,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.data.price).to.be.equal(4);
@@ -531,7 +531,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -549,7 +549,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.data.price).to.be.equal(666);
@@ -566,7 +566,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(400);
                     expect(res.body.status).to.be.equal("fail");
                 });
@@ -582,7 +582,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                 });
@@ -596,7 +596,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(200);
                 });
             const after = await ElementEvent.find({change: "Move"}).exec();
@@ -647,7 +647,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -673,7 +673,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(204);
                 });
 
@@ -723,7 +723,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(403);
                     expect(res.body.status).to.be.equal("fail");
                 });
@@ -737,7 +737,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
@@ -763,7 +763,7 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    ;
+
                     expect(res.status).to.be.equal(204);
                 });
 
