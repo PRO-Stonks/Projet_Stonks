@@ -12,9 +12,6 @@ const authController = require('../controllers/authController');
 router.use(authController.protect);
 
 // Available by every user
-router
-    .route('/:id')
-    .get(elementController.getElement);
 
 router
     .route('/local/:location/')
@@ -32,6 +29,7 @@ router.post('/add', elementController.addElement);
 
 router
     .route('/:id')
+    .get(elementController.getElement)
     .patch(elementController.updateElement)
     .delete(elementController.softDeleteElement);
 
