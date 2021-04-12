@@ -1,24 +1,60 @@
+<!-- HTML for static distribution bundle build -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>API Reference | ReDoc</title>
-    <!-- needed for adaptive design -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="favicon.png">
-
-    <!--
-    ReDoc uses font options from the parent element
-    So override default browser styles
-    -->
+    <meta charset="UTF-8">
+    <title>Swagger UI</title>
+    <link rel="stylesheet" type="text/css" href="./dist/swagger-ui.css" />
+    <link rel="icon" type="image/png" href="./dist/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="./dist/favicon-16x16.png" sizes="16x16" />
     <style>
-      body {
-        margin: 0;
-        padding: 0;
+      html
+      {
+        box-sizing: border-box;
+        overflow: -moz-scrollbars-vertical;
+        overflow-y: scroll;
+      }
+
+      *,
+      *:before,
+      *:after
+      {
+        box-sizing: inherit;
+      }
+
+      body
+      {
+        margin:0;
+        background: #fafafa;
       }
     </style>
-    {{{redocHead}}}
   </head>
+
   <body>
-    {{{redocHTML}}}
+    <div id="swagger-ui"></div>
+
+    <script src="./dist/swagger-ui-bundle.js" charset="UTF-8"> </script>
+    <script src="./dist/swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
+    <script>
+    window.onload = function() {
+      // Begin Swagger UI call region
+      const ui = SwaggerUIBundle({
+        url: "dist.yaml",
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        plugins: [
+          SwaggerUIBundle.plugins.DownloadUrl
+        ],
+        layout: "StandaloneLayout"
+      });
+      // End Swagger UI call region
+
+      window.ui = ui;
+    };
+  </script>
   </body>
 </html>
