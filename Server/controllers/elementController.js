@@ -164,7 +164,7 @@ exports.moveElement = async (req, res, next) => {
             });
         }).then(dat => {
             doc.idLocation = req.params.location;
-            res.status(204).json({
+            res.status(200).json({
                 status: 'success',
                 data: doc
             });
