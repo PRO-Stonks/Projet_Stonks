@@ -1491,6 +1491,9 @@ components:
         idLocation:
           type: string
           format: mongoId
+        idProduct:
+          type: string
+          format: mongoId
     ConnectionEvent:
       type: object
       properties:
