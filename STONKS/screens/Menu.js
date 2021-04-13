@@ -1,32 +1,59 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, {useState, useEffect}from 'react';
+import Options from "./Options";
 
-export default function Menu({navigation}) {
+
+async function getData(url, token){
+    try{
+        console.log(token)
+        const response = await fetch(url, {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        });
+        return response.json();
+    }catch (e){
+        console.log("Error")
+        console.log(e);
+    }
+}
+
+
+export default function Menu(props) {
+    console.log(props)
+    const [product, setProduct] = useState([]);
+    const [isFetchingProduct, setIsFetchingProduct] = useState(false);
+
+    useEffect(() =>{
+       async function fetchData(){
+           const res = await getData('http://10.192.95.186:4000/api/v1/products', props.token);
+           if(res.status === 'success'){
+               console.log(res)
+               console.log("Hello")
+               setProduct(res.data)
+           }else{
+               throw res;
+           }
+       }
+       fetchData().then(r => console.log(r)).catch(r => console.log(r));
+        console.log("Hello")
+    });
+
     return (
         <View style={styles.buttonsContainer}>
             <View style={styles.headerContainer}>
                 <Text style={styles.titleText}>Options</Text>
             </View>
 
-            <View style={styles.bodyContainer}>
-                <TouchableOpacity
-                    onPress={() => alert('Bouton visualiser')}
-                    style={styles.bVisualize}>
-                    <Text style={styles.bText}>Visualiser</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('Scan')}
-                    style={styles.bAdd}>
-                    <Text style={styles.bText}>Ajouter</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    onPress={() => alert('Bouton supprimer')}
-                    style={styles.bSupress}>
-                    <Text style={styles.bText}>Supprimer</Text>
-                </TouchableOpacity>
-            </View>
+            <Options navigation={props.navigation}/>
 
         </View>
     );

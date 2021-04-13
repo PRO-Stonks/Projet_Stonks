@@ -49,8 +49,10 @@ export default function Login({navigation}) {
                 validationSchema={loginValidation}
                 initialValues={{email: '', password: ''}}
                 onSubmit={async values => {
-                    const res = await getData("http://192.168.0.59:4000/api/v1/users/login", values);
+                    const res = await getData("http://10.192.95.186:4000/api/v1/users/login", values);
                     alert(JSON.stringify(res, null, 2));
+
+                    navigation.navigate('Menu')
                 }}
             >
                 {({
