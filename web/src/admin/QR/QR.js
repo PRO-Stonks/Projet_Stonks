@@ -1,7 +1,9 @@
-import React, {useEffect, useState, useRef} from "react";
-import API_URL from "../URL";
-import Spinner from "../Spinner";
-import QRCode from 'qrcode'
+import React, {useState, useEffect} from "react";
+import ReactToPrint from "react-to-print"
+import QRCodeCreator from "./QRCodeCreator";
+import PrinterWrapper from "./PrinterWrapper";
+import API_URL from "../../URL";
+
 
 async function askForQR(token) {
     try {
@@ -20,40 +22,39 @@ async function askForQR(token) {
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
             //body: JSON.stringify(data) // body data type must match "Content-Type" header
         });
+        console.log(response)
         return response.json();
     } catch (e) {
         console.log(e);
     }
 }
 
-function QRCodeCreator(props) {
-    const [fetching, setFetching] = useState(false);
-
-    const canvasRef = useRef(null)
+function QR(props) {
+    const [data, setFetching] = useState({fetching: false, code: ""});
 
 
     useEffect( () => {
         async function createQR(){
             const QR = await askForQR(props.token);
             console.log(QR.data);
-            const canvas = canvasRef.current
-            await QRCode.toCanvas(canvas, 'Nique SER'+QR.data.code)
+            return QR;
         }
-        if(fetching){
-            createQR();
-            setFetching(false);
+        if(data.fetching){
+             createQR().then(qr => {
+                     setFetching({code: qr, fetching: false})
+                 }
+             );
+
+
         }
-    }, [fetching, props]);
+    }, [data.fetching, props]);
     return (
-        <>
-            <button onClick={() => setFetching(true)}>
+        <div>
+            <button onClick={() => setFetching({data, fetching: true})}>
                 Generate QR
             </button>
-            <canvas ref={canvasRef} {...props}/>
-            <Spinner enabled={fetching}/>
-        </>
-
+            <PrinterWrapper children={QRCodeCreator({setFetching, data})}/>
+        </div>
     );
 }
-
-export default QRCodeCreator;
+export default QR;
