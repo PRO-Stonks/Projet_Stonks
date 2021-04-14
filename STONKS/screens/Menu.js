@@ -4,6 +4,12 @@ import Options from "./Options";
 import API_URL from "../url";
 import {UserContext} from "../UserContext";
 
+/**
+ * Fetch product
+ * @param url : path
+ * @param token : user token
+ * @returns {Promise<any>} : response
+ */
 async function getData(url, token){
     console.log("helloFromGetData")
     console.log(token)
@@ -33,16 +39,26 @@ export default function Menu(props) {
     const userData = useContext(UserContext);
     console.log("Checking token")
     console.log(userData)
+    /**
+     * Product state (product will contain the list of products
+     */
     const [product, setProduct] = useState([]);
+
+    /**
+     * to keep?
+     */
     const [isFetchingProduct, setIsFetchingProduct] = useState(false);
 
-    useEffect(() =>{
+    /**
+     * Get products when we get on this screen
+     */
+    useEffect(() => {
        async function fetchData(){
-           const res = await getData(API_URL+'products', userData.state.token);
-           if(res.status === 'success'){
+           const res = await getData(API_URL + 'products', userData.state.token);
+           if (res.status === 'success'){
                console.log("Hello")
                setProduct(res.data)
-           }else{
+           } else{
                throw res;
            }
        }
@@ -50,13 +66,16 @@ export default function Menu(props) {
         console.log("Hello")
     },[]);
 
+    /**
+     * Menu view
+     */
     return (
         <View style={styles.buttonsContainer}>
             <View style={styles.headerContainer}>
                 <Text style={styles.titleText}>Options</Text>
             </View>
 
-            <Options navigation={props.navigation}/>
+            <Options navigation={props.navigation} data={product}/>
 
         </View>
     );
