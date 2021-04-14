@@ -12,7 +12,6 @@ const productSchema = new mongoose.Schema({
     },
     tag: {
         type: String,
-        required: [true, "Please provide a tag for this product"]
     },
     active: { // Still don't completely understand this part
         type: Boolean,
