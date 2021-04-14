@@ -1,9 +1,12 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import React, {useState, useEffect}from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import Options from "./Options";
-
+import API_URL from "../url";
+import {UserContext} from "../UserContext";
 
 async function getData(url, token){
+    console.log("helloFromGetData")
+    console.log(token)
     try{
         const response = await fetch(url, {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
@@ -27,12 +30,15 @@ async function getData(url, token){
 
 
 export default function Menu(props) {
+    const userData = useContext(UserContext);
+    console.log("Checking token")
+    console.log(userData)
     const [product, setProduct] = useState([]);
     const [isFetchingProduct, setIsFetchingProduct] = useState(false);
 
     useEffect(() =>{
        async function fetchData(){
-           const res = await getData('http://192.168.0.59:4000/api/v1/products', props.token);
+           const res = await getData(API_URL+'products', userData.state.token);
            if(res.status === 'success'){
                console.log("Hello")
                setProduct(res.data)

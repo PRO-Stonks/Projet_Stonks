@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { Button } from "react-native";
+import {useState} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {Button} from "react-native";
 
 import Login from './screens/Login.js';
 import Menu from './screens/Menu.js';
 import Scan from './screens/Scan.js';
-import {useEffect, useState} from "react";
+import {UserContext} from './UserContext'
 
 
 /*
@@ -17,6 +18,15 @@ Créer le stack screen et définit le header pour les screens
  */
 function StackScreen() {
     const [state, setState] = useState({loggedIn: false, user: {}, token: ""});
+
+    const setUserData = (state) => {
+        setState(state);
+    };
+
+    const tokenHandler = {
+        state,
+        setUserData
+    }
 
     const handleChange = (e) => { // help
         console.log("FDKGÉLDSGLÉDSKGRS")
@@ -52,46 +62,50 @@ function StackScreen() {
     //     }
     // }, []);
 
-  return (
-      <Stack.Navigator initialRouteName="Login"
-          screenOptions={{
-              headerStyle: {
-                  backgroundColor : '#ffe385',
-              },
-              headerTintColor: 'black',
-              headerTitleStyle : {
-                  fontWeight: 'bold',
-              },
-          }}
-      >
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Menu"  options={{
-              headerRight: () => (
-                  <Button
-                      onPress={() => alert('Logout button')}
-                      title="Logout"
-                      color="black"
-                  />
-              ),
-          }}
-          >
-              {props => <Menu {...props} extraData={state.token} />} 
-          </Stack.Screen>
-          <Stack.Screen name="Scan" component={Scan} />
-      </Stack.Navigator>
-  );
+    return (
+        <UserContext.Provider value={tokenHandler}>
+            <Stack.Navigator initialRouteName="Login"
+                             screenOptions={{
+                                 headerStyle: {
+                                     backgroundColor: '#ffe385',
+                                 },
+                                 headerTintColor: 'black',
+                                 headerTitleStyle: {
+                                     fontWeight: 'bold',
+                                 },
+                             }}
+            >
+                <Stack.Screen name="Login" component={Login}/>
+
+                <Stack.Screen name="Menu" options={{
+                    headerRight: () => (
+                        <Button
+                            onPress={() => alert('Logout button')}
+                            title="Logout"
+                            color="black"
+                        />
+                    ),
+                }}
+                >
+                    {props => <Menu {...props} extraData={state.token}/>}
+                </Stack.Screen>
+                <Stack.Screen name="Scan" component={Scan}/>
+
+            </Stack.Navigator>
+        </UserContext.Provider>
+    );
 }
 
 const Stack = createStackNavigator();
 
 export default class App extends React.Component {
-  render () {
-    return (
-        <NavigationContainer>
-            <StackScreen/>
-        </NavigationContainer>
-    );
-  }
+    render() {
+        return (
+            <NavigationContainer>
+                <StackScreen/>
+            </NavigationContainer>
+        );
+    }
 }
 
 
