@@ -159,7 +159,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    put:
+    patch:
       tags:
         - User
       summary: Update user
@@ -286,7 +286,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    put:
+    patch:
       tags:
         - Element
       summary: Update Element
@@ -395,7 +395,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
   '/elements/move/{id}/{location}':
-    put:
+    patch:
       tags:
         - Element
       summary: Move Element
@@ -825,7 +825,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    put:
+    patch:
       tags:
         - Location
       summary: Update Location
@@ -1024,7 +1024,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    put:
+    patch:
       tags:
         - Product
       summary: Update Product
@@ -1223,7 +1223,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    put:
+    patch:
       tags:
         - QR
       summary: Update QR
