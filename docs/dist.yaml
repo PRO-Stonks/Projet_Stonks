@@ -1483,8 +1483,16 @@ components:
   responses:
     UnauthorizedError:
       description: Access token is missing or invalid
+      content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     ForbiddenError:
       description: Acces is restricted to this ressource
+      content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http
