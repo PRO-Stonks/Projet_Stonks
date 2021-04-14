@@ -1,8 +1,8 @@
 import LogInForm2 from "./login/LogInForm2";
 import React, {useEffect, useState} from "react";
-
+import './App.css';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
-import Navigation from "./pages/Navigation";
+import Navigation from "./pages/NavWelcome";
 import HomePage from "./pages/HomePage";
 import About from "./pages/About";
 import Footer from "./pages/Footer";
@@ -10,20 +10,17 @@ import logo from "./assets/stonks4.png";
 
 function App() {
     const [state, setState] = useState({loggedIn: false, user: {}, token: ""});
-    const handleChange = e => {
+    const handleLogIn = e => {
         console.log(e)
         setState(e);
-
         localStorage.setItem("token", e.token);
         localStorage.setItem("user", JSON.stringify(e.user));
     }
 
     const handleLogOut = () => {
+        localStorage.clear();
         setState({loggedIn: false, user: {}, token: ""});
-        localStorage.setItem("token", "");
-        localStorage.setItem("user", "");
     }
-
 
     useEffect(() => {
         let token = localStorage.getItem("token");
@@ -46,49 +43,41 @@ function App() {
         }
     }, []);
 
-
+    /* If the user is logged-in, render HomePage,
+        else render WelcomePage with LogInForm
+     */
     return (
         <div className="App">
-            <Router>
-                <Navigation handleLogOut={handleLogOut}/>
-                <Switch>
-                    <Route path="/" exact component={() => state.loggedIn ?
-                        <HomePage user={state.user} token={state.token}/> :
-                        <div>
-                            <div className="welcome">
-                                <div className="container">
-                                    <div className="row align-items-center my-5">
-                                        <div className="col-lg-7">
-                                            <img src={logo} className="App-logo" alt="logo"/>
-                                            <h1 className="font-weight-light">Stonks</h1>
-                                            <p>
-                                                Welcome to Stonks !
-                                            </p>
-                                        </div>
-                                        <div className="col-lg-5">
-                                            <h1 className="font-weight-light">Log-in</h1>
-                                            <LogInForm2 handleChangeProps={handleChange}/>
-                                            <br/>
-                                            <h1 className="font-weight-light">Sign-up</h1>
-                                            #TODO
-                                        </div>
+            {state.loggedIn ?
+                <HomePage user={state.user} token={state.token} handleLogOut={handleLogOut}/>
+                : <Router>
+                    <Navigation/>
+                    <Switch>
+                        <Route path="/" exact component={() =>
+                            <div className="container">
+                                <br/>
+                                <img src={logo} alt="Stonks logo" width="200" height="200"/>
+                                <h1>Welcome to Stonks !</h1>
+                                <br/>
+                                <div className="row align-content-center">
+                                    <div className="col">
+                                        <h2>Log-in</h2>
+                                        <LogInForm2 handleChangeProps={handleLogIn}/>
+                                    </div>
+                                    <div className="col">
+                                        <h2>Sign-up</h2>
+                                        #TODO
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    }/>
-                    <Route path="/about" exact component={() => <About/>}/>
-                </Switch>
-                <Footer/>
-            </Router>
+                        }/>
+                        <Route path="/about" exact component={() => <About/>}/>
+                    </Switch>
+                    <Footer/>
+                </Router>
+            }
         </div>
     );
-
-    /* image de l'apocalypse
-    <img src={logo} className="App-logo" alt="logo"/>
-                <p className="Logo-text-down">Not Stonks</p>
-                <p className="Logo-text-up">Stonks</p>
-     */
 }
 
 export default App;
