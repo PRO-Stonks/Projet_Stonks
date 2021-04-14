@@ -4,6 +4,7 @@ import LogInForm2 from "./login/LogInForm2";
 import MainPage from "./MainPage";
 import React, {useEffect, useState} from "react";
 
+
 function App() {
     const [state, setState] = useState({loggedIn: false, user: {}, token: ""});
     const handleChange = e => {
@@ -16,10 +17,10 @@ function App() {
 
 
     useEffect(() => {
-        let token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
         if (token) {
-            token = token.split('.');
-            const payload = JSON.parse(atob(token[1]));
+            const tokenArray = token.split('.');
+            const payload = JSON.parse(atob(tokenArray[1]));
             const current_time = Date.now().valueOf() / 1000;
             if(payload.exp < current_time){
                 localStorage.removeItem("token");
@@ -35,6 +36,7 @@ function App() {
             }
         }
     }, []);
+
     return (
         <div className="App">
             <header className="App-header">
