@@ -48,7 +48,7 @@ export default function Menu(props) {
        }
        fetchData().then(r => console.log(r)).catch(r => console.log(r));
         console.log("Hello")
-    });
+    },[]);
 
     return (
         <View style={styles.buttonsContainer}>
