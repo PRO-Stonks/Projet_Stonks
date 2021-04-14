@@ -16,30 +16,30 @@ Créer le stack screen et définit le header pour les screens
               headerLeft: null,
               gestureEnabled: false,
  */
+
+
 function StackScreen() {
+    /**
+     * User state to see if a user is logged
+     */
     const [state, setState] = useState({loggedIn: false, user: {}, token: ""});
 
+    /**
+     * Function to set the user state
+     * @param state
+     */
     const setUserData = (state) => {
         setState(state);
     };
 
+    /**
+     * To pass user state and function to set it to another component
+     * @type {{state: {loggedIn: boolean, user: {}, token: string}, setUserData: setUserData}}
+     */
     const tokenHandler = {
         state,
         setUserData
     }
-
-    const handleChange = (e) => { // help
-        console.log("FDKGÉLDSGLÉDSKGRS")
-        setState(e);
-        state.user = JSON.stringify(e.user);
-        state.token = e.token;
-        console.log({state})
-
-        //
-        // localStorage.setItem("token", e.token);
-        // localStorage.setItem("user", JSON.stringify(e.user));
-    }
-
 
     // useEffect(() => {
     //     const token = localStorage.getItem("token");
@@ -62,6 +62,12 @@ function StackScreen() {
     //     }
     // }, []);
 
+    /**
+     * Define app screens in a Stack navigator
+     * to add later:
+     * headerLeft: null,
+     * gestureEnabled: false,
+     */
     return (
         <UserContext.Provider value={tokenHandler}>
             <Stack.Navigator initialRouteName="Login"
@@ -77,7 +83,7 @@ function StackScreen() {
             >
                 <Stack.Screen name="Login" component={Login}/>
 
-                <Stack.Screen name="Menu" options={{
+                <Stack.Screen name="Menu" component={Menu} options={{
                     headerRight: () => (
                         <Button
                             onPress={() => alert('Logout button')}
@@ -87,7 +93,6 @@ function StackScreen() {
                     ),
                 }}
                 >
-                    {props => <Menu {...props} extraData={state.token}/>}
                 </Stack.Screen>
                 <Stack.Screen name="Scan" component={Scan}/>
 
@@ -98,6 +103,9 @@ function StackScreen() {
 
 const Stack = createStackNavigator();
 
+/**
+ * Main
+ */
 export default class App extends React.Component {
     render() {
         return (
