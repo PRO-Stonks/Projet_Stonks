@@ -12,7 +12,7 @@ function About() {
                         <p className="Logo-text-down">Not Stonks</p>
                         <p className="Logo-text-up">Stonks</p>
                     </div>
-                    
+
                     <div className="col-lg-5">
                         <h1 className="font-weight-light">About</h1>
                         <h4>Stonks project</h4>
