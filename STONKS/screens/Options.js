@@ -1,7 +1,11 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
 
-export default function Options({navigation}) {
+//data.map
+export default function Options({navigation, data}) {
+    /**
+     * Options view -> 3 buttons
+     */
     return (
             <View style={styles.bodyContainer}>
                 <TouchableOpacity
