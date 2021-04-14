@@ -2,13 +2,13 @@ import React from "react";
 import { Link, withRouter } from "react-router-dom";
 import logo from "../assets/Webp.net-resizeimage.png"
 
-function Navigation(props) {
+function NavWelcome(props) {
     return (
         <div className="navigation">
             <nav class="navbar navbar-expand navbar-dark bg-dark">
                 <div class="container">
                     <Link class="navbar-brand" to="/">
-                        <img src={logo} className="App-logo" alt="logo"/>   Stonks
+                        <img src={logo} alt="logo"/>   Stonks
                     </Link>
                     <div>
                         <ul class="navbar-nav ml-auto">
@@ -46,4 +46,4 @@ function Navigation(props) {
     );
 }
 
-export default withRouter(Navigation);
+export default withRouter(NavWelcome);
