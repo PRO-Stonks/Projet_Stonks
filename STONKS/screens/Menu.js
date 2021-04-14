@@ -11,8 +11,7 @@ import {UserContext} from "../UserContext";
  * @returns {Promise<any>} : response
  */
 async function getData(url, token){
-    console.log("helloFromGetData")
-    console.log(token)
+    //console.log(token)
     try{
         const response = await fetch(url, {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
@@ -37,8 +36,8 @@ async function getData(url, token){
 
 export default function Menu(props) {
     const userData = useContext(UserContext);
-    console.log("Checking token")
-    console.log(userData)
+    //console.log(userData)
+
     /**
      * Product state (product will contain the list of products
      */
@@ -49,21 +48,22 @@ export default function Menu(props) {
      */
     const [isFetchingProduct, setIsFetchingProduct] = useState(false);
 
+
     /**
      * Get products when we get on this screen
      */
+    async function fetchData() {
+        const res = await getData(API_URL + 'products', userData.state.token);
+        if (res.status === 'success') {
+            return res;
+        } else {
+            throw res;
+        }
+    }
+
+
     useEffect(() => {
-       async function fetchData(){
-           const res = await getData(API_URL + 'products', userData.state.token);
-           if (res.status === 'success'){
-               console.log("Hello")
-               setProduct(res.data)
-           } else{
-               throw res;
-           }
-       }
-       fetchData().then(r => console.log(r)).catch(r => console.log(r));
-        console.log("Hello")
+        fetchData().then(r => setProduct(r)).catch(r => console.log(r))
     },[]);
 
     /**
