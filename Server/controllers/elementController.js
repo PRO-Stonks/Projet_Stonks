@@ -19,8 +19,9 @@ const mongoose = require("mongoose");
  * @returns {Promise<void>}
  */
 exports.softDeleteElement = async (req, res, next) => {
+    let session;
     try {
-        const session = await mongoose.startSession();
+        session = await mongoose.startSession();
         // Transaction to revert all in case of error (I hate BDR)
         await session.withTransaction(async () => {
             const doc = await Element.findByIdAndUpdate(req.params.id, {
@@ -61,6 +62,7 @@ exports.softDeleteElement = async (req, res, next) => {
  * @returns {Promise<*>}
  */
 exports.addElement = async (req, res, next) => {
+    let session;
     try {
         const QR = await QRModel.findOne({
             code: req.body.code,
@@ -90,7 +92,7 @@ exports.addElement = async (req, res, next) => {
         // Setup object as expected by DB
         req.body.idQR = QR._id;
         delete req.body.code;
-        const session = await mongoose.startSession();
+        session = await mongoose.startSession();
 
         const doc = await session.withTransaction(async () => {
             const doc = await Element.create(req.body);
@@ -142,8 +144,9 @@ exports.moveElement = async (req, res, next) => {
     if (!location) {
         return next(new AppError(404, 'fail', 'IdLocation not found'), req, res, next);
     }
+    let session;
     try {
-        const session = await mongoose.startSession();
+        session = await mongoose.startSession();
         let doc = {}
         await session.withTransaction(async () => {
             doc = await Element.findByIdAndUpdate(req.params.id, {
