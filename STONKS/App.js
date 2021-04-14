@@ -17,9 +17,14 @@ Créer le stack screen et définit le header pour les screens
  */
 function StackScreen() {
     const [state, setState] = useState({loggedIn: false, user: {}, token: ""});
-    const handleChange = e => {
-        console.log(e)
+
+    const handleChange = (e) => { // help
+        console.log("FDKGÉLDSGLÉDSKGRS")
         setState(e);
+        state.user = JSON.stringify(e.user);
+        state.token = e.token;
+        console.log({state})
+
         //
         // localStorage.setItem("token", e.token);
         // localStorage.setItem("user", JSON.stringify(e.user));
@@ -46,6 +51,7 @@ function StackScreen() {
     //         }
     //     }
     // }, []);
+
   return (
       <Stack.Navigator initialRouteName="Login"
           screenOptions={{
@@ -59,7 +65,7 @@ function StackScreen() {
           }}
       >
           <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Menu" component={Menu} options={{
+          <Stack.Screen name="Menu"  options={{
               headerRight: () => (
                   <Button
                       onPress={() => alert('Logout button')}
@@ -67,13 +73,14 @@ function StackScreen() {
                       color="black"
                   />
               ),
-          }} initialParams={state.token}
-          />
+          }}
+          >
+              {props => <Menu {...props} extraData={state.token} />} 
+          </Stack.Screen>
           <Stack.Screen name="Scan" component={Scan} />
       </Stack.Navigator>
   );
 }
-
 
 const Stack = createStackNavigator();
 

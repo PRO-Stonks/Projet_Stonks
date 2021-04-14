@@ -5,7 +5,6 @@ import Options from "./Options";
 
 async function getData(url, token){
     try{
-        console.log(token)
         const response = await fetch(url, {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -28,15 +27,13 @@ async function getData(url, token){
 
 
 export default function Menu(props) {
-    console.log(props)
     const [product, setProduct] = useState([]);
     const [isFetchingProduct, setIsFetchingProduct] = useState(false);
 
     useEffect(() =>{
        async function fetchData(){
-           const res = await getData('http://10.192.95.186:4000/api/v1/products', props.token);
+           const res = await getData('http://192.168.0.59:4000/api/v1/products', props.token);
            if(res.status === 'success'){
-               console.log(res)
                console.log("Hello")
                setProduct(res.data)
            }else{

@@ -3,8 +3,30 @@ import * as yup from 'yup'
 import * as React from 'react';
 import {Image, Text, TouchableOpacity, TextInput, View, StyleSheet} from 'react-native';
 
+async function getData(url, data) {
+    try{
+        const response = await fetch(url, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json'
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+        });
+        return response.json();
+    }catch (e) {
+        console.log("Error")
+        console.log(e);
+    }
+}
 
-export default function Login({navigation}) {
+
+const Login = (props) => {
 
     const loginValidation = yup.object().shape({
         email: yup
@@ -17,28 +39,6 @@ export default function Login({navigation}) {
             .required('Password is required'),
     })
 
-    async function getData(url, data){
-        try{
-            const response = await fetch(url, {
-                method: 'POST', // *GET, POST, PUT, DELETE, etc.
-                mode: 'cors', // no-cors, *cors, same-origin
-                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: 'same-origin', // include, *same-origin, omit
-                headers: {
-                    'Content-Type': 'application/json'
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                redirect: 'follow', // manual, *follow, error
-                referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                body: JSON.stringify(data) // body data type must match "Content-Type" header
-            });
-            return response.json();
-        }catch (e){
-            console.log("Error")
-            console.log(e);
-        }
-    }
-
     return (
         <View style={styles.container}>
             <Image
@@ -49,16 +49,21 @@ export default function Login({navigation}) {
                 validationSchema={loginValidation}
                 initialValues={{email: '', password: ''}}
                 onSubmit={async values => {
-                    const res = await getData("http://10.192.95.186:4000/api/v1/users/login", values);
-                    alert(JSON.stringify(res, null, 2));
-
-                    navigation.navigate('Menu')
+                    const res = await getData("http://192.168.0.59:4000/api/v1/users/login", values);
+                    if (res.status === 'fail'){
+                        console.log("FAIL") // to do error message
+                    } else {
+                        console.log("OK")
+                      //  props.handleChangeProps({loggedIn: true, user: res.data.user, token: res.token}) !
+                        props.navigation.navigate('Menu')
+                    }
                 }}
             >
                 {({
                       handleChange,
                       handleBlur,
                       handleSubmit,
+
                       values,
                       errors,
                       touched,
@@ -145,3 +150,4 @@ const styles = StyleSheet.create({
     },
 });
 
+export default Login;
