@@ -5,6 +5,12 @@ import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-
 import API_URL from "../url";
 import {UserContext} from "../UserContext";
 
+/**
+ * POST request of user id
+ * @param url : path
+ * @param data : user id (email + password)
+ * @returns {Promise<any>} : response (user exists or not)
+ */
 async function getData(url, data) {
     try {
         const response = await fetch(url, {
@@ -31,6 +37,9 @@ async function getData(url, data) {
 
 const Login = (props) => {
 
+    /**
+     * Form validation using yup
+     */
     const loginValidation = yup.object().shape({
         email: yup
             .string()
@@ -42,6 +51,9 @@ const Login = (props) => {
             .required('Password is required'),
     })
 
+    /**
+     * Login view using Formik
+     */
     return (
         <UserContext.Consumer>
             {({userData, setUserData}) => (
@@ -60,7 +72,6 @@ const Login = (props) => {
                             } else {
                                 console.log("OK")
                                 setUserData({loggedIn: true, user: res.data.user, token: res.token})
-                                //  props.handleChangeProps({loggedIn: true, user: res.data.user, token: res.token}) !
                                 props.navigation.navigate('Menu')
                             }
                         }}
@@ -69,7 +80,6 @@ const Login = (props) => {
                               handleChange,
                               handleBlur,
                               handleSubmit,
-
                               values,
                               errors,
                               touched,
@@ -109,7 +119,6 @@ const Login = (props) => {
                                 >
                                     <Text style={styles.buttonText}>Login</Text>
                                 </TouchableOpacity>
-
                             </>
                         )}
                     </Formik>
@@ -120,6 +129,9 @@ const Login = (props) => {
 
 }
 
+/**
+ * Styles to make it pretty
+ */
 const styles = StyleSheet.create({
     container: {
         flex: 1,
