@@ -1,6 +1,6 @@
 import {useFormik} from 'formik';
 
-async function addProduct(token, url, data) {
+async function addProduct(url, data) {
     try {
         const response = await fetch(url, {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -8,7 +8,7 @@ async function addProduct(token, url, data) {
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             credentials: 'same-origin', // include, *same-origin, omit
             headers: {
-                'Authorization': 'Bearer ' + token,
+                'Authorization': 'Bearer ' + localStorage.token,
                 'Content-Type': 'application/json'
             },
             redirect: 'follow', // manual, *follow, error
@@ -21,34 +21,107 @@ async function addProduct(token, url, data) {
     }
 }
 
+async function getProduct(url) {
+    try {
+        const response = await fetch(url, {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.token,
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        });
+        return response.json();
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+async function getAllProduct() {
+    const url = "http://localhost:4000/api/v1/products/";
+    try {
+        const response = await fetch(url, {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.token,
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        });
+        return response.json();
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+
 const ProductForm = (props) => {
-    const formik = useFormik({
+    const formikAdd = useFormik({
         initialValues: {
             name: '',
             tag: ''
         },
         onSubmit: async (values) => {
-            const res = await addProduct(props.token, "http://localhost:4000/api/v1/products/add", values);
+            const res = await addProduct("http://localhost:4000/api/v1/products/add", values);
             if (res.status === "fail") {
-                formik.errors.submit = res.message;
+                formikAdd.errors.submit = res.message;
             } else {
                 console.log("Is ok");
+                alert("The product: " + JSON.stringify(res.data.name) + " has correctly been added");
+            }
+        }
+    });
+
+    const formikGet = useFormik({
+        initialValues: {
+            id: ' '
+        },
+        onSubmit: async (values) => {
+            const res = await getProduct("http://localhost:4000/api/v1/products/" + values.id);
+            if (res.status === "fail") {
+                formikGet.errors.submit = res.message;
+            } else {
+                console.log("Is ok");
+                alert("This is your product:\n" + JSON.stringify(res.data));
+            }
+        }
+    });
+
+    const formikGetAll = useFormik({
+        initialValues: {
+            none: ''
+        },
+        onSubmit: async () => {
+            const res = await getAllProduct();
+            if (res.status === "fail") {
+                formikGet.errors.submit = res.message;
+            } else {
+                console.log("Is ok");
+                alert("This is all the products:\n" + JSON.stringify(res.data));
             }
         }
     });
 
     return (
         <div>
-            <form onSubmit={formik.handleSubmit}>
+            <form onSubmit={formikAdd.handleSubmit}>
                 ADD Product<br/>
                 <label htmlFor="name">Name </label>
                 <input
                     id="name"
                     name="name"
                     type="text"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.name}
+                    onChange={formikAdd.handleChange}
+                    onBlur={formikAdd.handleBlur}
+                    value={formikAdd.values.name}
                 />
 
                 <label htmlFor="tag">Tag </label>
@@ -56,14 +129,35 @@ const ProductForm = (props) => {
                     id="tag"
                     name="tag"
                     type="text"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.tag}
+                    onChange={formikAdd.handleChange}
+                    onBlur={formikAdd.handleBlur}
+                    value={formikAdd.values.tag}
                     size="50"
                 />
 
                 <button type="submit">Submit</button>
-                {formik.errors.submit ? <div className="Error">{formik.errors.submit}</div> : <br/>}
+                {formikAdd.errors.submit ? <div className="Error">{formikAdd.errors.submit}</div> : <br/>}
+            </form>
+
+            <form onSubmit={formikGet.handleSubmit}>
+                GET Product<br/>
+                <label htmlFor="id">ID </label>
+                <input
+                    id="id"
+                    name="id"
+                    type="text"
+                    onChange={formikGet.handleChange}
+                    onBlur={formikGet.handleBlur}
+                    value={formikGet.values.id}
+                />
+
+                <button type="submit">Submit</button>
+                {formikGet.errors.submit ? <div className="Error">{formikGet.errors.submit}</div> : <br/>}
+            </form>
+
+            <form onSubmit={formikGetAll.handleSubmit}>
+                GET all Products<br/>
+                <button type="submit">Submit</button>
             </form>
         </div>
     );
