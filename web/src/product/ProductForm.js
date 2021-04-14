@@ -62,6 +62,27 @@ async function getAllProduct() {
     }
 }
 
+async function updateProduct(url, data) {
+    try {
+        const response = await fetch(url, {
+            method: 'PATCH', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.token,
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+        });
+        return response.json();
+    } catch (e) {
+        console.log(e);
+    }
+}
+
 
 const ProductForm = (props) => {
     const formikAdd = useFormik({
@@ -109,6 +130,25 @@ const ProductForm = (props) => {
             }
         }
     });
+
+    const formikUpdate = useFormik({
+        initialValues: {
+            id: '..',
+            name: '',
+            tag: ''
+        },
+        onSubmit: async (values) => {
+            const res = await updateProduct("http://localhost:4000/api/v1/products/" + values.id, {
+                name : values.name, tag: values.tag });
+            if (res.status === "fail") {
+                formikGet.errors.submit = res.message;
+            } else {
+                console.log("Is ok");
+                alert("This is the updated products:\n" + JSON.stringify(res.data));
+            }
+        }
+    });
+
 
     return (
         <div>
@@ -159,6 +199,45 @@ const ProductForm = (props) => {
                 GET all Products<br/>
                 <button type="submit">Submit</button>
             </form>
+
+            <form onSubmit={formikUpdate.handleSubmit}>
+                UPDATE Product<br/>
+
+                <label htmlFor="id">ID </label>
+                <input
+                    id="id"
+                    name="id"
+                    type="text"
+                    onChange={formikUpdate.handleChange}
+                    onBlur={formikUpdate.handleBlur}
+                    value={formikUpdate.values.id}
+                />
+
+                <label htmlFor="name">Name </label>
+                <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    onChange={formikUpdate.handleChange}
+                    onBlur={formikUpdate.handleBlur}
+                    value={formikUpdate.values.name}
+                />
+
+                <label htmlFor="tag">Tag </label>
+                <input
+                    id="tag"
+                    name="tag"
+                    type="text"
+                    onChange={formikUpdate.handleChange}
+                    onBlur={formikUpdate.handleBlur}
+                    value={formikUpdate.values.tag}
+                    size="50"
+                />
+
+                <button type="submit">Submit</button>
+                {formikUpdate.errors.submit ? <div className="Error">{formikUpdate.errors.submit}</div> : <br/>}
+            </form>
+
         </div>
     );
 }
