@@ -32,7 +32,6 @@ async function askForQR(token) {
 function QR(props) {
     const [data, setFetching] = useState({fetching: false, code: ""});
 
-
     useEffect( () => {
         async function createQR(){
             const QR = await askForQR(props.token);
@@ -44,10 +43,9 @@ function QR(props) {
                      setFetching({code: qr, fetching: false})
                  }
              );
-
-
         }
     }, [data.fetching, props]);
+    
     return (
         <div>
             <button onClick={() => setFetching({data, fetching: true})}>
