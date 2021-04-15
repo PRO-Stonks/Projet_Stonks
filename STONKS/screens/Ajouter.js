@@ -5,7 +5,6 @@ import {StyleSheet, Text, View, TextInput, TouchableOpacity} from "react-native"
 export default function Ajouter({navigation}) {
     const [text, setText] = useState('');
 
-
         const placeholder = {
             label: 'Select a sport...',
             value: null,
@@ -28,7 +27,7 @@ export default function Ajouter({navigation}) {
             <Text style={styles.productText}>Product selection</Text>
             <View style={styles.selection}>
                 <RNPickerSelect
-
+                    placeholder={{label: 'Select a product', value: null}}
                     onValueChange={(value) => console.log(value)}
                     items={[
                         {label: "JavaScript", value: "JavaScript"},
@@ -44,7 +43,7 @@ export default function Ajouter({navigation}) {
             <TouchableOpacity
                 onPress={() => navigation.navigate('Scan')} //alert('Bouton visualiser')}
                 style={styles.bAdd}>
-                <Text style={styles.scanText}>Visualiser</Text>
+                <Text style={styles.scanText}>Ajouter</Text>
             </TouchableOpacity>
         </View>
     );
@@ -94,6 +93,4 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-start",
     },
-
-
 });
