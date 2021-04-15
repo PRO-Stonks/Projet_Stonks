@@ -92,7 +92,7 @@ class BaseManagement{
      * @returns {Promise<*>}
      */
     async getAll(token) {
-        return this.get("", token);
+        return this.get(token, "");
     }
 
     /**
