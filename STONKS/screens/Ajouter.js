@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import RNPickerSelect from "react-native-picker-select";
 import {StyleSheet, Text, View, TextInput, TouchableOpacity} from "react-native";
 
-export default function Ajouter() {
+export default function Ajouter({navigation}) {
     const [text, setText] = useState('');
 
 
@@ -26,7 +26,6 @@ export default function Ajouter() {
             </View>
 
             <Text style={styles.productText}>Product selection</Text>
-
             <View style={styles.selection}>
                 <RNPickerSelect
 
