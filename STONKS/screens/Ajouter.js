@@ -4,10 +4,16 @@ import {StyleSheet, Text, View, TextInput, TouchableOpacity} from "react-native"
 
 export default function Ajouter() {
     const [text, setText] = useState('');
+
+
+        const placeholder = {
+            label: 'Select a sport...',
+            value: null,
+            color: '#9EA0A4'};
     return (
         <View style={styles.container}>
             <Text style={styles.priceText}>Product price</Text>
-            <View style = {{padding:20,flexDirection:'row'}}>
+            <View style={{padding: 20, flexDirection: 'row'}}>
                 <TextInput
                     style={{textAlign: 'right'}}
                     placeholder="Price"
@@ -20,22 +26,22 @@ export default function Ajouter() {
             </View>
 
             <Text style={styles.productText}>Product selection</Text>
-            <RNPickerSelect
-                //style={{fontSize: 28}}
-                //style={{textAlign: 'right'}}
-                //placeholder={label: 'Choose a product...', value: null}
-                onValueChange={(value) => console.log(value)}
-                items={[
-                    {label: "JavaScript", value: "JavaScript"},
-                    {label: "TypeStript", value: "TypeStript"},
-                    {label: "Python", value: "Python"},
-                    {label: "Java", value: "Java"},
-                    {label: "C++", value: "C++"},
-                    {label: "C", value: "C"},
-                ]}
-                //placeholder={"Choose a product"}
-            />
-            <Text style={styles.qrText}>QR Scan</Text>
+
+            <View style={styles.selection}>
+                <RNPickerSelect
+
+                    onValueChange={(value) => console.log(value)}
+                    items={[
+                        {label: "JavaScript", value: "JavaScript"},
+                        {label: "TypeStript", value: "TypeStript"},
+                        {label: "Python", value: "Python"},
+                        {label: "Java", value: "Java"},
+                        {label: "C++", value: "C++"},
+                        {label: "C", value: "C"},
+                    ]}
+                />
+            </View>
+            <Text style={styles.qrText}>Scan QR</Text>
             <TouchableOpacity
                 onPress={() => navigation.navigate('Scan')} //alert('Bouton visualiser')}
                 style={styles.bAdd}>
@@ -68,8 +74,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     bAdd: {
-        //justifyContent: 'center',
-        //alignItems: 'center',
         backgroundColor: 'darkseagreen',
         padding: 40,
         borderRadius: 5,
@@ -85,15 +89,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-
-    testText: {
-        flex: 2,
-        fontSize: 15,
-        fontWeight: 'bold',
-        flexDirection: "row",
-
+    selection: {
+        padding: 20,
+        backgroundColor: "#fff",
+        alignItems: "center",
+        justifyContent: "flex-start",
     },
-
 
 
 });
