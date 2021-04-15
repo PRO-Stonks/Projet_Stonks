@@ -38,10 +38,7 @@ exports.softDeleteElement = async (req, res, next) => {
             });
             return doc
         }).then(dat => {
-            res.status(204).json({
-                status: 'success',
-                data: null
-            });
+            res.status(204).send();
         }).catch(err => {
             return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
         });

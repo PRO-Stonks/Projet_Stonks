@@ -20,10 +20,7 @@ exports.deleteOne = Model => async (req, res, next) => {
             return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
         }
 
-        res.status(204).json({
-            status: 'success',
-            data: null
-        });
+        res.status(204).send();
     } catch (error) {
         next(error);
     }
@@ -44,10 +41,7 @@ exports.softDeleteOne = Model => async (req, res, next) => {
             return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
         }
 
-        res.status(204).json({
-            status: 'success',
-            data: null
-        });
+        res.status(204).send();
     } catch (error) {
         next(error);
     }
@@ -186,9 +180,7 @@ exports.deleteAll = Model => async (req, res, next) => {
     try {
         await Model.deleteMany({});
 
-        res.status(204).json({
-            status: 'success',
-        });
+        res.status(204).send();
 
     } catch (error) {
         next(error);
