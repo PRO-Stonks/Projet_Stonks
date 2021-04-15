@@ -1,10 +1,13 @@
 import React, {useState} from "react";
-import logo from "./assets/stonks.png";
+import QR from "./admin/QR/QR";
+import QRCodeCreator from "./admin/QR/QRCodeCreator";
 
 
 function MainPage(props) {
     return (
-        <div>{props.user.email} {props.token.toString()}</div>
+        <div>
+            <QR {...props}/>
+        </div>
     );
 };
 export default MainPage;
