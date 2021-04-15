@@ -3,7 +3,9 @@ import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 import Footer from "./Footer";
 import Navigation from "./NavAdmin";
 import About from "./About";
-import ProductForm from "../product/ProductForm";
+import ProductForm from "../admin/product/ProductForm";
+import QR from "../admin/QR/QR";
+import Product from "../admin/product/Product";
 
 /* This home page is specific to Admins
     #TODO later for manager
@@ -68,16 +70,19 @@ function HomePage(props) {
                             </div>
                         </div>
                     }/>
+
                     {/* About page */}
                     <Route path="/about" exact component={() => <About/>}/>
 
                     {/* Products management page */}
-                    <Route path="/products" exact component={() => <ProductForm/>}/>
+                    <Route path="/products" exact component={() => <Product token={props.token}/>}/>
+
+                    {/* QR management page */}
+                    <Route path="/QR" exact component={() => <QR/>}/>
 
                     {/* #TODO Pages below are not implemented yet */}
                     <Route path="/elements" exact component={() => <About/>}/>
                     <Route path="/locations" exact component={() => <About/>}/>
-                    <Route path="/QR" exact component={() => <About/>}/>
                     <Route path="/logs" exact component={() => <About/>}/>
                 </Switch>
                 <Footer/>
