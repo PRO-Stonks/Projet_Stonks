@@ -35,11 +35,11 @@ export default function Ajouter() {
                 ]}
                 //placeholder={"Choose a product"}
             />
-            <Text style={styles.productText}>QR Scan</Text>
+            <Text style={styles.qrText}>QR Scan</Text>
             <TouchableOpacity
                 onPress={() => navigation.navigate('Scan')} //alert('Bouton visualiser')}
                 style={styles.bAdd}>
-                <Text style={styles.priceText}>Visualiser</Text>
+                <Text style={styles.scanText}>Visualiser</Text>
             </TouchableOpacity>
         </View>
     );
@@ -58,22 +58,33 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     productText: {
-
+        marginTop: 30,
+        fontSize: 30,
+        fontWeight: 'bold',
+    },
+    qrText: {
         marginTop: 30,
         fontSize: 30,
         fontWeight: 'bold',
     },
     bAdd: {
-        flex: 3,
-        justifyContent: 'center',
-        alignItems: 'center',
+        //justifyContent: 'center',
+        //alignItems: 'center',
         backgroundColor: 'darkseagreen',
-        padding: 30,
+        padding: 40,
         borderRadius: 5,
-        width: '60%',
-        height: '25%',
+        width: '50%',
+        height: '15%',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-
+    scanText: {
+        color: '#fff',
+        fontSize: 25,
+        fontWeight: 'bold',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 
     testText: {
         flex: 2,
@@ -83,10 +94,6 @@ const styles = StyleSheet.create({
 
     },
 
-    scanText: {
-        flex: 1,
-        fontSize: 40,
-        fontWeight: 'bold',
-    }
+
 
 });
