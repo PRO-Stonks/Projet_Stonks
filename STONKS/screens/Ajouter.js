@@ -6,9 +6,9 @@ import {StyleSheet, Text, View} from "react-native";
 export default function Ajouter ({route, navigation}) {
     console.log("AJOUTER")
     const {products} = route.params;
-
     //console.log(products.data)
     //const productList = products.data.map(product => product.name);
+    
     /**
      * Generate list of products name to display in dropdown list
      * @returns {*} : array of products name
@@ -22,8 +22,6 @@ export default function Ajouter ({route, navigation}) {
 
     return (
         <View style={styles.container}>
-            <Text>products: {JSON.stringify(products)}</Text>
-            <Text>Hello World!</Text>
             <RNPickerSelect
                 onValueChange={(value) => console.log(value)}
                 items={productList()}
