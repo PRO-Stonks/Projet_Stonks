@@ -1,52 +1,50 @@
 import React, {useState} from "react";
 import RNPickerSelect from "react-native-picker-select";
-import {StyleSheet, Text, View, TextInput, TouchableOpacity} from "react-native";
+import {StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView} from "react-native";
 
 export default function Ajouter({navigation}) {
     const [text, setText] = useState('');
 
-        const placeholder = {
-            label: 'Select a sport...',
-            value: null,
-            color: '#9EA0A4'};
     return (
         <View style={styles.container}>
             <Text style={styles.priceText}>Product price</Text>
             <View style={{padding: 20, flexDirection: 'row'}}>
                 <TextInput
-                    style={{textAlign: 'right'}}
+                    style={{textAlign: 'right', fontSize: 28}}
                     placeholder="Price"
                     onChangeText={text => setText(text)}
                     defaultValue={text}
                     keyboardType={"decimal-pad"}
-                    style={{fontSize: 28}}
                 />
                 <Text style={{fontSize: 28}}> CHF</Text>
             </View>
 
             <Text style={styles.productText}>Product selection</Text>
             <View style={styles.selection}>
-                <RNPickerSelect
-                    placeholder={{label: 'Select a product', value: null}}
-                    onValueChange={(value) => console.log(value)}
-                    items={[
-                        {label: "JavaScript", value: "JavaScript"},
-                        {label: "TypeStript", value: "TypeStript"},
-                        {label: "Python", value: "Python"},
-                        {label: "Java", value: "Java"},
-                        {label: "C++", value: "C++"},
-                        {label: "C", value: "C"},
-                    ]}
-                />
+                    <RNPickerSelect
+                        placeholder={{label: 'Select a product', value: null}}
+
+                        onValueChange={(value) => console.log(value)}
+                        items={[
+                            {label: "Test1", value: "Test2"},
+                            {label: "TypeStript", value: "TypeStript"},
+                            {label: "Python", value: "Python"},
+                            {label: "Java", value: "Java"},
+                            {label: "C++", value: "C++"},
+                            {label: "C", value: "C"},
+                        ]}
+                        style={pickerSelectStyles}
+                    />
             </View>
-            <Text style={styles.qrText}>Scan QR</Text>
+            <Text style={styles.qrText}>QR code</Text>
             <TouchableOpacity
                 onPress={() => navigation.navigate('Scan')} //alert('Bouton visualiser')}
                 style={styles.bAdd}>
-                <Text style={styles.scanText}>Ajouter</Text>
+                <Text style={styles.scanText}>Scan</Text>
             </TouchableOpacity>
         </View>
     );
+
 }
 
 const styles = StyleSheet.create({
@@ -88,9 +86,32 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     selection: {
-        padding: 20,
+        padding: 10,
         backgroundColor: "#fff",
         alignItems: "center",
         justifyContent: "flex-start",
+    },
+});
+
+const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+        fontSize: 25,
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 4,
+        color: 'black',
+        paddingRight: 30, // to ensure the text is never behind the icon
+    },
+    inputAndroid: {
+        fontSize: 25,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderWidth: 0.5,
+        borderColor: 'purple',
+        borderRadius: 8,
+        color: 'black',
+        paddingRight: 30, // to ensure the text is never behind the icon
     },
 });
