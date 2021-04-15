@@ -7,19 +7,23 @@ export default function Ajouter() {
     return (
         <View style={styles.container}>
             <Text style={styles.priceText}>Product price</Text>
-            <TextInput
-                style={{height: 50}}
-                placeholder="Price of the product in CHF"
-                onChangeText={text => setText(text)}
-                defaultValue={text}
-                keyboardType={"decimal-pad"}
-                style={styles.input}
-            />
-            <Text style={styles.testText}>CHF</Text>
+            <View style = {{padding:20,flexDirection:'row'}}>
+                <TextInput
+                    style={{textAlign: 'right'}}
+                    placeholder="Price"
+                    onChangeText={text => setText(text)}
+                    defaultValue={text}
+                    keyboardType={"decimal-pad"}
+                    style={{fontSize: 28}}
+                />
+                <Text style={{fontSize: 28}}> CHF</Text>
+            </View>
 
-            <Text style={styles.productText}>Product</Text>
-
+            <Text style={styles.productText}>Product selection</Text>
             <RNPickerSelect
+                //style={{fontSize: 28}}
+                //style={{textAlign: 'right'}}
+                //placeholder={label: 'Choose a product...', value: null}
                 onValueChange={(value) => console.log(value)}
                 items={[
                     {label: "JavaScript", value: "JavaScript"},
@@ -29,6 +33,7 @@ export default function Ajouter() {
                     {label: "C++", value: "C++"},
                     {label: "C", value: "C"},
                 ]}
+                //placeholder={"Choose a product"}
             />
             <Text style={styles.productText}>QR Scan</Text>
             <TouchableOpacity
@@ -47,6 +52,17 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-start",
     },
+    priceText: {
+        marginTop: 30,
+        fontSize: 30,
+        fontWeight: 'bold',
+    },
+    productText: {
+
+        marginTop: 30,
+        fontSize: 30,
+        fontWeight: 'bold',
+    },
     bAdd: {
         flex: 3,
         justifyContent: 'center',
@@ -57,16 +73,8 @@ const styles = StyleSheet.create({
         width: '60%',
         height: '25%',
     },
-    priceText: {
-        marginTop: 30,
-        fontSize: 30,
-        fontWeight: 'bold',
-    },
-    productText: {
-        flex: 2,
-        fontSize: 30,
-        fontWeight: 'bold',
-    },
+
+
     testText: {
         flex: 2,
         fontSize: 15,
@@ -79,18 +87,6 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 40,
         fontWeight: 'bold',
-    },
-    input: {
-        //width: 250,
-        fontSize: 18,
-        height: 44,
-        padding: 10,
-        //borderWidth: 1,
-        //borderColor: 'black',
-        marginVertical: 10,
-        flexDirection: "row",
-        flexWrap: 'wrap',
-        flex: 1
+    }
 
-    },
 });
