@@ -255,7 +255,7 @@ function ProductForm(props) {
         }
     }
 
-    const actions = ["add", "get", "get all", "update", "softDelete", "delete"];
+    const actions = ["none", "add", "get", "get all", "update", "softDelete", "delete"];
     const steps = ['Action', 'Details'];
     let [activeStep, setActiveStep] = useState(0);
 
@@ -318,8 +318,9 @@ function ProductForm(props) {
                                     SelectProps={{
                                         native: true,
                                     }}
-                                    helperText="Please select an Action"
+                                    helperText={action === "none"? "Please select an Action !" : ""}
                                     variant="outlined"
+                                    error={action === "none"}
                                 >
                                     {actions.map((option, index) => (
                                         <option key={index} value={option}>
@@ -329,9 +330,11 @@ function ProductForm(props) {
                                 </TextField>
                             </FormControl>
                         </Card>
+                        <br/>
 
                         {/* Next button */}
                         <button
+                            hidden={action === "none"}
                             className={"btn-secondary"}
                             onClick={() => {
                                 setActiveStep(activeStep + 1)
