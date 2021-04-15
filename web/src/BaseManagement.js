@@ -1,11 +1,22 @@
 /**
  * Abstract class BaseManagement
+ * This class implements the base queries to add/get/getAll/update/sofDel/del
+ * Stonks items.
  *
  * @class BaseManagement
  */
 class BaseManagement{
+    /**
+     * The base url, where we fetch the queries
+     */
     #baseURL;
 
+    /**
+     * Constructor
+     *
+     * @abstract
+     * @param baseURL the base URL to fetch the queries
+     */
     constructor(baseURL) {
         if (this.constructor === BaseManagement) {
             throw new Error("Abstract classes can't be instantiated.");
@@ -14,6 +25,13 @@ class BaseManagement{
         }
     }
 
+    /**
+     * Add an item
+     *
+     * @param token the token to send with query (user auth)
+     * @param data the data to add
+     * @returns {Promise<any>}
+     */
     async add(token, data) {
         try {
             const response = await fetch(
@@ -38,6 +56,13 @@ class BaseManagement{
         }
     }
 
+    /**
+     * Get an item
+     *
+     * @param token the token to send with query (user auth)
+     * @param id mongo _id of the item
+     * @returns {Promise<any>}
+     */
     async get(token, id) {
         try {
             const response = await fetch(
@@ -60,27 +85,99 @@ class BaseManagement{
         }
     }
 
+    /**
+     * Get all items
+     *
+     * @param token the token to send with query (user auth)
+     * @returns {Promise<*>}
+     */
     async getAll(token) {
         return this.get("", token);
     }
 
+    /**
+     * Update an item
+     *
+     * @param token the token to send with query (user auth)
+     * @param id mongo _id of the item
+     * @param data the data to update
+     * @returns {Promise<any>}
+     */
     async update(token, id, data) {
         try {
             const response = await fetch(
                 this.#baseURL + id,
                 {
-                method: 'PATCH', // *GET, POST, PUT, DELETE, etc.
-                mode: 'cors', // no-cors, *cors, same-origin
-                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: 'same-origin', // include, *same-origin, omit
+                method: 'PATCH',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
                 headers: {
                     'Authorization': 'Bearer ' + token,
                     'Content-Type': 'application/json'
                 },
-                redirect: 'follow', // manual, *follow, error
-                referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                body: JSON.stringify(data) // body data type must match "Content-Type" header
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(data)
             });
+            return response.json();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    /**
+     * Soft delete an item
+     *
+     * @param token the token to send with query (user auth)
+     * @param id mongo _id of the item
+     * @returns {Promise<any>}
+     */
+    async softDelete(token, id) {
+        try {
+            const response = await fetch(
+                this.#baseURL + id,
+                {
+                    method: 'DELETE',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                });
+            return response.json();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    /**
+     * Hard delete an item
+     *
+     * @param token the token to send with query (user auth)
+     * @param id mongo _id of the item
+     * @returns {Promise<any>}
+     */
+    async delete(token, id) {
+        try {
+            const response = await fetch(
+                this.#baseURL + "hardDel/" + id,
+                {
+                    method: 'DELETE',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                });
             return response.json();
         } catch (e) {
             console.log(e);
