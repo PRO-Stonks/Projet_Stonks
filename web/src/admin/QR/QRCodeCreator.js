@@ -1,9 +1,6 @@
-import React, {useEffect, useState, useRef} from "react";
-import API_URL from "../../URL";
+import React, {useRef} from "react";
 import Spinner from "../../Spinner";
 import QRCode from 'qrcode'
-
-
 
 function QRCodeCreator(props) {
     console.log(props);

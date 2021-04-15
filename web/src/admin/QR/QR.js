@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from "react";
-import ReactToPrint from "react-to-print"
 import QRCodeCreator from "./QRCodeCreator";
 import PrinterWrapper from "./PrinterWrapper";
 import API_URL from "../../URL";
