@@ -4,36 +4,7 @@ import * as React from 'react';
 import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import API_URL from "../url";
 import {UserContext} from "../UserContext";
-
-/**
- * POST request of user id
- * @param url : path
- * @param data : user id (email + password)
- * @returns {Promise<any>} : response (user exists or not)
- */
-async function getData(url, data) {
-    try {
-        const response = await fetch(url, {
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: 'same-origin', // include, *same-origin, omit
-            headers: {
-                'Content-Type': 'application/json'
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            redirect: 'follow', // manual, *follow, error
-            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-            body: JSON.stringify(data) // body data type must match "Content-Type" header
-        });
-        return response.json();
-    } catch (e) {
-        console.log("Error")
-        console.log(e);
-        console.log(e.stack);
-    }
-}
-
+import verifyUser from '../request/verifyUser.js';
 
 const Login = (props) => {
 
@@ -66,11 +37,11 @@ const Login = (props) => {
                         validationSchema={loginValidation}
                         initialValues={{email: '', password: ''}}
                         onSubmit={async values => {
-                            const res = await getData(API_URL + "users/login", values);
+                            const res = await verifyUser(API_URL + "users/login", values);
                             if (res.status === 'fail') {
-                                console.log("FAIL") // to do error message
+                                console.log("LOGIN FAIL") // to do error message
                             } else {
-                                console.log("OK")
+                                console.log("LOGIN OK")
                                 setUserData({loggedIn: true, user: res.data.user, token: res.token})
                                 props.navigation.navigate('Menu')
                             }
