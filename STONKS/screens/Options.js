@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
+import styles from '../styles/MenuStyle';
 
 //data.map
 export default function Options({navigation, data}) {
@@ -43,59 +44,4 @@ export default function Options({navigation, data}) {
     );
 }
 
-const styles = StyleSheet.create({
-    buttonsContainer: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-    headerContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-around',
-    },
-    titleText: {
-        fontSize: 40,
-        fontWeight: 'bold',
-    },
-    bodyContainer: {
-        flex: 2,
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 50,
-    },
-    bText: {
-        fontSize: 25,
-        color: '#fff',
-        textAlign: 'center',
-        fontWeight: 'bold',
-    },
-    bVisualize: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'lightskyblue',
-        padding: 30,
-        borderRadius: 5,
-        width: '60%',
-        height: '25%',
-    },
-    bAdd: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'darkseagreen',
-        padding: 30,
-        borderRadius: 5,
-        width: '60%',
-        height: '25%',
-    },
-    bSupress: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'lightsalmon',
-        padding: 30,
-        borderRadius: 5,
-        width: '60%',
-        height: '25%',
-    },
-});
+
