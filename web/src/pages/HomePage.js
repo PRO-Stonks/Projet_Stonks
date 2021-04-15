@@ -5,7 +5,6 @@ import Navigation from "./NavAdmin";
 import About from "./About";
 import ProductForm from "../admin/product/ProductForm";
 import QR from "../admin/QR/QR";
-import Product from "../admin/product/Product";
 
 /* This home page is specific to Admins
     #TODO later for manager
@@ -75,7 +74,7 @@ function HomePage(props) {
                     <Route path="/about" exact component={() => <About/>}/>
 
                     {/* Products management page */}
-                    <Route path="/products" exact component={() => <Product token={props.token}/>}/>
+                    <Route path="/products" exact component={() => <ProductForm token={props.token}/>}/>
 
                     {/* QR management page */}
                     <Route path="/QR" exact component={() => <QR token={props.token}/>}/>
