@@ -3,6 +3,15 @@ import React from 'react';
 
 //data.map
 export default function Options({navigation, data}) {
+    console.log("OPTIONS")
+    console.log(data)
+/*
+    const getProducts = data.map(item => {
+        const container = {};
+
+    })
+*/
+
     /**
      * Options view -> 3 buttons
      */
@@ -15,7 +24,11 @@ export default function Options({navigation, data}) {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('Scan')}
+                    onPress={() => {
+                        navigation.navigate('Ajouter', {
+                            products: data,
+                        });
+                    }}
                     style={styles.bAdd}>
                     <Text style={styles.bText}>Ajouter</Text>
                 </TouchableOpacity>
