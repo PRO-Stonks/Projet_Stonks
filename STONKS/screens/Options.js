@@ -1,17 +1,13 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
 import styles from '../styles/MenuStyle';
 
-//data.map
-export default function Options({navigation, data}) {
-    console.log("OPTIONS")
-    console.log(data)
-/*
-    const getProducts = data.map(item => {
-        const container = {};
+/**
+ * TO DO: Requêtes pour visualiser et supprimer
+ */
 
-    })
-*/
+export default function Options({navigation, data, token}) {
+    console.log("OPTIONS")
 
     /**
      * Options view -> 3 buttons
@@ -28,6 +24,7 @@ export default function Options({navigation, data}) {
                     onPress={() => {
                         navigation.navigate('Ajouter', {
                             products: data,
+                            token: token,
                         });
                     }}
                     style={styles.bAdd}>

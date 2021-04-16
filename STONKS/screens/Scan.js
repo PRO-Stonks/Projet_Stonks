@@ -16,6 +16,7 @@ export default function Scan() {
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
         alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+        return data;
     };
 
     if (hasPermission === null) {

@@ -9,7 +9,6 @@ import styles from '../styles/MenuStyle';
 
 export default function Menu(props) {
     const userData = useContext(UserContext);
-    //console.log(userData)
 
     /**
      * Product state (product will contain the list of products
@@ -46,7 +45,7 @@ export default function Menu(props) {
                 <Text style={styles.titleText}>Options</Text>
             </View>
 
-            <Options navigation={props.navigation} data={product}/>
+            <Options navigation={props.navigation} data={product} token={userData.state.token}/>
 
         </View>
     );

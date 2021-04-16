@@ -2,14 +2,35 @@ import React, {useState} from "react";
 import RNPickerSelect from "react-native-picker-select";
 import {StyleSheet, Text, View, TextInput, TouchableOpacity} from "react-native";
 
+async function addElement(url, token, data) {
+    //console.log(token)
+    try{
+        const response = await fetch(url, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            body: JSON.stringify(data)
+        });
+        return response.json();
+    }catch (e){
+        console.log("Error")
+        console.log(e);
+    }
+}
+
 export default function Ajouter({route, navigation}) {
     console.log("AJOUTER")
-    const {products} = route.params;
+    const {products, token} = route.params;
 
-    //console.log(products.data)
-    //const productList = products.data.map(product => product.name);
-
-    const [productInfo, setProductInfo] = useState({price:'', productId:''});
+    const [productInfo, setProductInfo] = useState({});
 
     /**
      * Generate list of products name to display in dropdown list
@@ -39,13 +60,14 @@ export default function Ajouter({route, navigation}) {
             <View style={styles.selection}>
                 <RNPickerSelect
                     placeholder={{label: 'Select a product', value: null}}
-                    onValueChange={(value) => setProductInfo({...productInfo, productId:value})}
+                    onValueChange={(value) => setProductInfo({...productInfo, idProduct:value})}
                     items={productList()}
+                    style={pickerSelectStyles}
                 />
             </View>
             <Text style={styles.qrText}>Scan QR</Text>
             <TouchableOpacity
-                onPress={() => console.log(productInfo)} //alert('Bouton visualiser')}
+                onPress={() => navigation.navigate('Scan')}
                 style={styles.bAdd}>
                 <Text style={styles.scanText}>Ajouter</Text>
             </TouchableOpacity>
@@ -103,5 +125,29 @@ const styles = StyleSheet.create({
         paddingLeft:15,
         paddingRight:15,
         fontSize:25,
+    },
+});
+
+
+const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+        fontSize: 25,
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 4,
+        color: 'black',
+        paddingRight: 30, // to ensure the text is never behind the icon
+    },
+    inputAndroid: {
+        fontSize: 25,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderWidth: 0.5,
+        borderColor: 'purple',
+        borderRadius: 8,
+        color: 'black',
+        paddingRight: 30, // to ensure the text is never behind the icon
     },
 });
