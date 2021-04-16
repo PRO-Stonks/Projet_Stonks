@@ -14,10 +14,17 @@ const applySetResult = (result) => (prevState) => ({
 });
 
 
-
-
-
-function ListMaster({spinner, url,item, token, ...itemProps}) {
+/**
+ * Paginated List
+ * @param spinner An element to display while a fetch is occurring
+ * @param url the part of the url to fetch (Composed as BASE_URL+ulr/?pages=
+ * @param item the item to display in the list (the item will be given with props.item)
+ * @param token the token to make a request
+ * @param itemProps all remaing props will be given to the item
+ * @returns {JSX.Element}
+ * @constructor
+ */
+function List({spinner, url,item, token, ...itemProps}) {
     const [state, setState] = useState({page: null, data: [], isLoading: false});
     const onInitialSearch = () => {
         fetchStories(1);
@@ -91,4 +98,4 @@ function ListMaster({spinner, url,item, token, ...itemProps}) {
     );
 }
 
-export default ListMaster;
+export default List;
