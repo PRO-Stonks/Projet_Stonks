@@ -5,6 +5,9 @@ import Navigation from "./NavAdmin";
 import About from "./About";
 import Product from "../admin/product/Product";
 import QR from "../admin/QR/QR";
+import List from "../List";
+import ItemTest from "../Itemtest";
+import Spinner from "../Spinner";
 
 /* This home page is specific to Admins
     #TODO later for manager
@@ -80,7 +83,7 @@ function HomePage(props) {
                     <Route path="/QR" exact component={() => <QR token={props.token}/>}/>
 
                     {/* #TODO Pages below are not implemented yet */}
-                    <Route path="/elements" exact component={() => <About/>}/>
+                    <Route path="/elements" exact component={() => <List token={props.token} item={ItemTest} spinner={Spinner} url={"QR"} proptest={"ajjajajaj"}/>}/>
                     <Route path="/locations" exact component={() => <About/>}/>
                     <Route path="/logs" exact component={() => <About/>}/>
                 </Switch>
