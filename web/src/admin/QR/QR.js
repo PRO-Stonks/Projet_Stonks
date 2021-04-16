@@ -34,6 +34,7 @@ function QR(props) {
         async function createQR(){
             const QR = await askForQR(props.token);
             console.log(QR.data);
+            console.log("DATA");
             return QR;
         }
         if(data.fetching){
