@@ -25,8 +25,8 @@ function App() {
     useEffect(() => {
         let token = localStorage.getItem("token");
         if (token) {
-            token = token.split('.');
-            const payload = JSON.parse(atob(token[1]));
+            const tokenArray = token.split('.');
+            const payload = JSON.parse(atob(tokenArray[1]));
             const current_time = Date.now().valueOf() / 1000;
             if (payload.exp < current_time) {
                 localStorage.removeItem("token");

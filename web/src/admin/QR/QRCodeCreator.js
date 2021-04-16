@@ -6,8 +6,10 @@ function QRCodeCreator(props) {
     console.log(props);
     console.log("QRCreator ")
     console.log(props.data)
+    console.log("Aaaaaaa")
     const canvasRef = useRef(null);
     if(props.data && props.data.code !== ""){
+        console.log(props.data)
         QRCode.toCanvas(canvasRef.current, 'Nique SER'+props.data.code)
     }
 
