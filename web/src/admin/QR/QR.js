@@ -1,8 +1,7 @@
-import React, {useState, useEffect} from "react";
-import ReactToPrint from "react-to-print"
+import React, {useEffect, useState} from "react";
 import QRCodeCreator from "./QRCodeCreator";
 import PrinterWrapper from "./PrinterWrapper";
-import API_URL from "../../URL";
+import API_URL from "../../utils/URL";
 
 
 async function askForQR(token) {
@@ -22,7 +21,6 @@ async function askForQR(token) {
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
             //body: JSON.stringify(data) // body data type must match "Content-Type" header
         });
-        console.log(response)
         return response.json();
     } catch (e) {
         console.log(e);
@@ -35,19 +33,16 @@ function QR(props) {
 
     useEffect( () => {
         async function createQR(){
-            const QR = await askForQR(props.token);
-            console.log(QR.data);
-            return QR;
+            return await askForQR(props.token);
         }
         if(data.fetching){
              createQR().then(qr => {
-                     setFetching({code: qr, fetching: false})
+                     setFetching({code: qr.data.code, fetching: false})
                  }
              );
-
-
         }
     }, [data.fetching, props]);
+
     return (
         <div>
             <button onClick={() => setFetching({data, fetching: true})}>
