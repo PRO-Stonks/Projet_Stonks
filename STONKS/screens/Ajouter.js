@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import RNPickerSelect from "react-native-picker-select";
 import {StyleSheet, Text, View, TextInput, TouchableOpacity} from "react-native";
+import getCurrentDate from "../utils/utils";
 
 async function addElement(url, token, data) {
     //console.log(token)
@@ -30,7 +31,7 @@ export default function Ajouter({route, navigation}) {
     console.log("AJOUTER")
     const {products, token} = route.params;
 
-    const [productInfo, setProductInfo] = useState({});
+    const [productInfo, setProductInfo] = useState({entryDate:getCurrentDate});
 
     /**
      * Generate list of products name to display in dropdown list
@@ -42,6 +43,9 @@ export default function Ajouter({route, navigation}) {
             value: product._id,
         }));
     }
+
+
+    console.log(productInfo)
 
     return (
         <View style={styles.container}>
