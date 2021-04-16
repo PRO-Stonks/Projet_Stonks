@@ -5,11 +5,11 @@ import {StyleSheet, Text, View, TextInput, TouchableOpacity} from "react-native"
 export default function Ajouter({route, navigation}) {
     console.log("AJOUTER")
     const {products} = route.params;
-    const [text, setText] = useState('');
+
     //console.log(products.data)
     //const productList = products.data.map(product => product.name);
 
-    const [productInfo, setProductInfo] = useState({price:0, productName:""});
+    const [productInfo, setProductInfo] = useState({price:'', productId:''});
 
     /**
      * Generate list of products name to display in dropdown list
@@ -29,8 +29,7 @@ export default function Ajouter({route, navigation}) {
                 <TextInput
                     style={{textAlign: 'right', fontSize:28}}
                     placeholder="Price"
-                    onChangeText={text => setText(text)}
-                    defaultValue={text}
+                    onChangeText={(price) => setProductInfo({...productInfo, price:price})}
                     keyboardType={"decimal-pad"}
                 />
                 <Text style={{fontSize: 28}}> CHF</Text>
@@ -40,19 +39,17 @@ export default function Ajouter({route, navigation}) {
             <View style={styles.selection}>
                 <RNPickerSelect
                     placeholder={{label: 'Select a product', value: null}}
-                    onValueChange={(value) => console.log(value)}
+                    onValueChange={(value) => setProductInfo({...productInfo, productId:value})}
                     items={productList()}
-                    style={styles.dropDown}
                 />
             </View>
             <Text style={styles.qrText}>Scan QR</Text>
             <TouchableOpacity
-                onPress={() => navigation.navigate('Scan')} //alert('Bouton visualiser')}
+                onPress={() => console.log(productInfo)} //alert('Bouton visualiser')}
                 style={styles.bAdd}>
                 <Text style={styles.scanText}>Ajouter</Text>
             </TouchableOpacity>
         </View>
-
     );
 }
 
