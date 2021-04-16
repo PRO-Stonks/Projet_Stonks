@@ -17,14 +17,14 @@ const applySetResult = (result) => (prevState) => ({
 
 
 
-function ListMaster(props) {
+function ListMaster({spinner, url,item, token, ...itemProps}) {
     const [state, setState] = useState({page: null, data: [], isLoading: false});
     const onInitialSearch = () => {
         fetchStories(1);
     }
 
     const getUrl = (page) =>
-        API_URL + props.url+`/?page=${page}`;
+        API_URL + url+`/?page=${page}`;
 
     useEffect(() => {
         onInitialSearch();
@@ -39,7 +39,7 @@ function ListMaster(props) {
             credentials: 'same-origin', // include, *same-origin, omit
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + props.token
+                'Authorization': 'Bearer ' + token
                 // 'Content-Type': 'application/x-www-form-urlencoded',
             },
             redirect: 'follow', // manual, *follow, error
@@ -67,12 +67,12 @@ function ListMaster(props) {
         fetchStories(state.page + 1);
     }
 
-    const Spinner = props.spinner;
-    const Item = props.item;
+    const Spinner = spinner;
+    const Item = item;
     return (
         <div className="page">
             <div className="list">
-                {state.data.map(item => <Item item={item}/>)}
+                {state.data.map(item => <Item item={item} {...itemProps} />)}
             </div>
             <div className="interactions">
                 {
