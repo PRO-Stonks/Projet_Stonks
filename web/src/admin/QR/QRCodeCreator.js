@@ -10,7 +10,7 @@ function QRCodeCreator(props) {
     const canvasRef = useRef(null);
     if(props.data && props.data.code !== ""){
         console.log(props.data)
-        QRCode.toCanvas(canvasRef.current, 'Nique SER'+props.data.code)
+        QRCode.toCanvas(canvasRef.current, props.data.code)
     }
 
     return (
