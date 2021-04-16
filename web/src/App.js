@@ -9,7 +9,7 @@ import Footer from "./pages/Footer";
 import logo from "./assets/stonks4.png";
 
 function App() {
-    const [state, setState] = useState({loggedIn: false, user: {}, token: ""});
+    const [state, setState] = useState({loggedIn: false, user: {}, token: ""})
     const handleLogIn = e => {
         console.log(e)
         setState(e);
@@ -23,15 +23,15 @@ function App() {
     }
 
     useEffect(() => {
-        let token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
         if (token) {
-            token = token.split('.');
-            const payload = JSON.parse(atob(token[1]));
+            const tokenArray = token.split('.');
+            const payload = JSON.parse(atob(tokenArray[1]));
             const current_time = Date.now().valueOf() / 1000;
-            if (payload.exp < current_time) {
+            if(payload.exp < current_time){
                 localStorage.removeItem("token");
                 localStorage.removeItem("user");
-            } else {
+            }else{
                 setState(
                     {
                         token,

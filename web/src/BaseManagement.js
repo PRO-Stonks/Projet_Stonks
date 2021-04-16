@@ -89,10 +89,11 @@ class BaseManagement{
      * Get all items
      *
      * @param token the token to send with query (user auth)
+     * @param queryString the string query to paginate / limit => ex: ?page=2&limit=20
      * @returns {Promise<*>}
      */
-    async getAll(token) {
-        return this.get(token, "");
+    async getAll(token, queryString) {
+        return this.get(token, queryString);
     }
 
     /**
@@ -149,7 +150,7 @@ class BaseManagement{
                     redirect: 'follow',
                     referrerPolicy: 'no-referrer',
                 });
-            return response.json();
+            return response.status === 204 ? {status: "success"} : response.json();
         } catch (e) {
             console.log(e);
         }
@@ -178,7 +179,7 @@ class BaseManagement{
                     redirect: 'follow',
                     referrerPolicy: 'no-referrer',
                 });
-            return response.json();
+            return response.status === 204 ? {status: "success"} : response.json();
         } catch (e) {
             console.log(e);
         }

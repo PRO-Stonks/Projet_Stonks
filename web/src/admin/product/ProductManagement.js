@@ -38,13 +38,14 @@ class ProductManagement extends BaseManagement {
     }
 
     /**
-     * Get all Products
+     * Get all Product
      *
      * @param token the token to send with query (user auth)
+     * @param queryString the string query to paginate / limit => ex: ?page=2&limit=20
      * @returns {Promise<*>}
      */
-    async getAll(token) {
-        return super.getAll(token);
+    async getAll(token, queryString) {
+        return super.getAll(token, queryString);
     }
 
     /**
@@ -64,7 +65,7 @@ class ProductManagement extends BaseManagement {
      *
      * @param token the token to send with query (user auth)
      * @param id mongo _id of the Product
-     * @returns {Promise<*>}
+     * @returns {Promise<*>} the code status response
      */
     async softDelete(token, id) {
         return super.softDelete(token, id);
@@ -75,7 +76,7 @@ class ProductManagement extends BaseManagement {
      *
      * @param token the token to send with query (user auth)
      * @param id mongo _id of the Product
-     * @returns {Promise<*>}
+     * @returns {Promise<*>} the code status response
      */
     async delete(token, id) {
         return super.delete(token, id);
