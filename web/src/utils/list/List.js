@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import API_URL from "./URL";
+import API_URL from "../URL";
 
 const applyUpdateResult = (result) => (prevState) => ({
     data: [...prevState.data, ...result.data],
@@ -26,16 +26,6 @@ const applySetResult = (result) => (prevState) => ({
  */
 function List({spinner, url,item, token, ...itemProps}) {
     const [state, setState] = useState({page: null, data: [], isLoading: false});
-    const onInitialSearch = () => {
-        fetchStories(1);
-    }
-
-    const getUrl = (page) =>
-        API_URL + url+`/?page=${page}`;
-
-    useEffect(() => {
-        onInitialSearch();
-    }, []);
 
     const fetchStories = (page) => {
         setState({...state, isLoading: true})
@@ -62,6 +52,18 @@ function List({spinner, url,item, token, ...itemProps}) {
                 onSetResult(result, page)
             })
     };
+
+    const getUrl = (page) =>
+        API_URL + url+`/?page=${page}`;
+
+    useEffect(() => {
+        const onInitialSearch = () => {
+            fetchStories(1);
+        }
+        onInitialSearch();
+    }, []);
+
+
 
     const onSetResult = (result, page) => {
         result.page = page

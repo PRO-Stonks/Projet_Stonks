@@ -1,6 +1,6 @@
 import LogInForm2 from "./login/LogInForm2";
 import React, {useEffect, useState} from "react";
-import './App.css';
+import './css/App.css';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import Navigation from "./pages/NavWelcome";
 import HomePage from "./pages/HomePage";

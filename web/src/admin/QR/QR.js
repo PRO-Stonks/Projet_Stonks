@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import QRCodeCreator from "./QRCodeCreator";
 import PrinterWrapper from "./PrinterWrapper";
-import API_URL from "../../URL";
+import API_URL from "../../utils/URL";
 
 
 async function askForQR(token) {

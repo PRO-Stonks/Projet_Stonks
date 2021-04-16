@@ -1,5 +1,5 @@
-import API_URL from "../../URL";
-import BaseManagement from "../../BaseManagement";
+import API_URL from "../../utils/URL";
+import BaseManagement from "../../utils/BaseManagement";
 
 /**
  * Management specific to Products
