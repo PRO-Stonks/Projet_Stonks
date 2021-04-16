@@ -16,7 +16,7 @@ export default function Scan(props) {
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
         alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-        props.setScanId({code:data})
+        props.setScanId({code:data}) // Fonctionne pas au premier scan??
         console.log(props.scanId)
     };
 

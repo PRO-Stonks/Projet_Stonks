@@ -3,8 +3,6 @@ import RNPickerSelect from "react-native-picker-select";
 import {StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback} from "react-native";
 import getCurrentDate from "../utils/getDate.js";
 import Scan from './Scan.js';
-import * as yup from "yup";
-import getProducts from "../request/getProducts";
 import API_URL from "../url";
 
 async function addElement(url, token, data) {
@@ -60,11 +58,14 @@ export default function Ajouter({route, navigation}) {
         }));
     }
 
+    /**
+     * Validate data enter by user
+     */
     const dataValidate = () => {
         if (productInfo.idProduct != null && productInfo.price != null) {
             setScan(true);
         } else {
-            console.log("Enter valide value");
+            alert("Please provide all informations before scanning");
         }
     }
 
