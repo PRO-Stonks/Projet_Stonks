@@ -26,6 +26,7 @@ export default function Scan() {
         return <Text>No access to camera</Text>;
     }
 
+
     return (
         <View style={styles.container}>
             <BarCodeScanner
@@ -42,5 +43,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center',
+        height: '100%',
+        width: '100%',
     },
 });

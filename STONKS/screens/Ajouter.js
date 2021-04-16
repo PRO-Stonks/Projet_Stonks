@@ -1,11 +1,12 @@
 import React, {useState} from "react";
 import RNPickerSelect from "react-native-picker-select";
-import {StyleSheet, Text, View, TextInput, TouchableOpacity} from "react-native";
-import getCurrentDate from "../utils/utils";
+import {StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback} from "react-native";
+import getCurrentDate from "../utils/getDate.js";
+import Scan from './Scan.js';
 
 async function addElement(url, token, data) {
     //console.log(token)
-    try{
+    try {
         const response = await fetch(url, {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -21,7 +22,7 @@ async function addElement(url, token, data) {
             body: JSON.stringify(data)
         });
         return response.json();
-    }catch (e){
+    } catch (e) {
         console.log("Error")
         console.log(e);
     }
@@ -31,7 +32,9 @@ export default function Ajouter({route, navigation}) {
     console.log("AJOUTER")
     const {products, token} = route.params;
 
-    const [productInfo, setProductInfo] = useState({entryDate:getCurrentDate});
+    const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate});
+
+    const [isScan, setScan] = useState(false);
 
     /**
      * Generate list of products name to display in dropdown list
@@ -44,38 +47,40 @@ export default function Ajouter({route, navigation}) {
         }));
     }
 
-
     console.log(productInfo)
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.priceText}>Product price</Text>
-            <View style={{padding: 20, flexDirection: 'row'}}>
-                <TextInput
-                    style={{textAlign: 'right', fontSize:28}}
-                    placeholder="Price"
-                    onChangeText={(price) => setProductInfo({...productInfo, price:price})}
-                    keyboardType={"decimal-pad"}
-                />
-                <Text style={{fontSize: 28}}> CHF</Text>
-            </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+                <Text style={styles.priceText}>Product price</Text>
+                <View style={{padding: 20, flexDirection: 'row'}}>
+                    <TextInput
+                        style={{textAlign: 'right', fontSize: 28}}
+                        placeholder="Price"
+                        onChangeText={(price) => setProductInfo({...productInfo, price: price})}
+                        keyboardType={"decimal-pad"}
+                    />
+                    <Text style={{fontSize: 28}}> CHF</Text>
+                </View>
 
-            <Text style={styles.productText}>Product selection</Text>
-            <View style={styles.selection}>
-                <RNPickerSelect
-                    placeholder={{label: 'Select a product', value: null}}
-                    onValueChange={(value) => setProductInfo({...productInfo, idProduct:value})}
-                    items={productList()}
-                    style={pickerSelectStyles}
-                />
+                <Text style={styles.productText}>Product selection</Text>
+                <View style={styles.selection}>
+                    <RNPickerSelect
+                        placeholder={{label: 'Select a product', value: null}}
+                        onValueChange={(value) => setProductInfo({...productInfo, idProduct: value})}
+                        items={productList()}
+                        style={pickerSelectStyles}
+                    />
+                </View>
+                <Text style={styles.qrText}>Scan QR</Text>
+                {isScan ? <Scan/> : <TouchableOpacity
+                    onPress={() => setScan(true)}
+                    style={styles.bAdd}>
+                    <Text style={styles.scanText}>Ajouter</Text>
+                </TouchableOpacity>
+                }
             </View>
-            <Text style={styles.qrText}>Scan QR</Text>
-            <TouchableOpacity
-                onPress={() => navigation.navigate('Scan')}
-                style={styles.bAdd}>
-                <Text style={styles.scanText}>Ajouter</Text>
-            </TouchableOpacity>
-        </View>
+        </TouchableWithoutFeedback>
     );
 }
 
@@ -123,12 +128,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-start",
     },
-    dropDown:{
-        backgroundColor:'#0e131e',
-        padding:20,
-        paddingLeft:15,
-        paddingRight:15,
-        fontSize:25,
+    dropDown: {
+        backgroundColor: '#0e131e',
+        padding: 20,
+        paddingLeft: 15,
+        paddingRight: 15,
+        fontSize: 25,
     },
 });
 
