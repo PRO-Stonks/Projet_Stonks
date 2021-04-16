@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import QRCodeCreator from "./QRCodeCreator";
 import PrinterWrapper from "./PrinterWrapper";
 import API_URL from "../../utils/URL";
@@ -30,12 +30,10 @@ async function askForQR(token) {
 function QR(props) {
     const [data, setFetching] = useState({fetching: false, code: ""});
 
+
     useEffect( () => {
         async function createQR(){
-            const QR = await askForQR(props.token);
-            console.log(QR.data);
-            console.log("DATA");
-            return QR;
+            return await askForQR(props.token);
         }
         if(data.fetching){
              createQR().then(qr => {
@@ -44,7 +42,7 @@ function QR(props) {
              );
         }
     }, [data.fetching, props]);
-    
+
     return (
         <div>
             <button onClick={() => setFetching({data, fetching: true})}>

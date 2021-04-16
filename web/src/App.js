@@ -8,6 +8,7 @@ import About from "./pages/About";
 import Footer from "./pages/Footer";
 import logo from "./assets/stonks4.png";
 
+
 function App() {
     const [state, setState] = useState({loggedIn: false, user: {}, token: ""})
     const handleLogIn = e => {
