@@ -1,8 +1,11 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import RNPickerSelect from "react-native-picker-select";
 import {StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback} from "react-native";
 import getCurrentDate from "../utils/getDate.js";
 import Scan from './Scan.js';
+import * as yup from "yup";
+import getProducts from "../request/getProducts";
+import API_URL from "../url";
 
 async function addElement(url, token, data) {
     //console.log(token)
@@ -32,9 +35,19 @@ export default function Ajouter({route, navigation}) {
     console.log("AJOUTER")
     const {products, token} = route.params;
 
-    const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate});
+    const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate, idLocation:"", exitDate:"",});
 
     const [isScan, setScan] = useState(false);
+
+    const [scanId, setScanId] = useState({});
+
+    useEffect(() => {
+        console.log("SCAN CHANGED")
+        setProductInfo({...productInfo, code: scanId.code})
+        console.log(productInfo)
+        fetchData().then(r => console.log(r)).catch(r => console.log(r))
+    }, [scanId])
+
 
     /**
      * Generate list of products name to display in dropdown list
@@ -47,9 +60,27 @@ export default function Ajouter({route, navigation}) {
         }));
     }
 
-    console.log(productInfo)
+    const dataValidate = () => {
+        if (productInfo.idProduct != null && productInfo.price != null) {
+            setScan(true);
+        } else {
+            console.log("Enter valide value");
+        }
+    }
+
+    async function fetchData() {
+        const res = await addElement(API_URL + 'elements/add', token, productInfo);
+        if (res.status === 'success') {
+            console.log("YOUHOUHOU");
+            return res;
+        } else {
+            console.log("BAAAAAAAAAAAAAA");
+            throw res;
+        }
+    }
 
     return (
+        isScan ? <Scan scanId={scanId} setScanId={setScanId}/> :
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
                 <Text style={styles.priceText}>Product price</Text>
@@ -73,12 +104,11 @@ export default function Ajouter({route, navigation}) {
                     />
                 </View>
                 <Text style={styles.qrText}>Scan QR</Text>
-                {isScan ? <Scan/> : <TouchableOpacity
-                    onPress={() => setScan(true)}
+               <TouchableOpacity
+                    onPress={() => dataValidate()}
                     style={styles.bAdd}>
                     <Text style={styles.scanText}>Ajouter</Text>
                 </TouchableOpacity>
-                }
             </View>
         </TouchableWithoutFeedback>
     );
