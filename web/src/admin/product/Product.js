@@ -13,7 +13,6 @@ import ProductFormGetAll from "./ProductdetailsForm/ProductFormGetAll";
 import ProductFormUpdate from "./ProductdetailsForm/ProductFormUpdate";
 import ProductFormDelete from "./ProductdetailsForm/ProductFormDelete";
 
-
 function Product(props) {
 
     const management = new ProductManagement();
