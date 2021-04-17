@@ -109,7 +109,7 @@ paths:
     get:
       tags:
         - User
-      summary: Get all user
+      summary: Get all users
       operationId: getAllUser
       responses:
         '200':
@@ -240,6 +240,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /elements:
     get:
       tags:
@@ -269,12 +270,12 @@ paths:
     get:
       tags:
         - Element
-      summary: Get Element by id
+      summary: Get element by id
       operationId: getElementById
       parameters:
         - name: id
           in: path
-          description: The id that needs to be fetched
+          description: element id
           required: true
           schema:
             type: string
@@ -301,17 +302,17 @@ paths:
     patch:
       tags:
         - Element
-      summary: Update Element
+      summary: Update element
       operationId: updateElement
       parameters:
         - name: id
           in: path
-          description: Element that need to be updated
+          description: element id
           required: true
           schema:
             type: string
       requestBody:
-        description: Updated Element object
+        description: Updated element object
         content:
           application/json:
             schema:
@@ -346,13 +347,13 @@ paths:
     delete:
       tags:
         - Element
-      summary: (Soft)Delete Element
-      description: Disable an Element
+      summary: (Soft)Delete element
+      description: Disable an element
       operationId: deleteElement
       parameters:
         - name: id
           in: path
-          description: The Element that needs to be deleted
+          description: element id
           required: true
           schema:
             type: string
@@ -371,12 +372,12 @@ paths:
     get:
       tags:
         - Element
-      summary: Get Element by location
+      summary: Get element by location
       operationId: getElementByLocation
       parameters:
         - name: location
           in: path
-          description: The id that needs to be fetched
+          description: Location id
           required: true
           schema:
             type: string
@@ -409,18 +410,18 @@ paths:
     patch:
       tags:
         - Element
-      summary: Move Element
+      summary: Move element
       operationId: moveElement
       parameters:
         - name: id
           in: path
-          description: Element that need to be updated
+          description: element id
           required: true
           schema:
             type: string
         - name: location
           in: path
-          description: Location to move to
+          description: location id to move to
           required: true
           schema:
             type: string
@@ -454,14 +455,15 @@ paths:
     post:
       tags:
         - Element
-      summary: add Element
+      summary: Add element
       operationId: AddElement
       requestBody:
-        description: Creat Element object
+        description: Created element object
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ElementAdd'
+        required: true
       responses:
         '201':
           description: successful operation
@@ -492,13 +494,13 @@ paths:
     delete:
       tags:
         - Element
-      summary: Delete Element
+      summary: Delete element
       description: Only possible as admin
       operationId: HardDeleteElement
       parameters:
         - name: id
           in: path
-          description: The Element that needs to be deleted
+          description: element id
           required: true
           schema:
             type: string
@@ -1531,6 +1533,9 @@ components:
           format: date
         price:
           type: number
+        idProduct:
+          type: string
+          format: mongoId
         idLocation:
           type: string
           format: mongoId
@@ -1565,12 +1570,13 @@ components:
           format: date
         price:
           type: number
-        idLocation:
-          type: string
-          format: mongoId
         idProduct:
           type: string
           format: mongoId
+        idLocation:
+          type: string
+          format: mongoId
+
     ConnectionEvent:
       type: object
       properties:
