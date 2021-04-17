@@ -22,7 +22,7 @@ paths:
   /users/login:
     post:
       security:
-        - {}
+        - { }
       tags:
         - User
       summary: Logs user into the system
@@ -72,7 +72,7 @@ paths:
   /users/signup:
     post:
       security:
-        - {}
+        - { }
       tags:
         - User
       summary: Add user into the system
@@ -129,7 +129,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/UserLoginResponse'
         '401':
-          $ref: '#/components/responses/UnauthorizedError'              
+          $ref: '#/components/responses/UnauthorizedError'
   '/users/{id}':
     get:
       tags:
@@ -1049,16 +1049,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /products:
+    get:
+      tags:
+        - Product
+      summary: Get all Product
+      operationId: getAllProduct
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: No document found with that id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   '/products/{id}':
     get:
       tags:
         - Product
-      summary: Get Product by id
+      summary: Get product by id
       operationId: getProductById
       parameters:
         - name: id
           in: path
-          description: The id that needs to be fetched
+          description: product id
           required: true
           schema:
             type: string
@@ -1085,18 +1117,18 @@ paths:
     patch:
       tags:
         - Product
-      summary: Update Product
+      summary: Update product
       description: This can only be done by the admin
       operationId: updateProduct
       parameters:
         - name: id
           in: path
-          description: Product that need to be updated
+          description: product id
           required: true
           schema:
             type: string
       requestBody:
-        description: Updated Product object
+        description: Updated product object
         content:
           application/json:
             schema:
@@ -1131,13 +1163,13 @@ paths:
     delete:
       tags:
         - Product
-      summary: (Soft)Delete Product
+      summary: (Soft)Delete product
       description: This can only be done by the admin. Disable a Product
       operationId: deleteProduct
       parameters:
         - name: id
           in: path
-          description: The Product that needs to be deleted
+          description: product id
           required: true
           schema:
             type: string
@@ -1154,49 +1186,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /products:
-    get:
-      tags:
-        - Product
-      summary: Get All Product
-      operationId: getAllProduct
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  results:
-                    type: number
-                    description: The number of results
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Product'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          description: No document found with that id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
   /products/add:
     post:
       tags:
         - Product
-      summary: add Product
+      summary: Add product
+      description: Only possible as admin
       operationId: AddProduct
       requestBody:
-        description: Creat Product object Need Admin
+        description: Created Product object
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ProductAdd'
+        required: true
       responses:
         '201':
           description: successful operation
@@ -1229,13 +1232,13 @@ paths:
     delete:
       tags:
         - Product
-      summary: Delete Product
+      summary: Delete product
       description: Only possible as admin
       operationId: HardDeleteProduct
       parameters:
         - name: id
           in: path
-          description: The Product that needs to be deleted
+          description: product id
           required: true
           schema:
             type: string
@@ -1252,6 +1255,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /QR:
+    get:
+      tags:
+        - QR
+      summary: Get all QR
+      operationId: getAllQR
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/QR'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: No document found with that id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   '/QR/{id}':
     get:
       tags:
@@ -1261,7 +1296,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: The id that needs to be fetched
+          description: QR id
           required: true
           schema:
             type: string
@@ -1294,7 +1329,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: QR that need to be updated
+          description: QR id
           required: true
           schema:
             type: string
@@ -1342,7 +1377,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: The QR that needs to be deleted
+          description: QR id
           required: true
           schema:
             type: string
@@ -1359,49 +1394,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /QR:
-    get:
-      tags:
-        - QR
-      summary: Get All QR
-      operationId: getAllQR
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  results:
-                    type: number
-                    description: The number of results
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/QR'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          description: No document found with that id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+
   /QR/add:
     post:
       tags:
         - QR
-      summary: add QR
+      summary: Add QR
       operationId: AddQR
       requestBody:
-        description: Creat QR object
+        description: Created QR object
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/QRAdd'
+        required: true
       responses:
         '201':
           description: successful operation
@@ -1433,21 +1439,21 @@ components:
     UnauthorizedError:
       description: Access token is missing or invalid
       content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     ForbiddenError:
       description: Acces is restricted to this ressource
       content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      
+
   schemas:
     UserLoginResponse:
       type: object
@@ -1708,7 +1714,7 @@ components:
           type: string
           format: uuid
 security:
-  - bearerAuth: []
+  - bearerAuth: [ ]
 servers:
   - url: 'http://127.0.0.1:4000/api/v1'
     description: Dev server (uses test data)
