@@ -18,6 +18,7 @@ export default function Scan(props) {
         alert(`Bar code with type ${type} and data ${data} has been scanned!`);
         props.setScanId({code:data}) // Fonctionne pas au premier scan??
         console.log(props.scanId)
+        console.log("BEING SCANNED")
     };
 
     if (hasPermission === null) {

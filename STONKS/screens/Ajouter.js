@@ -33,7 +33,7 @@ export default function Ajouter({route, navigation}) {
     console.log("AJOUTER")
     const {products, token} = route.params;
 
-    const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate, idLocation:"", exitDate:"",});
+    const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate, exitDate:"2021-04-26",});
 
     const [isScan, setScan] = useState(false);
 
@@ -41,7 +41,7 @@ export default function Ajouter({route, navigation}) {
 
     useEffect(() => {
         console.log("SCAN CHANGED")
-        setProductInfo({...productInfo, code: scanId.code})
+        setProductInfo({...productInfo, code: scanId.code, idLocation: scanId.code})
         console.log(productInfo)
         fetchData().then(r => console.log(r)).catch(r => console.log(r))
     }, [scanId])
