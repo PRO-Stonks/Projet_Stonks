@@ -3,7 +3,7 @@ post:
     - { }
   tags:
     - User
-  summary: Logs user into the system
+  summary: Logs user into the system WTF i'm here
   operationId: loginUser
   requestBody:
     description: Login body
@@ -16,7 +16,6 @@ post:
               type: string
             password:
               type: string
-    required: true
   responses:
     '200':
       description: successful operation
