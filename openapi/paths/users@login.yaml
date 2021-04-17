@@ -1,9 +1,9 @@
 post:
   security:
-    - { }
+    - {}
   tags:
     - User
-  summary: Logs user into the system WTF i'm here
+  summary: Logs user into the system
   operationId: loginUser
   requestBody:
     description: Login body
