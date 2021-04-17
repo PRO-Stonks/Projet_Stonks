@@ -1,6 +1,6 @@
 post:
   security:
-    - {}
+    - { }
   tags:
     - User
   summary: Logs user into the system
@@ -16,6 +16,7 @@ post:
               type: string
             password:
               type: string
+    required: true
   responses:
     '200':
       description: successful operation
