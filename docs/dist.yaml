@@ -521,7 +521,7 @@ paths:
     get:
       tags:
         - Event
-      summary: Get All ConnectionEvent
+      summary: Get all connection events
       description: Only possible as admin
       operationId: getAllConnectionEvent
       responses:
@@ -555,7 +555,7 @@ paths:
     get:
       tags:
         - Event
-      summary: Get All OrderEvent
+      summary: Get all order events
       description: Only possible as admin
       operationId: getAllOrderEvent
       responses:
@@ -589,7 +589,7 @@ paths:
     get:
       tags:
         - Event
-      summary: Get All ElementEvent
+      summary: Get all element events
       description: Only possible as admin
       operationId: getAllElementEvent
       responses:
@@ -623,12 +623,12 @@ paths:
     get:
       tags:
         - Event
-      summary: Get ConnectionEvent by id
+      summary: Get connection event by id
       operationId: getConnectionEventById
       parameters:
         - name: id
           in: path
-          description: The id that needs to be fetched
+          description: connection event id
           required: true
           schema:
             type: string
@@ -658,12 +658,12 @@ paths:
     get:
       tags:
         - Event
-      summary: Get OrderEvent by id
+      summary: Get order event by id
       operationId: getOrderEventById
       parameters:
         - name: id
           in: path
-          description: The id that needs to be fetched
+          description: order event id
           required: true
           schema:
             type: string
@@ -693,12 +693,12 @@ paths:
     get:
       tags:
         - Event
-      summary: Get ElementEvent by id
+      summary: Get element event by id
       operationId: getElementEventById
       parameters:
         - name: id
           in: path
-          description: The id that needs to be fetched
+          description: element event id
           required: true
           schema:
             type: string
@@ -728,12 +728,12 @@ paths:
     get:
       tags:
         - Event
-      summary: Get ConnectionEvent by id
+      summary: Get all connection events by user id
       operationId: getConnectionEventByUserId
       parameters:
         - name: id
           in: path
-          description: The id that needs to be fetched
+          description: user id
           required: true
           schema:
             type: string
@@ -768,12 +768,12 @@ paths:
     get:
       tags:
         - Event
-      summary: Get ElementEvent by id
+      summary: Get all element events by user id
       operationId: getElementEventByUserId
       parameters:
         - name: id
           in: path
-          description: The id that needs to be fetched
+          description: user id
           required: true
           schema:
             type: string
@@ -808,12 +808,12 @@ paths:
     get:
       tags:
         - Event
-      summary: Get ElementEvent by id
+      summary: Get all element events by product id
       operationId: getElementEventByProductID
       parameters:
         - name: id
           in: path
-          description: The id that needs to be fetched
+          description: product id
           required: true
           schema:
             type: string
@@ -844,16 +844,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /locations:
+    get:
+      tags:
+        - Location
+      summary: Get all locations
+      operationId: getAllLocation
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Location'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: No document found with that id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   '/locations/{id}':
     get:
       tags:
         - Location
-      summary: Get Location by id
+      summary: Get location by id
       operationId: getLocationById
       parameters:
         - name: id
           in: path
-          description: The id that needs to be fetched
+          description: location id
           required: true
           schema:
             type: string
@@ -880,13 +912,13 @@ paths:
     patch:
       tags:
         - Location
-      summary: Update Location
+      summary: Update location
       description: This can only be done by the admin
       operationId: updateLocation
       parameters:
         - name: id
           in: path
-          description: Location that need to be updated
+          description: location id
           required: true
           schema:
             type: string
@@ -928,13 +960,13 @@ paths:
     delete:
       tags:
         - Location
-      summary: (Soft)Delete Location
+      summary: (Soft)Delete location
       description: This can only be done by the admin. Disable a Location
       operationId: deleteLocation
       parameters:
         - name: id
           in: path
-          description: The Location that needs to be deleted
+          description: location id
           required: true
           schema:
             type: string
@@ -951,49 +983,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /locations:
-    get:
-      tags:
-        - Location
-      summary: Get All Location
-      operationId: getAllLocation
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  results:
-                    type: number
-                    description: The number of results
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Location'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          description: No document found with that id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
   /locations/add:
     post:
       tags:
         - Location
-      summary: add Location
+      summary: Add location
       operationId: AddLocation
       requestBody:
-        description: Creat Location object
+        description: Created location object
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/LocationAdd'
+        required: true
       responses:
         '201':
           description: successful operation
@@ -1024,13 +1026,13 @@ paths:
     delete:
       tags:
         - Location
-      summary: Delete Location
+      summary: Delete location
       description: Only possible as admin
       operationId: HardDeleteLocation
       parameters:
         - name: id
           in: path
-          description: The Location that needs to be deleted
+          description: location id
           required: true
           schema:
             type: string
