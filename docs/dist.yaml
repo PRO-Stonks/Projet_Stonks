@@ -75,7 +75,7 @@ paths:
         - {}
       tags:
         - User
-      summary: add an user into the system
+      summary: Add user into the system
       operationId: signupUser
       requestBody:
         description: Created user object
@@ -140,7 +140,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: 'The id that needs to be fetched '
+          description: user id
           required: true
           schema:
             type: string
@@ -175,7 +175,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: user that need to be updated
+          description: user id
           required: true
           schema:
             type: string
@@ -223,7 +223,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: The user that needs to be deleted
+          description: user id
           required: true
           schema:
             type: string
