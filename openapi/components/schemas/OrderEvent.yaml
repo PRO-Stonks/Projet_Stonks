@@ -1,0 +1,14 @@
+type: object
+properties:
+  id:
+    type: string
+    format: mongoId
+  time:
+    type: string
+    format: date
+  user:
+    type: string
+    format: mongoId
+  order:
+    type: string
+    format: mongoId

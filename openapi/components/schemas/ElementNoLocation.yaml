@@ -1,0 +1,16 @@
+type: object
+properties:
+  id:
+    type: string
+    format: mongoId
+  idQR:
+    type: string
+    format: mongoId
+  entryDate:
+    type: string
+    format: date
+  exitDate:
+    type: string
+    format: date
+  price:
+    type: number
