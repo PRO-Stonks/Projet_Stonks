@@ -5,14 +5,13 @@ import {Button} from "react-native";
 
 import Login from '../screens/Login.js';
 import Menu from '../screens/Menu.js';
-import Ajouter from '../screens/Ajouter.js';
-import Scan from '../screens/Scan.js';
+import Add from '../screens/Add.js';
 import {UserContext} from '../UserContext'
 
+
+
 export default function StackScreen() {
-    /**
-     * User state to see if a user is logged
-     */
+    // state to store user info
     const [state, setState] = useState({loggedIn: false, user: {}, token: ""});
 
     /**
@@ -54,8 +53,8 @@ export default function StackScreen() {
     // }, []);
 
     /**
-     * Define app screens in a Stack navigator
-     * to add later:
+     * Define the app screens in a Stack navigator
+     * remove if you want to scroll back to Login:
      * headerLeft: null,
      * gestureEnabled: false,
      */
@@ -75,17 +74,21 @@ export default function StackScreen() {
                 <Stack.Screen name="Login" component={Login}/>
                 <Stack.Screen name="Menu" component={Menu} options={{
                     headerRight: () => (
+
                         <Button
-                            onPress={() => alert('Logout button')} //TO DO
+                            onPress={() => alert("logout")} //TO DO
                             title="Logout"
                             color="black"
                         />
+
                     ),
+                    headerLeft: null,
+                    gestureEnabled: false,
                 }}
                 >
                 </Stack.Screen>
-                <Stack.Screen name="Ajouter" component={Ajouter}/>
-                <Stack.Screen name="Scan" component={Scan}/>
+                <Stack.Screen name="Add" component={Add}/>
+
 
             </Stack.Navigator>
         </UserContext.Provider>

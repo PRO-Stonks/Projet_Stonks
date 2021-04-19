@@ -5,6 +5,10 @@ import getCurrentDate from "../utils/getDate.js";
 import Scan from './Scan.js';
 import API_URL from "../url";
 
+//Refaire styles car valeur brute like a pig
+
+
+// POST request -> to move in a request package file
 async function addElement(url, token, data) {
     //console.log(token)
     try {
@@ -29,14 +33,14 @@ async function addElement(url, token, data) {
     }
 }
 
-export default function Ajouter({route, navigation}) {
+export default function Add({route, navigation}) {
     console.log("AJOUTER")
     const {products, token} = route.params;
-
+    // state to store product info
     const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate, exitDate:"2021-04-26",});
-
+    // state to check if we should scan
     const [isScan, setScan] = useState(false);
-
+    // state to store scan id
     const [scanId, setScanId] = useState({});
 
     useEffect(() => {
@@ -48,8 +52,8 @@ export default function Ajouter({route, navigation}) {
 
 
     /**
-     * Generate list of products name to display in dropdown list
-     * @returns {*} : array of products name
+     * Generate list of products name to display in RNPickerSelect
+     * @returns {*} : array of products label and value
      */
     const productList = () => {
         return products.data.map(product => ({
@@ -59,7 +63,7 @@ export default function Ajouter({route, navigation}) {
     }
 
     /**
-     * Validate data enter by user
+     * Validate users entries
      */
     const dataValidate = () => {
         if (productInfo.idProduct != null && productInfo.price != null) {
@@ -69,6 +73,10 @@ export default function Ajouter({route, navigation}) {
         }
     }
 
+    /**
+     * Call request to add an element
+     * @returns {Promise<any>}
+     */
     async function fetchData() {
         const res = await addElement(API_URL + 'elements/add', token, productInfo);
         if (res.status === 'success') {
@@ -80,6 +88,9 @@ export default function Ajouter({route, navigation}) {
         }
     }
 
+    /**
+     * Add view
+     */
     return (
         isScan ? <Scan scanId={scanId} setScanId={setScanId}/> :
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -104,11 +115,11 @@ export default function Ajouter({route, navigation}) {
                         style={pickerSelectStyles}
                     />
                 </View>
-                <Text style={styles.qrText}>Scan QR</Text>
+
                <TouchableOpacity
                     onPress={() => dataValidate()}
                     style={styles.bAdd}>
-                    <Text style={styles.scanText}>Ajouter</Text>
+                    <Text style={styles.scanText}>Scan</Text>
                 </TouchableOpacity>
             </View>
         </TouchableWithoutFeedback>
@@ -140,6 +151,7 @@ const styles = StyleSheet.create({
     bAdd: {
         backgroundColor: 'darkseagreen',
         padding: 10,
+        marginTop: 50,
         borderRadius: 5,
         width: '50%',
         height: '15%',

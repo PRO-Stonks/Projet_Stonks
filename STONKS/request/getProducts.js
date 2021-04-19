@@ -1,8 +1,8 @@
 /**
- * Fetch product
+ * GET request of list of products
  * @param url : path
  * @param token : user token
- * @returns {Promise<any>} : response
+ * @returns {Promise<any>} : server response
  */
 export default async function getProducts(url, token){
     //console.log(token)

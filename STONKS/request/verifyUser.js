@@ -1,9 +1,9 @@
 
 /**
- * POST request of user id
+ * POST request of user identifiers
  * @param url : path
  * @param data : user id (email + password)
- * @returns {Promise<any>} : response (user exists or not)
+ * @returns {Promise<any>} : server response
  */
 export default async function getData(url, data) {
     try {
