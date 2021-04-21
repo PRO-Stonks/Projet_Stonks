@@ -8,6 +8,7 @@ import QR from "../admin/QR/QR";
 import List from "../utils/list/List";
 import ItemTest from "../utils/list/Itemtest";
 import Spinner from "../Spinner";
+import UserManagementMenu from "../admin/user/UserManagementMenu";
 
 /* This home page is specific to Admins
     #TODO later for manager
@@ -59,13 +60,13 @@ function HomePage(props) {
                                             <p className="card-text">Click below to manage your item</p>
 
                                             {/* Buttons for specific management page item */}
-                                            <Link class="nav-link btn btn-secondary" to="/users">Users</Link><br/>
-                                            <Link class="nav-link btn btn-secondary" to="/products">Products</Link><br/>
-                                            <Link class="nav-link btn btn-secondary" to="/elements">Elements</Link><br/>
-                                            <Link class="nav-link btn btn-secondary"
+                                            <Link className="nav-link btn btn-secondary" to="/users">Users</Link><br/>
+                                            <Link className="nav-link btn btn-secondary" to="/products">Products</Link><br/>
+                                            <Link className="nav-link btn btn-secondary" to="/elements">Elements</Link><br/>
+                                            <Link className="nav-link btn btn-secondary"
                                                   to="/locations">Locations</Link><br/>
-                                            <Link class="nav-link btn btn-secondary" to="/QR">QR</Link><br/>
-                                            <Link class="nav-link btn btn-secondary" to="/Logs">Logs</Link>
+                                            <Link className="nav-link btn btn-secondary" to="/QR">QR</Link><br/>
+                                            <Link className="nav-link btn btn-secondary" to="/Logs">Logs</Link>
                                         </div>
                                     </div>
                                 </div>
@@ -75,7 +76,7 @@ function HomePage(props) {
 
                     {/* About page */}
                     <Route path="/about" exact component={() => <About/>}/>
-
+                    <Route path="/users" exact component={() => <UserManagementMenu token={props.token} user={props.user}/>}/>
                     {/* Products management page */}
                     <Route path="/products" exact component={() => <Product token={props.token}/>}/>
 

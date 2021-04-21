@@ -1,18 +1,7 @@
 import React, {useEffect, useState} from "react";
 import API_URL from "../URL";
 
-const applyUpdateResult = (result) => (prevState) => ({
-    data: [...prevState.data, ...result.data],
-    page: result.page,
-    isLoading: false,
-});
-
-const applySetResult = (result) => (prevState) => ({
-    data: result.data,
-    page: result.page,
-    isLoading: false,
-});
-
+const NUMBER_OF_ELEMENT_PER_FETCH = 10;
 
 /**
  * Paginated List
@@ -24,12 +13,16 @@ const applySetResult = (result) => (prevState) => ({
  * @returns {JSX.Element}
  * @constructor
  */
-function List({spinner, url,item, token, ...itemProps}) {
-    const [state, setState] = useState({page: null, data: [], isLoading: false});
+function List({spinner, url, item, token, sort, ...itemProps}) {
+    const [page, setPage] = useState(0);
+    const [data, setData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [nbFetchedElement, setNbFetchedElement] = useState(NUMBER_OF_ELEMENT_PER_FETCH);
 
-    const fetchStories = (page) => {
-        setState({...state, isLoading: true})
-        fetch(getUrl(page), {
+    const fetchStories = (pageTarget) => {
+        setIsLoading(true);
+        fetch(getUrl(pageTarget), {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -47,14 +40,27 @@ function List({spinner, url,item, token, ...itemProps}) {
                 return response.json();
             })
             .then(result => {
-                console.log(result.data);
-                console.log(page);
-                onSetResult(result, page)
-            })
+                setIsLoading(false);
+                if (result.status === "fail") {
+                    setError(result.message);
+                } else {
+                    if (nbFetchedElement < NUMBER_OF_ELEMENT_PER_FETCH) {
+                        setData(prevState => ([...prevState.slice(0, prevState.length - nbFetchedElement), ...result.data]));
+                    } else {
+                        setData(prevState => ([...prevState, ...result.data]));
+                    }
+
+                    if (result.results < NUMBER_OF_ELEMENT_PER_FETCH) {
+                        setNbFetchedElement(result.results);
+                    } else {
+                        setPage(pageTarget);
+                    }
+                }
+            });
     };
 
     const getUrl = (page) =>
-        API_URL + url+`/?page=${page}`;
+        API_URL + url + `/?page=${page}`;
 
     useEffect(() => {
         const onInitialSearch = () => {
@@ -64,16 +70,8 @@ function List({spinner, url,item, token, ...itemProps}) {
     }, []);
 
 
-
-    const onSetResult = (result, page) => {
-        result.page = page
-        page === 0
-            ? setState(applySetResult(result))
-            : setState(applyUpdateResult(result));
-    }
-
-    const onPaginatedSearch = (e) => {
-        fetchStories(state.page + 1);
+    const onPaginatedSearch = () => {
+        fetchStories(page + 1);
     }
 
     const Spinner = spinner;
@@ -81,21 +79,22 @@ function List({spinner, url,item, token, ...itemProps}) {
     return (
         <div className="page">
             <div className="list">
-                {state.data.map(item => <Item item={item} {...itemProps} />)}
-            </div>
-            <div className="interactions">
-                {
-                    (state.page !== null && !state.isLoading) &&
-                    <button
-                        type="button"
-                        onClick={onPaginatedSearch}
-                    >
-                        More
-                    </button>
+                {sort ?
+                    data.sort(sort).map(item => <Item key={item._id} item={item} {...itemProps} />) :
+                    data.map(item => <Item key={item._id} item={item} {...itemProps} />)
                 }
             </div>
-            {Spinner && <Spinner enable={state.isLoading}/>}
-
+            <div className="interactions">
+                {!isLoading &&
+                <button
+                    type="button"
+                    onClick={onPaginatedSearch}
+                >
+                    More
+                </button>}
+            </div>
+            {error !== "" && <div>{error}</div>}
+            {Spinner && <Spinner enable={isLoading}/>}
         </div>
     );
 }
