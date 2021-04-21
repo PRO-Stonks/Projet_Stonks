@@ -41,11 +41,11 @@ export default function Add({route, navigation}) {
     // state to check if we should scan
     const [isScan, setScan] = useState(false);
     // state to store scan id
-    const [scanId, setScanId] = useState({});
+    const [scanId, setScanId] = useState('');
 
     useEffect(() => {
         console.log("SCAN CHANGED")
-        setProductInfo({...productInfo, code: scanId.code, idLocation: scanId.code})
+        setProductInfo({...productInfo, code: scanId, idLocation: scanId})
         console.log(productInfo)
         fetchData().then(r => console.log(r)).catch(r => console.log(r))
     }, [scanId])
