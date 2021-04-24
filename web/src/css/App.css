@@ -13,6 +13,11 @@
     color: red;
     font-size: calc(10px + 1vmin);;
 }
+#footer {
+    background-color: #efefef;
+    flex: 0 0 50px;/*or just height:50px;*/
+    margin-top: auto;
+}
 
 @media (prefers-reduced-motion: no-preference) {
     .App-logo {
@@ -30,6 +35,11 @@
 
 .App-link {
     color: #61dafb;
+}
+
+.List-container{
+    overflow-y: auto;
+    max-height: 600px;
 }
 
 @keyframes App-logo-spin {

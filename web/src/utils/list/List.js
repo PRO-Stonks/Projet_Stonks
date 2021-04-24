@@ -2,14 +2,15 @@ import React, {useEffect, useState} from "react";
 import API_URL from "../URL";
 
 const NUMBER_OF_ELEMENT_PER_FETCH = 10;
-
+// TODO Add option to filter element displayed multi-filter would be nice
 /**
  * Paginated List
  * @param spinner An element to display while a fetch is occurring
  * @param url the part of the url to fetch (Composed as BASE_URL+ulr/?pages=
  * @param item the item to display in the list (the item will be given with props.item)
  * @param token the token to make a request
- * @param itemProps all remaing props will be given to the item
+ * @param sort a sort function
+ * @param itemProps all remaining props will be given to the item
  * @returns {JSX.Element}
  * @constructor
  */
@@ -19,6 +20,7 @@ function List({spinner, url, item, token, sort, ...itemProps}) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     const [nbFetchedElement, setNbFetchedElement] = useState(NUMBER_OF_ELEMENT_PER_FETCH);
+
 
     const fetchStories = (pageTarget) => {
         setIsLoading(true);
@@ -77,8 +79,8 @@ function List({spinner, url, item, token, sort, ...itemProps}) {
     const Spinner = spinner;
     const Item = item;
     return (
-        <div className="page">
-            <div className="list">
+        <div className="List">
+            <div className="List-container">
                 {sort ?
                     data.sort(sort).map(item => <Item key={item._id} item={item} {...itemProps} />) :
                     data.map(item => <Item key={item._id} item={item} {...itemProps} />)

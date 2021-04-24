@@ -2,8 +2,9 @@ import React, {useState} from "react";
 import List from "../../utils/list/List";
 import Spinner from "../../Spinner";
 import UserListElement from "./UserListElement";
-import {Button, Col, Container, Row} from 'react-bootstrap';
+import {Col, Container, Row} from 'react-bootstrap';
 import UserManager from "./UserManager";
+import UserForm from "./UserForm";
 
 
 function UserManagementMenu(props) {
@@ -11,12 +12,11 @@ function UserManagementMenu(props) {
 
     function onSelectHandler(userSelected) {
         console.log(userSelected);
-        if (selected){
-            setSelected(userSelected._id === selected._id ? null: selected);
-        }else{
+        if (selected) {
+            setSelected(userSelected._id === selected._id ? null : userSelected);
+        } else {
             setSelected(userSelected);
         }
-
     }
 
     function sortElement(a, b) {
@@ -31,10 +31,7 @@ function UserManagementMenu(props) {
                           onSelect={onSelectHandler} sort={sortElement}/>
                 </Col>
                 <Col>
-                    {selected === null ?
-                        <Button> Add user</Button> :
-                        <UserManager user={selected}/>
-                    }
+                    <UserManager user={selected} token={props.token} />
                 </Col>
             </Row>
         </Container>

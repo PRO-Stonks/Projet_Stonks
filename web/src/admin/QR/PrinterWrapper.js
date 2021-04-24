@@ -11,7 +11,6 @@ export default function PrinterWrapper({children}) {
     const componentRef = useRef();
     return (
         <>
-
             <ReactToPrint trigger={linkToPrint} content={() => componentRef.current}/>
             <div ref={componentRef}>
                 {children}

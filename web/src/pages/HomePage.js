@@ -84,7 +84,7 @@ function HomePage(props) {
                     <Route path="/QR" exact component={() => <QR token={props.token}/>}/>
 
                     {/* #TODO Pages below are not implemented yet */}
-                    <Route path="/elements" exact component={() => <List token={props.token} item={ItemTest} spinner={Spinner} url={"products"} proptest={"ajjajajaj"} select={"name"}/>}/>
+                    <Route path="/elements" exact component={() => <List token={props.token} item={ItemTest} spinner={Spinner} url={"QR"} proptest={"ajjajajaj"} select={"code"}/>}/>
                     <Route path="/locations" exact component={() => <About/>}/>
                     <Route path="/logs" exact component={() => <About/>}/>
                 </Switch>

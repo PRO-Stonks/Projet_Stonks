@@ -9,20 +9,20 @@ import logo from "../assets/Webp.net-resizeimage.png"
 function NavAdmin(props) {
     return (
         <div className="navigation">
-            <nav class="navbar navbar-expand navbar-dark bg-dark">
-                <div class="container">
+            <nav className="navbar navbar-expand navbar-dark bg-dark">
+                <div className="container">
                     <Link class="navbar-brand" to="/">
                         <img src={logo} alt="logo"/> Stonks
                     </Link>
                     <div>
-                        <ul class="navbar-nav ml-auto">
-                            <li class={`nav-item  ${props.location.pathname === "/" ? "active" : ""}`}>
+                        <ul className="navbar-nav ml-auto">
+                            <li className={`nav-item  ${props.location.pathname === "/" ? "active" : ""}`}>
                                 <Link class="nav-link" to="/">
                                     Home
-                                    <span class="sr-only">(current)</span>
+                                    <span className="sr-only">(current)</span>
                                 </Link>
                             </li>
-                            <li class={`nav-item  ${props.location.pathname === "/about" ? "active" : ""}`}>
+                            <li className={`nav-item  ${props.location.pathname === "/about" ? "active" : ""}`}>
                                 <Link class="nav-link" to="/about">
                                     About
                                 </Link>
