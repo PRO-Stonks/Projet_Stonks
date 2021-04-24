@@ -28,6 +28,10 @@ router
     .route('/:id')
     .get(userController.getUser)
     .patch(userController.updateUser)
+    .delete(userController.softDeleteUser);
+
+router
+    .route('/hardDel/:id')
     .delete(userController.deleteUser);
 
 module.exports = router;
