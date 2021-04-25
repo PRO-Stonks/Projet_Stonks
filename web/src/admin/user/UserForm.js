@@ -96,6 +96,8 @@ const UserForm = (props) => {
 
                 if (res.status === "fail") {
                     actions.setFieldError("submit", res.message);
+                }else{
+                    props.refreshHandler(res.data);
                 }
             }}
         >

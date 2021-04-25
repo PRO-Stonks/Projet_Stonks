@@ -2,10 +2,12 @@ import React, {useEffect, useState} from "react";
 import API_URL from "../URL";
 
 const NUMBER_OF_ELEMENT_PER_FETCH = 10;
+
 // TODO Add option to filter element displayed multi-filter would be nice
 /**
  * Paginated List
- * @param spinner An element to display while a fetch is occurring
+ * @param refetch a boolean to indicates that a refetch is needed.
+ * @param spinner An element to display while a fetch is occurring.
  * @param url the part of the url to fetch (Composed as BASE_URL+ulr/?pages=
  * @param item the item to display in the list (the item will be given with props.item)
  * @param token the token to make a request
@@ -14,7 +16,7 @@ const NUMBER_OF_ELEMENT_PER_FETCH = 10;
  * @returns {JSX.Element}
  * @constructor
  */
-function List({spinner, url, item, token, sort, ...itemProps}) {
+function List({refetch, spinner, url, item, token, sort, ...itemProps}) {
     const [page, setPage] = useState(0);
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -22,9 +24,9 @@ function List({spinner, url, item, token, sort, ...itemProps}) {
     const [nbFetchedElement, setNbFetchedElement] = useState(NUMBER_OF_ELEMENT_PER_FETCH);
 
 
-    const fetchStories = (pageTarget) => {
+    const fetchStories = (pageTarget, limit = 10) => {
         setIsLoading(true);
-        fetch(getUrl(pageTarget), {
+        fetch(getUrl(pageTarget) + '&limit=' + limit, {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -64,12 +66,13 @@ function List({spinner, url, item, token, sort, ...itemProps}) {
     const getUrl = (page) =>
         API_URL + url + `/?page=${page}`;
 
+
     useEffect(() => {
         const onInitialSearch = () => {
             fetchStories(1);
         }
         onInitialSearch();
-    }, []);
+    }, [refetch]);
 
 
     const onPaginatedSearch = () => {

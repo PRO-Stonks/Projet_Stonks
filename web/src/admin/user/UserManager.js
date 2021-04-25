@@ -1,5 +1,4 @@
 import {Button, Col, Container, Row} from 'react-bootstrap';
-import {useState} from "react";
 import UserForm from "./UserForm";
 import API_URL from "../../utils/URL";
 
@@ -18,46 +17,50 @@ async function del(url, token) {
             redirect: 'follow', // manual, *follow, error
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url// body data type must match "Content-Type" header
         });
-        return response.json();
+        return response;
     } catch (e) {
         console.log(e);
     }
 }
 
 
-function UserManager({user, token}) {
-    const [modify, setModify] = useState(false);
+function UserManager({user, token, refreshHandler, formRefresh, deleteHandler}) {
 
     const softDelete = async () => {
-        try {
-            const res = await del(API_URL + "users/" + user._id, token);
+        const res = await del(API_URL + "users/" + user._id, token);
+        if (res.status !== 204) {
+            res.json();
             if (res.status === "fail") {
                 console.log(res.message);
             }
-        } catch (e) {
-
+        } else {
+            refreshHandler();
         }
 
     }
 
     const hardDelete = async () => {
-        try {
-            const res = await del(API_URL + "users/hardDel/" + user._id, token);
+
+        const res = await del(API_URL + "users/hardDel/" + user._id, token);
+        console.log(res);
+        if (res.status !== 204) {
+            res.json();
             if (res.status === "fail") {
                 console.log(res.message);
             }
-        } catch (e) {
-                // Empty catch to
+        } else {
+            console.log("Calling handler")
+            deleteHandler();
         }
+
     }
 
     if (!user) {
         return <UserForm
             userData={{firstName: "", lastName: "", email: "", password: "", role: "manager"}} action={"add"}
-            token={token}/>
+            token={token} refreshHandler={refreshHandler}/>
     }
 
-    console.log(user)
     return <Container fluid>
         <Row>
             <Col md={3} style={style}>Role</Col>
@@ -73,11 +76,15 @@ function UserManager({user, token}) {
         </Row>
         <br/>
         <Row>
-            <Button onClick={() => setModify(prevState => (!prevState))}>Modify Me</Button>
-            <Button variant="warning" onClick={softDelete}>Disable Me</Button>
-            <Button variant="danger" onClick={hardDelete}>Delete Me</Button>
+            <Col>
+                <Button variant="warning" onClick={softDelete}>Disable Me</Button>
+            </Col>
+            <Col>
+                <Button variant="danger" onClick={hardDelete}>Delete Me</Button>
+            </Col>
         </Row>
-        <Row>
+        <br/>
+        <Row className="justify-content-md-center">
             <UserForm
                 userData={{
                     id: user._id,
@@ -85,10 +92,10 @@ function UserManager({user, token}) {
                     lastName: user.lastName,
                     email: user.email,
                     role: user.role
-                }} action={"update"} token={token}/>
+                }} action={"update"} token={token} refreshHandler={formRefresh}/>
         </Row>
     </Container>
 };
 export default UserManager;
 
-const style = {"font-weight": "bold", "borderBottom": "2px solid", "padding-bottom": "2px"}
+const style = {"fontWeight": "bold", "borderBottom": "2px solid", "paddingBottom": "2px"}
