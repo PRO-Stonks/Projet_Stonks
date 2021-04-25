@@ -61,7 +61,8 @@ exports.updateOne = Model => async (req, res, next) => {
         }
         const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
-            runValidators: true
+            runValidators: true,
+            context: 'query'
         });
 
         if (!doc) {
@@ -80,7 +81,7 @@ exports.updateOne = Model => async (req, res, next) => {
             Object.keys(err.errors).forEach((key) => {
                 errorOutput += err.errors[key].message + "\n";
             });
-
+            console.log(err)
             next(new AppError(400, "Invalid Input", errorOutput),
                 req,
                 res,

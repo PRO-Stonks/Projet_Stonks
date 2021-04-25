@@ -149,7 +149,8 @@ exports.moveElement = async (req, res, next) => {
             doc = await Element.findByIdAndUpdate(req.params.id, {
                 idLocation: req.params.location
             }, {
-                runValidators: true
+                runValidators: true,
+                context: 'query'
             });
             if (!doc) {
                 throw Error;
