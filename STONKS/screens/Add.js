@@ -37,9 +37,8 @@ export default function Add({route, navigation}) {
     console.log("AJOUTER")
 
     const {products, token} = route.params;
-    console.log(products.data[0])
     // state to store product info
-    const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate, exitDate:"2021-04-26",idProduct: products.data[0]._id});
+    const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate, exitDate:"2021-04-26"});
     // state to check if we should scan
     const [isScan, setScan] = useState(false);
     // state to store scan id
