@@ -35,19 +35,23 @@ async function addElement(url, token, data) {
 
 export default function Add({route, navigation}) {
     console.log("AJOUTER")
+
     const {products, token} = route.params;
     // state to store product info
-    const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate, exitDate:"2021-04-26",});
+    const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate, exitDate:"2021-04-26"});
     // state to check if we should scan
     const [isScan, setScan] = useState(false);
     // state to store scan id
-    const [scanId, setScanId] = useState({});
+    const [scanId, setScanId] = useState(null);
 
     useEffect(() => {
-        console.log("SCAN CHANGED")
-        setProductInfo({...productInfo, code: scanId.code, idLocation: scanId.code})
-        console.log(productInfo)
-        fetchData().then(r => console.log(r)).catch(r => console.log(r))
+        if(scanId){
+            console.log("SCAN CHANGED")
+            setProductInfo({...productInfo, code: scanId, idLocation: scanId})
+            console.log(productInfo)
+            fetchData({...productInfo, code: scanId, idLocation: scanId}).then(r => console.log(r)).catch(r => console.log(r));
+            setScanId(null);
+        }
     }, [scanId])
 
 
@@ -77,8 +81,9 @@ export default function Add({route, navigation}) {
      * Call request to add an element
      * @returns {Promise<any>}
      */
-    async function fetchData() {
-        const res = await addElement(API_URL + 'elements/add', token, productInfo);
+    async function fetchData(data) {
+        const res = await addElement(API_URL + 'elements/add', token, data);
+        console.log(data)
         if (res.status === 'success') {
             console.log("YOUHOUHOU");
             return res;
