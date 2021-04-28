@@ -45,7 +45,9 @@ exports.softDeleteElement = async (req, res, next) => {
     } catch (error) {
         next(error);
     } finally {
-        session.endSession();
+        if(session){
+            session.endSession();
+        }
     }
 };
 
@@ -120,7 +122,9 @@ exports.addElement = async (req, res, next) => {
             next(err);
         }
     } finally {
-        session.endSession();
+        if(session){
+            session.endSession();
+        }
     }
 };
 
@@ -177,7 +181,9 @@ exports.moveElement = async (req, res, next) => {
     } catch (error) {
         next(error);
     } finally {
-        session.endSession();
+        if(session){
+            session.endSession();
+        }
     }
 };
 
