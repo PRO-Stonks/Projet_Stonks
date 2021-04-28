@@ -24,10 +24,16 @@ exports.getUser = base.getOne(User);
 exports.updateUser = base.updateOne(User);
 
 /**
+ * Softdelete handler
+ * @type {(function(Response.req=, res=, handler=): Promise<*|undefined>)|*}
+ */
+exports.softDeleteUser = base.softDeleteOne(User);
+
+/**
  * HardDelete handler
  * @type {(function(Response.req=, res=, handler=): Promise<*|undefined>)|*}
  */
-exports.deleteUser = base.softDeleteOne(User);
+exports.deleteUser = base.deleteOne(User);
 
 /**
  * HardDeleteAll handler
