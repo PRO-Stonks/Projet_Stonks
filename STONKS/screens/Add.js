@@ -36,9 +36,9 @@ async function addElement(url, token, data) {
 export default function Add({route, navigation}) {
     console.log("AJOUTER")
 
-    const {products, token} = route.params;
+    const {products, token, location} = route.params;
     // state to store product info
-    const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate, exitDate:"2021-04-26"});
+    const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate, exitDate:"2021-04-26", idLocation:location._id});
     // state to check if we should scan
     const [isScan, setScan] = useState(false);
     // state to store scan id
@@ -47,7 +47,7 @@ export default function Add({route, navigation}) {
     useEffect(() => {
         if(scanId){
             console.log("SCAN CHANGED")
-            setProductInfo({...productInfo, code: scanId, idLocation: scanId})
+            setProductInfo({...productInfo, code: scanId})
             console.log(productInfo)
             fetchData({...productInfo, code: scanId, idLocation: scanId}).then(r => console.log(r)).catch(r => console.log(r));
             setScanId(null);
