@@ -1,6 +1,6 @@
 /**
  * GET request of list of products
- * @param url : path
+ * @param url : string
  * @param token : user token
  * @returns {Promise<any>} : server response
  */
