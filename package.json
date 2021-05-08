@@ -6,7 +6,7 @@
   "scripts": {
     "test-server": "cd Server && mocha \"test/**/*.js\"",
     "debug-server": "cd Server && ndb server.js",
-    "start-server": "cd Server && PORT=4000 nodemon server.js"
+    "start": "cd Server && PORT=4000 nodemon server.js"
   },
   "keywords": [],
   "author": "",
