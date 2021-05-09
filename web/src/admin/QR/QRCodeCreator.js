@@ -1,5 +1,5 @@
 import React, {useRef} from "react";
-import Spinner from "../../Spinner";
+import Spinner from "../../utils/Spinner";
 import QRCode from 'qrcode'
 
 function QRCodeCreator(props) {

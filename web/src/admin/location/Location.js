@@ -1,5 +1,5 @@
 import {isInteger, useFormik} from "formik";
-import ProductManagement from "./ProductManagement";
+import LocationManagement from "./LocationManagement";
 import React, {useEffect, useState} from "react";
 import {
     Step,
@@ -7,30 +7,43 @@ import {
     Stepper
 } from '@material-ui/core';
 import ActionsForm from "../../utils/ActionsForm";
-import ProductFormAdd from "./ProductdetailsForm/ProductFormAdd";
-import ProductFormGetAll from "./ProductdetailsForm/ProductFormGetAll";
-import ProductFormUpdate from "./ProductdetailsForm/ProductFormUpdate";
-import ProductFormDelete from "./ProductdetailsForm/ProductFormDelete";
+import LocationFormAdd from "./LocationdetailsForm/LocationFormAdd";
+import LocationFormGetAll from "./LocationdetailsForm/LocationFormGetAll";
+import LocationFormUpdate from "./LocationdetailsForm/LocationFormUpdate";
+import LocationFormDelete from "./LocationdetailsForm/LocationFormDelete";
 
-function Product(props) {
+function Location(props) {
 
-    const management = new ProductManagement();
+    const management = new LocationManagement();
 
     /* Formik handlers */
     const handlers = {
         add: useFormik({
             initialValues: {
                 name: '',
-                tag: ''
+                street: '',
+                noStreet: '',
+                npa: '',
+                city: '',
+                country: ''
             },
             onSubmit: async (values) => {
                 /* Send http request and get response */
-                const res = await management.add(props.token, values);
+                const res = await management.add(props.token, {
+                    name: values.name,
+                    address: {
+                        street: values.street,
+                        noStreet: values.noStreet,
+                        npa: values.npa,
+                        city: values.city,
+                        country: values.country
+                    }
+                });
 
-                /* Display Product Name */
+                /* Display Location Name */
                 if (res.status === "success") {
-                    console.log("Product added");
-                    alert("The product: " + JSON.stringify(res.data.name) + " has correctly been added");
+                    console.log("Location added");
+                    alert("The location: " + JSON.stringify(res.data.name) + " has correctly been added");
                 }
                 /* Display message error */
                 else {
@@ -47,10 +60,10 @@ function Product(props) {
                 /* Send http request and get response */
                 const res = await management.get(props.token, values.id);
 
-                /* Display Product data */
+                /* Display Location data */
                 if (res.status === "success") {
-                    console.log("Product got");
-                    alert("Product requested:\n" + JSON.stringify(res.data));
+                    console.log("Location got");
+                    alert("Location requested:\n" + JSON.stringify(res.data));
                 }
                 /* Display message error */
                 else {
@@ -67,10 +80,10 @@ function Product(props) {
                 /* Send http request and get response */
                 const res = await management.getAll(props.token, values.queryString);
 
-                /* Display Products data */
+                /* Display Locations data */
                 if (res.status === "success") {
-                    console.log("All Products got");
-                    alert("All products:\n" + JSON.stringify(res.data));
+                    console.log("All Locations got");
+                    alert("All locations:\n" + JSON.stringify(res.data));
                 }
                 /* Display message error */
                 else {
@@ -82,19 +95,30 @@ function Product(props) {
         update: useFormik({
             initialValues: {
                 name: '',
-                tag: ''
+                street: '',
+                noStreet: '',
+                npa: '',
+                city: '',
+                country: ''
             },
             onSubmit: async (values) => {
+
                 /* Send http request and get response */
-                const res = await management.update(props.token, selectedProduct.id, {
+                const res = await management.update(props.token, selectedLocation.id, {
                     name: values.name,
-                    tag: values.tag
+                    address: {
+                        street: values.street,
+                        noStreet: values.noStreet,
+                        npa: values.npa,
+                        city: values.city,
+                        country: values.country
+                    }
                 });
 
-                /* Display updated Product */
+                /* Display updated Location */
                 if (res.status === "success") {
-                    console.log("Product updated");
-                    alert("This is the updated product:\n" + JSON.stringify(res.data) + "\nPlease reload the page" +
+                    console.log("Location updated");
+                    alert("This is the updated location:\n" + JSON.stringify(res.data) + "\nPlease reload the page" +
                         " to see the changes.");
                 }
                 /* Display message error */
@@ -109,15 +133,15 @@ function Product(props) {
             onSubmit: async (values) => {
 
                 /* Send http request and get response */
-                const res = await management.softDelete(props.token, selectedProduct.id);
+                const res = await management.softDelete(props.token, selectedLocation.id);
 
                 /* Display soft deleted message */
                 if (res.status === "success") {
-                    console.log("Product soft deleted");
-                    alert("The product was soft deleted but still can be seen.");
+                    console.log("Location soft deleted");
+                    alert("The location was soft deleted but still can be seen.");
                 }
                 /* Display message error */
-                else{
+                else {
                     handlers.sofDelete.errors.submit = res.message;
                 }
             }
@@ -127,19 +151,20 @@ function Product(props) {
             initialValues: {},
             onSubmit: async (values) => {
                 /* Send http request and get response */
-                const res = await management.delete(props.token, selectedProduct.id);
+                const res = await management.delete(props.token, selectedLocation.id);
 
                 /* Display deleted message */
                 if (res.status === "success") {
-                    console.log("Product soft deleted");
-                    alert("The product was deleted, please refresh the page.");
+                    console.log("Location soft deleted");
+                    alert("The location was deleted, please refresh the page.");
                 }
                 /* Display message error */
-                else{
+                else {
                     handlers.sofDelete.errors.submit = res.message;
                 }
             }
         })
+
     }
 
     /* Fetch only once */
@@ -157,16 +182,20 @@ function Product(props) {
     }, [data.fetching]);
 
 
-    /* Product selection management */
+    /* Location selection management */
     const handleSelect = (event) => {
         let index = event.target.value;
         if (isInteger(index)) {
-            setGetSelection({id: data.data[index]._id, tag: data.data[index].tag, name: data.data[index].name});
+            setGetSelection({id: data.data[index]._id, name: data.data[index].name, address: data.data[index].address});
         } else {
-            setGetSelection({id: "", tag: "", name: ""});
+            setGetSelection({id: "", name: "", address: {street: "", noStreet: "", npa: "", city: "", country: ""}});
         }
     };
-    const [selectedProduct, setGetSelection] = useState({id: "", tag: "", name: ""});
+    const [selectedLocation, setGetSelection] = useState({
+        id: "",
+        name: "",
+        address: {street: "", noStreet: "", npa: "", city: "", country: ""}
+    });
 
 
     /**
@@ -178,47 +207,45 @@ function Product(props) {
     function renderFormContent(action) {
         switch (action) {
             case "add":
-                return <ProductFormAdd handler={handlers.add}/>
+                return <LocationFormAdd handler={handlers.add}/>
 
             case "get all":
-                return <ProductFormGetAll token={props.token}/>
+                return <LocationFormGetAll token={props.token}/>
 
             case "update":
-                /* Start by getting all products */
+                /* Start by getting all locations */
                 if (!data.fetching) {
                     data.fetching = true;
                 }
 
-                return <ProductFormUpdate handler={handlers.update}
-                                          handleSelect={handleSelect}
-                                          listProducts={data.data}
-                                          selectedProduct={selectedProduct}
-                                          baseHandlerValue={"\o"}/>;
+                return <LocationFormUpdate handler={handlers.update}
+                                           handleSelect={handleSelect}
+                                           listLocations={data.data}
+                                           selectedLocation={selectedLocation}/>;
 
             case "softDelete":
-
-                /* Start by getting all products */
+                /* Start by getting all locations */
                 if (!data.fetching) {
                     data.fetching = true;
                 }
 
-                return <ProductFormDelete title="Soft delete a Product"
-                                          handler={handlers.sofDelete}
-                                          handleSelect={handleSelect}
-                                          listProducts={data.data}
-                                          selectedProduct={selectedProduct}/>;
+                return <LocationFormDelete title="Soft delete a Location"
+                                           handler={handlers.sofDelete}
+                                           handleSelect={handleSelect}
+                                           listLocations={data.data}
+                                           selectedLocation={selectedLocation}/>;
 
             case "delete":
-                /* Start by getting all products */
+                /* Start by getting all locations */
                 if (!data.fetching) {
                     data.fetching = true;
                 }
 
-                return <ProductFormDelete title="Delete a Product"
-                                          handler={handlers.delete}
-                                          handleSelect={handleSelect}
-                                          listProducts={data.data}
-                                          selectedProduct={selectedProduct}/>;
+                return <LocationFormDelete title="Delete a Location"
+                                           handler={handlers.delete}
+                                           handleSelect={handleSelect}
+                                           listLocations={data.data}
+                                           selectedLocation={selectedLocation}/>;
 
             default:
                 return <div className="Error">Selected action not Found</div>;
@@ -235,7 +262,7 @@ function Product(props) {
     return (
         <React.Fragment>
             <div className="container">
-                <h2>Product management</h2>
+                <h2>Location management</h2>
 
                 {/* Stepper */}
                 <Stepper className="container bg-dark" activeStep={activeStep}>
@@ -263,7 +290,11 @@ function Product(props) {
                                 className={"btn-secondary"}
                                 onClick={() => {
                                     data.fetching = false;
-                                    setGetSelection({id: "", tag: "", name: ""})
+                                    setGetSelection({
+                                        id: "",
+                                        name: "",
+                                        address: {street: "", noStreet: "", npa: "", city: "", country: ""}
+                                    })
                                     setActiveStep(activeStep - 1);
                                 }}>
                                 BACK
@@ -292,4 +323,4 @@ function Product(props) {
     );
 }
 
-export default Product;
+export default Location;

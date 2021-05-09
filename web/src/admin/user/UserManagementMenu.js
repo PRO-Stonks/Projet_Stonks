@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import List from "../../utils/list/List";
-import Spinner from "../../Spinner";
+import Spinner from "../../utils/Spinner";
 import UserListElement from "./UserListElement";
 import {Col, Container, Row} from 'react-bootstrap';
 import UserManager from "./UserManager";

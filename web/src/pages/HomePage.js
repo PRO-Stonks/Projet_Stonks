@@ -1,14 +1,14 @@
 import React from "react";
 import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
-import Footer from "./Footer";
 import Navigation from "./NavAdmin";
 import About from "./About";
 import Product from "../admin/product/Product";
 import QR from "../admin/QR/QR";
 import List from "../utils/list/List";
 import ItemTest from "../utils/list/Itemtest";
-import Spinner from "../Spinner";
+import Spinner from "../utils/Spinner";
 import UserManagementMenu from "../admin/user/UserManagementMenu";
+import Location from "../admin/location/Location";
 
 /* This home page is specific to Admins
     #TODO later for manager
@@ -80,15 +80,17 @@ function HomePage(props) {
                     {/* User management page */}
                     <Route path="/users" exact component={() => <UserManagementMenu token={props.token} user={props.user}/>}/>
 
-                    {/* Products management page */}
+                    {/* Product management page */}
                     <Route path="/products" exact component={() => <Product token={props.token}/>}/>
+
+                    {/* Location management page */}
+                    <Route path="/locations" exact component={() => <Location token={props.token}/>}/>
 
                     {/* QR management page */}
                     <Route path="/QR" exact component={() => <QR token={props.token}/>}/>
 
                     {/* #TODO Pages below are not implemented yet */}
                     <Route path="/elements" exact component={() => <List token={props.token} item={ItemTest} spinner={Spinner} url={"QR"} proptest={"ajjajajaj"} select={"code"}/>}/>
-                    <Route path="/locations" exact component={() => <About/>}/>
                     <Route path="/logs" exact component={() => <About/>}/>
                 </Switch>
             </Router>

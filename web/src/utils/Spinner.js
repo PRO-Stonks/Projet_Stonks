@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "./assets/stonks.png";
+import logo from "../assets/stonks.png";
 
 /**
  * Really important Object function DO NOT DELETE
