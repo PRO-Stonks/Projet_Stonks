@@ -7,7 +7,7 @@ import Product from "../admin/product/Product";
 import QR from "../admin/QR/QR";
 import List from "../utils/list/List";
 import ItemTest from "../utils/list/Itemtest";
-import Spinner from "../Spinner";
+import Spinner from "../utils/Spinner";
 import UserManagementMenu from "../admin/user/UserManagementMenu";
 import Location from "../admin/location/Location";
 

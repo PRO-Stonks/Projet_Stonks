@@ -1,7 +1,7 @@
 import React from "react";
 import List from "../../../utils/list/List";
 import ProductListElement from "./ProductListElement";
-import Spinner from "../../../Spinner";
+import Spinner from "../../../utils/Spinner";
 
 function ProductFormGetAll(props) {
 

@@ -1,5 +1,5 @@
 import {useFormik} from 'formik';
-import Spinner from "../Spinner";
+import Spinner from "../utils/Spinner";
 import API_URL from "../utils/URL";
 import validateEmail from "../utils/validateEmail";
 
