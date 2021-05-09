@@ -12,6 +12,10 @@ import ProductFormGet from "./ProductdetailsForm/ProductFormGet";
 import ProductFormGetAll from "./ProductdetailsForm/ProductFormGetAll";
 import ProductFormUpdate from "./ProductdetailsForm/ProductFormUpdate";
 import ProductFormDelete from "./ProductdetailsForm/ProductFormDelete";
+import UserListElement from "../user/UserListElement";
+import Spinner from "../../Spinner";
+import List from "../../utils/list/List";
+import ProductListElement from "./ProductdetailsForm/ProductListElement";
 
 function Product(props) {
 
@@ -82,8 +86,8 @@ function Product(props) {
 
         update: useFormik({
             initialValues: {
-                name: '\o',
-                tag: '\o'
+                name: '',
+                tag: ''
             },
             onSubmit: async (values) => {
                 /* Send http request and get response */
@@ -96,7 +100,7 @@ function Product(props) {
                 if (res.status === "success") {
                     console.log("Product updated");
                     alert("This is the updated product:\n" + JSON.stringify(res.data) + "\nPlease reload the page" +
-                        "to see the changes.");
+                        " to see the changes.");
                 }
                 /* Display message error */
                 else {
@@ -143,7 +147,6 @@ function Product(props) {
         })
     }
 
-
     /* Fetch only once */
     const [data, setFetching] = useState({fetching: false, data: ""});
     useEffect(() => {
@@ -182,17 +185,8 @@ function Product(props) {
             case "add":
                 return <ProductFormAdd handler={handlers.add}/>
 
-            case "get":
-                /* Start by getting all products */
-                if (!data.fetching) {
-                    data.fetching = true;
-                }
-                return <ProductFormGet handleSelect={handleSelect}
-                                       listProducts={data.data}
-                                       selectedProduct={selectedProduct}/>
-
             case "get all":
-                return <ProductFormGetAll handler={handlers.getAll}/>;
+                return <ProductFormGetAll token={props.token}/>
 
             case "update":
                 /* Start by getting all products */
