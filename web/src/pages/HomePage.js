@@ -1,6 +1,5 @@
 import React from "react";
 import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
-import Footer from "./Footer";
 import Navigation from "./NavAdmin";
 import About from "./About";
 import Product from "../admin/product/Product";
