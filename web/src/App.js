@@ -65,15 +65,12 @@ function App() {
                                         <h2>Log-in</h2>
                                         <LogInForm2 handleChangeProps={handleLogIn}/>
                                     </div>
-                                    <div className="col">
-                                        <h2>Sign-up</h2>
-                                        #TODO
-                                    </div>
                                 </div>
                             </div>
                         }/>
                         <Route path="/about" exact component={() => <About/>}/>
                     </Switch>
+                    <Footer/>
                 </Router>
             }
         </div>
