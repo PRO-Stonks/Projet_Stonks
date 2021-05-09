@@ -91,80 +91,79 @@ function Location(props) {
                 }
             }
         }),
-        //
-        // update: useFormik({
-        //     initialValues: {
-        //         name: '',
-        //         address: {
-        //             street: '',
-        //             noStreet: '',
-        //             npa: '',
-        //             city: '',
-        //             country: ''
-        //         }
-        //     },
-        //     onSubmit: async (values) => {
-        //         /* Send http request and get response */
-        //         const res = await management.update(props.token, selectedLocation.id, {
-        //             name: values.name,
-        //             address: {
-        //                 street: values.address.street,
-        //                 noStreet: values.address.noStreet,
-        //                 npa: values.address.npa,
-        //                 city: values.address.city,
-        //                 country: values.address.country
-        //             }
-        //         });
-        //
-        //         /* Display updated Product */
-        //         if (res.status === "success") {
-        //             console.log("Location updated");
-        //             alert("This is the updated location:\n" + JSON.stringify(res.data) + "\nPlease reload the page" +
-        //                 " to see the changes.");
-        //         }
-        //         /* Display message error */
-        //         else {
-        //             handlers.update.errors.submit = res.message;
-        //         }
-        //     }
-        // }),
-        //
-        // sofDelete: useFormik({
-        //     initialValues: {},
-        //     onSubmit: async (values) => {
-        //
-        //         /* Send http request and get response */
-        //         const res = await management.softDelete(props.token, selectedLocation.id);
-        //
-        //         /* Display soft deleted message */
-        //         if (res.status === "success") {
-        //             console.log("Location soft deleted");
-        //             alert("The location was soft deleted but still can be seen.");
-        //         }
-        //         /* Display message error */
-        //         else{
-        //             handlers.sofDelete.errors.submit = res.message;
-        //         }
-        //     }
-        // }),
-        //
-        // delete: useFormik({
-        //     initialValues: {},
-        //     onSubmit: async (values) => {
-        //         /* Send http request and get response */
-        //         const res = await management.delete(props.token, selectedLocation.id);
-        //
-        //         /* Display deleted message */
-        //         if (res.status === "success") {
-        //             console.log("Location soft deleted");
-        //             alert("The location was deleted, please refresh the page.");
-        //         }
-        //         /* Display message error */
-        //         else{
-        //             handlers.sofDelete.errors.submit = res.message;
-        //         }
-        //     }
-        // })
+
+        update: useFormik({
+            initialValues: {
+                name: '',
+                street: '',
+                noStreet: '',
+                npa: '',
+                city: '',
+                country: ''
+            },
+            onSubmit: async (values) => {
+
+                /* Send http request and get response */
+                const res = await management.update(props.token, selectedLocation.id, {
+                    name: values.name,
+                    address: {
+                        street: values.street,
+                        noStreet: values.noStreet,
+                        npa: values.npa,
+                        city: values.city,
+                        country: values.country
+                    }
+                });
+
+                /* Display updated Location */
+                if (res.status === "success") {
+                    console.log("Location updated");
+                    alert("This is the updated location:\n" + JSON.stringify(res.data) + "\nPlease reload the page" +
+                        " to see the changes.");
+                }
+                /* Display message error */
+                else {
+                    handlers.update.errors.submit = res.message;
+                }
+            }
+        }),
+
+        sofDelete: useFormik({
+            initialValues: {},
+            onSubmit: async (values) => {
+
+                /* Send http request and get response */
+                const res = await management.softDelete(props.token, selectedLocation.id);
+
+                /* Display soft deleted message */
+                if (res.status === "success") {
+                    console.log("Location soft deleted");
+                    alert("The location was soft deleted but still can be seen.");
+                }
+                /* Display message error */
+                else{
+                    handlers.sofDelete.errors.submit = res.message;
+                }
+            }
+        }),
+
+        delete: useFormik({
+            initialValues: {},
+            onSubmit: async (values) => {
+                /* Send http request and get response */
+                const res = await management.delete(props.token, selectedLocation.id);
+
+                /* Display deleted message */
+                if (res.status === "success") {
+                    console.log("Location soft deleted");
+                    alert("The location was deleted, please refresh the page.");
+                }
+                /* Display message error */
+                else{
+                    handlers.sofDelete.errors.submit = res.message;
+                }
+            }
+        })
 
     }
 

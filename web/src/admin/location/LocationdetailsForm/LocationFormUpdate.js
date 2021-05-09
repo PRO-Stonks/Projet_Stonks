@@ -1,20 +1,24 @@
 import React, {useEffect, useState} from "react";
 
-function ProductFormUpdate(props) {
+function LocationFormUpdate(props) {
 
     /* Init values only once */
     const [init, setInit] = useState(false);
     useEffect(() => {
-            props.handler.values.tag = props.selectedProduct.tag;
-            props.handler.values.name = props.selectedProduct.name;
-            setInit(!init);
-    }, [props.selectedProduct]);
+        props.handler.values.name = props.selectedLocation.name;
+        props.handler.values.street = props.selectedLocation.address.street;
+        props.handler.values.noStreet = props.selectedLocation.address.noStreet;
+        props.handler.values.npa = props.selectedLocation.address.npa;
+        props.handler.values.city = props.selectedLocation.address.city;
+        props.handler.values.country = props.selectedLocation.address.country;
+        setInit(!init);
+    }, [props.selectedLocation]);
 
     return (
         <React.Fragment>
-            <h3>Update a Product</h3>
+            <h3>Update a Location</h3>
             <form className="form-group" onSubmit={props.handler.handleSubmit}>
-                {props.listProducts ?
+                {props.listLocations ?
                     <>
                         {/* Id select */}
                         <select
@@ -22,7 +26,7 @@ function ProductFormUpdate(props) {
                             onChange={props.handleSelect}
                         >
                             <option selected>Select the id</option>
-                            {props.listProducts.map((option, index) => (
+                            {props.listLocations.map((option, index) => (
                                 <option key={index} value={index}>
                                     {option._id}
                                 </option>
@@ -31,9 +35,8 @@ function ProductFormUpdate(props) {
                         <br/><br/>
 
                         {/* Display id and tag according to selected name */}
-                        {props.selectedProduct.id ?
+                        {props.selectedLocation.id ?
                             <>
-                                {/*props.handler.values = {name: props.selectedProduct.name, tag: props.selectedProduct.tag}*/}
                                 {/* Name Input */}
                                 <label className="form-check-label">Name</label>
                                 <input
@@ -43,29 +46,75 @@ function ProductFormUpdate(props) {
                                     type="text"
                                     onChange={props.handler.handleChange}
                                     onBlur={props.handler.handleBlur}
-                                    value={
-                                        /* With this, we give the original name to update */
-                                        props.handler.values.name}
+                                    value={props.handler.values.name}
                                 />
                                 <br/>
 
-                                {/* Tag Input */}
-                                <label className="form-check-label">Tag</label>
-                                <textarea
+                                {/* Street Input */}
+                                <label className="form-check-label">Street</label>
+                                <input
                                     className="form-control w-50 "
-                                    id="add_tag"
-                                    name="tag"
+                                    placeholder="Street"
+                                    id="add_street"
+                                    name="street"
+                                    type="text"
                                     onChange={props.handler.handleChange}
                                     onBlur={props.handler.handleBlur}
-                                    value={
-                                        /* With this, we give the original tag to update */
-                                        props.handler.values.tag }
+                                    value={props.handler.values.street}
+                                />
+
+                                {/* noStreet Input */}
+                                <label className="form-check-label">Street number</label>
+                                <input
+                                    className="form-control w-50 "
+                                    placeholder="Street number"
+                                    id="add_noStreet"
+                                    name="noStreet"
+                                    onChange={props.handler.handleChange}
+                                    onBlur={props.handler.handleBlur}
+                                    value={props.handler.values.noStreet}
+                                />
+
+                                {/* npa Input */}
+                                <label className="form-check-label">NPA</label>
+                                <input
+                                    className="form-control w-50 "
+                                    placeholder="NPA"
+                                    id="add_npa"
+                                    name="npa"
+                                    onChange={props.handler.handleChange}
+                                    onBlur={props.handler.handleBlur}
+                                    value={props.handler.values.npa}
+                                />
+
+                                {/* city Input */}
+                                <label className="form-check-label">City</label>
+                                <input
+                                    className="form-control w-50 "
+                                    placeholder="City"
+                                    id="add_city"
+                                    name="city"
+                                    onChange={props.handler.handleChange}
+                                    onBlur={props.handler.handleBlur}
+                                    value={props.handler.values.city}
+                                />
+
+                                {/* country Input */}
+                                <label className="form-check-label">Country</label>
+                                <input
+                                    className="form-control w-50 "
+                                    placeholder="Country"
+                                    id="add_country"
+                                    name="country"
+                                    onChange={props.handler.handleChange}
+                                    onBlur={props.handler.handleBlur}
+                                    value={props.handler.values.country}
                                 />
                             </>
                             : ""}
                     </>
                     : <error>
-                        {/* If Products could not be fetched */}
+                        {/* If Locations could not be fetched */}
                         Could not fetch data
                     </error>}
 
@@ -81,4 +130,4 @@ function ProductFormUpdate(props) {
 
 }
 
-export default ProductFormUpdate;
+export default LocationFormUpdate;
