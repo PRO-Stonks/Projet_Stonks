@@ -170,6 +170,7 @@ function Product(props) {
     };
     const [selectedProduct, setGetSelection] = useState({id: "", tag: "", name: ""});
 
+    
 
     /**
      * Select the form depending on the action
