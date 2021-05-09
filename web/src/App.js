@@ -7,8 +7,6 @@ import HomePage from "./pages/HomePage";
 import About from "./pages/About";
 import Footer from "./pages/Footer";
 import logo from "./assets/stonks4.png";
-import { useHistory } from "react-router-dom";
-import {normalizeToLocation, resolveToLocation} from "react-router-dom/modules/utils/locationUtils";
 
 function App() {
     const [state, setState] = useState({loggedIn: false, user: {}, token: ""})
