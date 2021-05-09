@@ -1,5 +1,4 @@
 import React from "react";
-import {Col, Row} from "react-bootstrap";
 
 function ProductListElement({item}) {
     return <div className="container-fluid">

@@ -5,9 +5,9 @@ function ProductFormUpdate(props) {
     /* Init values only once */
     const [init, setInit] = useState(false);
     useEffect(() => {
-            props.handler.values.tag = props.selectedProduct.tag;
-            props.handler.values.name = props.selectedProduct.name;
-            setInit(!init);
+        props.handler.values.tag = props.selectedProduct.tag;
+        props.handler.values.name = props.selectedProduct.name;
+        setInit(!init);
     }, [props.selectedProduct]);
 
     return (
@@ -33,7 +33,6 @@ function ProductFormUpdate(props) {
                         {/* Display id and tag according to selected name */}
                         {props.selectedProduct.id ?
                             <>
-                                {/*props.handler.values = {name: props.selectedProduct.name, tag: props.selectedProduct.tag}*/}
                                 {/* Name Input */}
                                 <label className="form-check-label">Name</label>
                                 <input
@@ -43,9 +42,7 @@ function ProductFormUpdate(props) {
                                     type="text"
                                     onChange={props.handler.handleChange}
                                     onBlur={props.handler.handleBlur}
-                                    value={
-                                        /* With this, we give the original name to update */
-                                        props.handler.values.name}
+                                    value={props.handler.values.name}
                                 />
                                 <br/>
 
@@ -59,7 +56,7 @@ function ProductFormUpdate(props) {
                                     onBlur={props.handler.handleBlur}
                                     value={
                                         /* With this, we give the original tag to update */
-                                        props.handler.values.tag }
+                                        props.handler.values.tag}
                                 />
                             </>
                             : ""}
@@ -78,7 +75,6 @@ function ProductFormUpdate(props) {
             </form>
         </React.Fragment>
     );
-
 }
 
 export default ProductFormUpdate;

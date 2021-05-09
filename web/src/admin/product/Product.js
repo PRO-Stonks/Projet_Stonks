@@ -8,14 +8,9 @@ import {
 } from '@material-ui/core';
 import ActionsForm from "../../utils/ActionsForm";
 import ProductFormAdd from "./ProductdetailsForm/ProductFormAdd";
-import ProductFormGet from "./ProductdetailsForm/ProductFormGet";
 import ProductFormGetAll from "./ProductdetailsForm/ProductFormGetAll";
 import ProductFormUpdate from "./ProductdetailsForm/ProductFormUpdate";
 import ProductFormDelete from "./ProductdetailsForm/ProductFormDelete";
-import UserListElement from "../user/UserListElement";
-import Spinner from "../../Spinner";
-import List from "../../utils/list/List";
-import ProductListElement from "./ProductdetailsForm/ProductListElement";
 
 function Product(props) {
 

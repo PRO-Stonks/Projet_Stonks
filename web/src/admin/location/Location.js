@@ -141,7 +141,7 @@ function Location(props) {
                     alert("The location was soft deleted but still can be seen.");
                 }
                 /* Display message error */
-                else{
+                else {
                     handlers.sofDelete.errors.submit = res.message;
                 }
             }
@@ -159,7 +159,7 @@ function Location(props) {
                     alert("The location was deleted, please refresh the page.");
                 }
                 /* Display message error */
-                else{
+                else {
                     handlers.sofDelete.errors.submit = res.message;
                 }
             }
