@@ -49,6 +49,7 @@ function List({refetch, spinner, url, item, token, sort, ...itemProps}) {
                     setError(result.message);
                 } else {
                     if (nbFetchedElement < NUMBER_OF_ELEMENT_PER_FETCH) {
+                        console.log("Missing: Removing "+nbFetchedElement +" Element ")
                         setData(prevState => ([...prevState.slice(0, prevState.length - nbFetchedElement), ...result.data]));
                     } else {
                         setData(prevState => ([...prevState, ...result.data]));
@@ -64,7 +65,7 @@ function List({refetch, spinner, url, item, token, sort, ...itemProps}) {
     };
 
     const getUrl = (page) =>
-        API_URL + url + `/?page=${page}`;
+        API_URL + url + `?page=${page}`;
 
 
     useEffect(() => {
@@ -85,7 +86,7 @@ function List({refetch, spinner, url, item, token, sort, ...itemProps}) {
         <div className="List">
             <div className="List-container">
                 {sort ?
-                    data.sort(sort).map(item => <Item key={item._id} item={item} {...itemProps} />) :
+                    [...data].sort(sort).map(item => <Item key={item._id} item={item} {...itemProps} />) :
                     data.map(item => <Item key={item._id} item={item} {...itemProps} />)
                 }
             </div>
