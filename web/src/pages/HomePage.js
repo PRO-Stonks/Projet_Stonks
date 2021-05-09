@@ -15,7 +15,7 @@ import UserManagementMenu from "../admin/user/UserManagementMenu";
 */
 function HomePage(props) {
     return (
-        <div className="container">
+        <div>
             <Router>
                 {/* Navigation bar */}
                 <Navigation handleLogOut={props.handleLogOut}/>

@@ -29,7 +29,7 @@ function NavAdmin(props) {
                             </li>
                         </ul>
                     </div>
-                    <div><button className="btn btn-dark" onClick={props.handleLogOut}>Log out</button></div>
+                    <div><Link className="btn btn-dark" onClick={props.handleLogOut} to="/">Log out</Link></div>
                 </div>
             </nav>
         </div>
