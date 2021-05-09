@@ -6,7 +6,7 @@ import {
     StepLabel,
     Stepper
 } from '@material-ui/core';
-import ActionsForm from "./ActionsForm";
+import ActionsForm from "../../utils/ActionsForm";
 import ProductFormAdd from "./ProductdetailsForm/ProductFormAdd";
 import ProductFormGet from "./ProductdetailsForm/ProductFormGet";
 import ProductFormGetAll from "./ProductdetailsForm/ProductFormGetAll";
