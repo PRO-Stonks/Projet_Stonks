@@ -1,35 +1,32 @@
 import React, {useEffect, useState} from "react";
 import API_URL from "../URL";
 
-const applyUpdateResult = (result) => (prevState) => ({
-    data: [...prevState.data, ...result.data],
-    page: result.page,
-    isLoading: false,
-});
+const NUMBER_OF_ELEMENT_PER_FETCH = 10;
 
-const applySetResult = (result) => (prevState) => ({
-    data: result.data,
-    page: result.page,
-    isLoading: false,
-});
-
-
+// TODO Add option to filter element displayed multi-filter would be nice
 /**
  * Paginated List
- * @param spinner An element to display while a fetch is occurring
+ * @param refetch a boolean to indicates that a refetch is needed.
+ * @param spinner An element to display while a fetch is occurring.
  * @param url the part of the url to fetch (Composed as BASE_URL+ulr/?pages=
  * @param item the item to display in the list (the item will be given with props.item)
  * @param token the token to make a request
- * @param itemProps all remaing props will be given to the item
+ * @param sort a sort function
+ * @param itemProps all remaining props will be given to the item
  * @returns {JSX.Element}
  * @constructor
  */
-function List({spinner, url,item, token, ...itemProps}) {
-    const [state, setState] = useState({page: null, data: [], isLoading: false});
+function List({refetch, spinner, url, item, token, sort, ...itemProps}) {
+    const [page, setPage] = useState(0);
+    const [data, setData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [nbFetchedElement, setNbFetchedElement] = useState(NUMBER_OF_ELEMENT_PER_FETCH);
 
-    const fetchStories = (page) => {
-        setState({...state, isLoading: true})
-        fetch(getUrl(page), {
+
+    const fetchStories = (pageTarget, limit = 10) => {
+        setIsLoading(true);
+        fetch(getUrl(pageTarget) + '&limit=' + limit, {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -47,55 +44,62 @@ function List({spinner, url,item, token, ...itemProps}) {
                 return response.json();
             })
             .then(result => {
-                console.log(result.data);
-                console.log(page);
-                onSetResult(result, page)
-            })
+                setIsLoading(false);
+                if (result.status === "fail") {
+                    setError(result.message);
+                } else {
+                    if (nbFetchedElement < NUMBER_OF_ELEMENT_PER_FETCH) {
+                        setData(prevState => ([...prevState.slice(0, prevState.length - nbFetchedElement), ...result.data]));
+                    } else {
+                        setData(prevState => ([...prevState, ...result.data]));
+                    }
+
+                    if (result.results < NUMBER_OF_ELEMENT_PER_FETCH) {
+                        setNbFetchedElement(result.results);
+                    } else {
+                        setPage(pageTarget);
+                    }
+                }
+            });
     };
 
     const getUrl = (page) =>
-        API_URL + url+`/?page=${page}`;
+        API_URL + url + `/?page=${page}`;
+
 
     useEffect(() => {
         const onInitialSearch = () => {
             fetchStories(1);
         }
         onInitialSearch();
-    }, []);
+    }, [refetch]);
 
 
-
-    const onSetResult = (result, page) => {
-        result.page = page
-        page === 0
-            ? setState(applySetResult(result))
-            : setState(applyUpdateResult(result));
-    }
-
-    const onPaginatedSearch = (e) => {
-        fetchStories(state.page + 1);
+    const onPaginatedSearch = () => {
+        fetchStories(page + 1);
     }
 
     const Spinner = spinner;
     const Item = item;
     return (
-        <div className="page">
-            <div className="list">
-                {state.data.map(item => <Item item={item} {...itemProps} />)}
-            </div>
-            <div className="interactions">
-                {
-                    (state.page !== null && !state.isLoading) &&
-                    <button
-                        type="button"
-                        onClick={onPaginatedSearch}
-                    >
-                        More
-                    </button>
+        <div className="List">
+            <div className="List-container">
+                {sort ?
+                    data.sort(sort).map(item => <Item key={item._id} item={item} {...itemProps} />) :
+                    data.map(item => <Item key={item._id} item={item} {...itemProps} />)
                 }
             </div>
-            {Spinner && <Spinner enable={state.isLoading}/>}
-
+            <div className="interactions">
+                {!isLoading &&
+                <button
+                    type="button"
+                    onClick={onPaginatedSearch}
+                >
+                    More
+                </button>}
+            </div>
+            {error !== "" && <div>{error}</div>}
+            {Spinner && <Spinner enable={isLoading}/>}
         </div>
     );
 }

@@ -1,10 +1,7 @@
 import {useFormik} from 'formik';
 import Spinner from "../Spinner";
-
-function validateEmail(email) {
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-}
+import API_URL from "../utils/URL";
+import validateEmail from "../utils/validateEmail";
 
 async function getData(url, data) {
     try {
@@ -53,7 +50,7 @@ const LogInForm2 = (props) => {
         },
         validate,
         onSubmit: async (values) => {
-            const res = await getData("http://localhost:4000/api/v1/users/login", values);
+            const res = await getData(API_URL+"users/login", values);
             if (res.status === "fail"){
                 formik.errors.submit = res.message;
             }else{
