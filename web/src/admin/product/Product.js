@@ -82,8 +82,8 @@ function Product(props) {
 
         update: useFormik({
             initialValues: {
-                name: '\o',
-                tag: '\o'
+                name: '',
+                tag: ''
             },
             onSubmit: async (values) => {
                 /* Send http request and get response */
@@ -96,7 +96,7 @@ function Product(props) {
                 if (res.status === "success") {
                     console.log("Product updated");
                     alert("This is the updated product:\n" + JSON.stringify(res.data) + "\nPlease reload the page" +
-                        "to see the changes.");
+                        " to see the changes.");
                 }
                 /* Display message error */
                 else {
@@ -143,7 +143,6 @@ function Product(props) {
         })
     }
 
-
     /* Fetch only once */
     const [data, setFetching] = useState({fetching: false, data: ""});
     useEffect(() => {
@@ -170,7 +169,6 @@ function Product(props) {
     };
     const [selectedProduct, setGetSelection] = useState({id: "", tag: "", name: ""});
 
-    
 
     /**
      * Select the form depending on the action
