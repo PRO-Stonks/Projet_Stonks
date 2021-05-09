@@ -10,7 +10,7 @@ function UserManagementMenu(props) {
     const [selected, setSelected] = useState(null);
     const [refetchList, setRefreshList] = useState(false);
 
-    const refresh = () =>{
+    const refresh = () => {
         setRefreshList(!refetchList);
     }
 
@@ -20,7 +20,7 @@ function UserManagementMenu(props) {
         setSelected(null);
     }
 
-    const refreshFrom = (data) =>{
+    const refreshFrom = (data) => {
         refresh();
         setSelected(data);
     }
@@ -41,13 +41,16 @@ function UserManagementMenu(props) {
 
     return (
         <Container fluid>
+            <h2>User management</h2>
+            <br/>
             <Row>
                 <Col>
                     <List token={props.token} item={UserListElement} spinner={Spinner} url={"users"}
                           onSelect={onSelectHandler} sort={sortElement} refetch={refetchList}/>
                 </Col>
                 <Col>
-                    <UserManager user={selected} token={props.token} refreshHandler={refresh} formRefresh={refreshFrom} deleteHandler={handleDelete}/>
+                    <UserManager user={selected} token={props.token} refreshHandler={refresh} formRefresh={refreshFrom}
+                                 deleteHandler={handleDelete}/>
                 </Col>
             </Row>
         </Container>

@@ -3,8 +3,7 @@ import Spinner from "../../Spinner";
 import {Field, Form, Formik} from 'formik';
 import validateEmail from "../../utils/validateEmail";
 
-
-async function getData(url, data, token, method='POST') {
+async function getData(url, data, token, method = 'POST') {
     try {
         const response = await fetch(url, {
             method, // *GET, POST, PUT, DELETE, etc.
@@ -49,25 +48,25 @@ const validate = values => {
     return errors;
 }
 
-function getChanges(original, changed){
+function getChanges(original, changed) {
     let output = {};
-    if(original.firstName !== changed.firstName){
+    if (original.firstName !== changed.firstName) {
         output.firstName = changed.firstName;
     }
 
-    if(original.firstName !== changed.firstName){
+    if (original.firstName !== changed.firstName) {
         output.firstName = changed.firstName;
     }
 
-    if(original.lastName !== changed.lastName){
+    if (original.lastName !== changed.lastName) {
         output.lastName = changed.lastName;
     }
 
-    if(original.role !== changed.role){
+    if (original.role !== changed.role) {
         output.role = changed.role;
     }
 
-    if(original.email !== changed.email){
+    if (original.email !== changed.email) {
         output.email = changed.email;
     }
 
@@ -87,24 +86,25 @@ const UserForm = (props) => {
             onSubmit={async (values, actions) => {
 
                 let res;
-                if(props.action === "update"){
+                if (props.action === "update") {
                     const data = getChanges(props.userData, values);
-                     res = await getData(API_URL + "users/"+props.userData.id, data, props.token, 'PATCH');
-                }else if(props.action === "add"){
+                    res = await getData(API_URL + "users/" + props.userData.id, data, props.token, 'PATCH');
+                } else if (props.action === "add") {
                     res = await getData(API_URL + "users/signup", values, props.token);
                 }
 
                 if (res.status === "fail") {
                     actions.setFieldError("submit", res.message);
-                }else{
+                } else {
                     props.refreshHandler(res.data);
                 }
             }}
         >
             {formik => (
                 <Form>
-                    <label htmlFor="firstName">First name </label>
+                    <label className="form-check-label" htmlFor="firstName">First name </label>
                     <Field
+                        className="form-control"
                         id="firstName"
                         name="firstName"
                         type="text"
@@ -115,8 +115,9 @@ const UserForm = (props) => {
                     {formik.touched.firstName && formik.errors.firstName ?
                         <div className="Error">{formik.errors.firstName}</div> :
                         <br/>}
-                    <label htmlFor="lastName">Last name </label>
+                    <label className="form-check-label" htmlFor="lastName">Last name </label>
                     <Field
+                        className="form-control"
                         id="lastName"
                         name="lastName"
                         type="text"
@@ -127,8 +128,9 @@ const UserForm = (props) => {
                     {formik.touched.lastName && formik.errors.lastName ?
                         <div className="Error">{formik.errors.lastName}</div> :
                         <br/>}
-                    <label htmlFor="email">Email Address </label>
+                    <label className="form-check-label" htmlFor="email">Email Address </label>
                     <Field
+                        className="form-control"
                         id="email"
                         name="email"
                         type="email"
@@ -139,8 +141,9 @@ const UserForm = (props) => {
                     {formik.touched.email && formik.errors.email ? <div className="Error">{formik.errors.email}</div> :
                         <br/>}
 
-                    <label htmlFor="password">Password </label>
+                    <label className="form-check-label" htmlFor="password">Password </label>
                     <Field
+                        className="form-control"
                         id="password"
                         name="password"
                         type="password"
@@ -151,8 +154,9 @@ const UserForm = (props) => {
                     {formik.touched.password && formik.errors.password ?
                         <div className="Error">{formik.errors.password}</div> :
                         <br/>}
-                    <label htmlFor="role">Role </label>
+                    <label className="form-check-label" htmlFor="role">Role </label>
                     <Field
+                        className="custom-select"
                         as="select"
                         id="role"
                         name="role"
@@ -166,7 +170,7 @@ const UserForm = (props) => {
                     {formik.touched.firstName && formik.errors.firstName ?
                         <div className="Error">{formik.errors.firstName}</div> :
                         <br/>}
-
+                    <br/>
                     <button type="submit">Submit</button>
                     <Spinner enabled={formik.isSubmitting}/>
                     {formik.errors.submit ? <div className="Error">{formik.errors.submit}</div> :

@@ -1,6 +1,7 @@
 import {Button, Col, Container, Row} from 'react-bootstrap';
 import UserForm from "./UserForm";
 import API_URL from "../../utils/URL";
+import {useEffect, useState} from "react";
 
 async function del(url, token) {
     try {
@@ -52,13 +53,22 @@ function UserManager({user, token, refreshHandler, formRefresh, deleteHandler}) 
             console.log("Calling handler")
             deleteHandler();
         }
-
     }
 
+    const [displayUpdateForm, setUpdate] = useState(false);
+    useEffect(() => {
+        if (displayUpdateForm) {
+            setUpdate(false);
+        }
+    }, [user]);
+
     if (!user) {
-        return <UserForm
-            userData={{firstName: "", lastName: "", email: "", password: "", role: "manager"}} action={"add"}
-            token={token} refreshHandler={refreshHandler}/>
+        return <div>
+            <h4>Add</h4>
+            <UserForm
+                userData={{firstName: "", lastName: "", email: "", password: "", role: "manager"}} action={"add"}
+                token={token} refreshHandler={refreshHandler}/>
+        </div>
     }
 
     return <Container fluid>
@@ -77,25 +87,34 @@ function UserManager({user, token, refreshHandler, formRefresh, deleteHandler}) 
         <br/>
         <Row>
             <Col>
-                <Button variant="warning" onClick={softDelete}>Disable Me</Button>
+                <Button variant="warning" onClick={softDelete}>Disable</Button>
             </Col>
             <Col>
-                <Button variant="danger" onClick={hardDelete}>Delete Me</Button>
+                <Button variant="success" onClick={() => {
+                    setUpdate(true)
+                }}>Update</Button>
+            </Col>
+            <Col>
+                <Button variant="danger" onClick={hardDelete}>Delete</Button>
             </Col>
         </Row>
         <br/>
-        <Row className="justify-content-md-center">
-            <UserForm
-                userData={{
-                    id: user._id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    email: user.email,
-                    role: user.role
-                }} action={"update"} token={token} refreshHandler={formRefresh}/>
-        </Row>
+        {displayUpdateForm ?
+            <Row className="justify-content-md-center">
+                <UserForm
+                    userData={{
+                        id: user._id,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        email: user.email,
+                        role: user.role
+                    }} action={"update"} token={token} refreshHandler={formRefresh}/>
+            </Row>
+            : ""
+        }
     </Container>
-};
+}
+
 export default UserManager;
 
 const style = {"fontWeight": "bold", "borderBottom": "2px solid", "paddingBottom": "2px"}
