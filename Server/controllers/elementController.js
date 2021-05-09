@@ -45,7 +45,7 @@ exports.softDeleteElement = async (req, res, next) => {
     } catch (error) {
         next(error);
     } finally {
-        if(session){
+        if (session) {
             session.endSession();
         }
     }
@@ -122,9 +122,44 @@ exports.addElement = async (req, res, next) => {
             next(err);
         }
     } finally {
-        if(session){
+        if (session) {
             session.endSession();
         }
+    }
+};
+
+exports.getElementByQR = async (req, res, next) => {
+    try {
+        const QR = await QRModel.findOne({
+            code: req.params.code,
+        });
+
+        if (!QR) {
+            return next(
+                new AppError(404, "fail", "The QR code does not exist"),
+                req,
+                res,
+                next,
+            );
+        }
+
+        const element = await Element.findOne({
+            idQR: QR._id,
+            active: true
+        });
+
+        if (!element) {
+            return next(new AppError(404, 'fail', 'No element found with that id'), req, res, next);
+        }
+
+        res.status(200).json({
+            status: 'success',
+            data: element
+        });
+
+
+    } catch (error) {
+        next(error);
     }
 };
 
@@ -181,7 +216,7 @@ exports.moveElement = async (req, res, next) => {
     } catch (error) {
         next(error);
     } finally {
-        if(session){
+        if (session) {
             session.endSession();
         }
     }

@@ -22,6 +22,10 @@ router
     .patch(elementController.moveElement);
 
 router
+    .route('/QR/:code')
+    .get(elementController.getElementByQR);
+
+router
     .route('/')
     .get(elementController.getAllElements);
 

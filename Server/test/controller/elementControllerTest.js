@@ -38,6 +38,7 @@ const codeQR3 = "QRcode3";
 const codeQR4 = "QRcode4";
 let idProduct;
 before(async function () {
+    console.log(process.env.DATABASE)
     const database = process.env.DATABASE.replace(
         '${MONGO_USERNAME}', process.env.MONGO_USERNAME).replace(
         '${MONGO_PASSWORD}', process.env.MONGO_PASSWORD).replace(
@@ -379,6 +380,67 @@ describe('elementController', function () {
                 .timeout(timeoutDuration)
                 .then((res) => {
 
+                    expect(res.status).to.be.equal(200);
+                    expect(res.body.status).to.be.equal("success");
+                    expect(res.body.data.price).to.be.equal(4);
+                });
+        });
+    });
+
+    describe('Get element by QR code', function () {
+        it('should fail when not logged in or without token', async () => {
+            // Get Element
+            await chai
+                .request(app)
+                .get(mainRoute + "/elements/QR/" + codeQR1)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(401);
+                    expect(res.body.status).to.be.equal('fail');
+                });
+        });
+
+        it('should fail with invalid token', async () => {
+            // Fake token
+            let token = "fakeTokenIsNotVeryGentle";
+
+            // Get element
+            await chai
+                .request(app)
+                .get(mainRoute + "/elements/QR/" + codeQR1)
+                .set("Authorization", "Bearer " + token)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(500);
+                    expect(res.body.status).to.be.equal('error');
+                })
+        });
+
+        it('should fail with invalid id', async () => {
+            // Get Element
+            await chai
+                .request(app)
+                .get(mainRoute + "/elements/QR/" + mongoose.Types.ObjectId.createFromTime(42))
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal("fail");
+                    expect(res.body.message).to.be.equal("The QR code does not exist");
+                });
+        });
+
+        it('should work with correct id', async () => {
+            // Get Element
+            await chai
+                .request(app)
+                .get(mainRoute + "/elements/QR/" + codeQR1)
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.data.price).to.be.equal(4);
