@@ -74,7 +74,6 @@ function App() {
                         }/>
                         <Route path="/about" exact component={() => <About/>}/>
                     </Switch>
-                    <Footer/>
                 </Router>
             }
         </div>

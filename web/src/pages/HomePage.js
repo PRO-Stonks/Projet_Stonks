@@ -15,7 +15,7 @@ import UserManagementMenu from "../admin/user/UserManagementMenu";
 */
 function HomePage(props) {
     return (
-        <div>
+        <div className="container">
             <Router>
                 {/* Navigation bar */}
                 <Navigation handleLogOut={props.handleLogOut}/>
@@ -76,7 +76,10 @@ function HomePage(props) {
 
                     {/* About page */}
                     <Route path="/about" exact component={() => <About/>}/>
+
+                    {/* User management page */}
                     <Route path="/users" exact component={() => <UserManagementMenu token={props.token} user={props.user}/>}/>
+
                     {/* Products management page */}
                     <Route path="/products" exact component={() => <Product token={props.token}/>}/>
 
@@ -88,7 +91,6 @@ function HomePage(props) {
                     <Route path="/locations" exact component={() => <About/>}/>
                     <Route path="/logs" exact component={() => <About/>}/>
                 </Switch>
-                <Footer/>
             </Router>
         </div>
     );

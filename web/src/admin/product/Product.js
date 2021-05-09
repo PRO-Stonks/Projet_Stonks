@@ -12,6 +12,10 @@ import ProductFormGet from "./ProductdetailsForm/ProductFormGet";
 import ProductFormGetAll from "./ProductdetailsForm/ProductFormGetAll";
 import ProductFormUpdate from "./ProductdetailsForm/ProductFormUpdate";
 import ProductFormDelete from "./ProductdetailsForm/ProductFormDelete";
+import UserListElement from "../user/UserListElement";
+import Spinner from "../../Spinner";
+import List from "../../utils/list/List";
+import ProductListElement from "./ProductdetailsForm/ProductListElement";
 
 function Product(props) {
 
@@ -181,17 +185,8 @@ function Product(props) {
             case "add":
                 return <ProductFormAdd handler={handlers.add}/>
 
-            case "get":
-                /* Start by getting all products */
-                if (!data.fetching) {
-                    data.fetching = true;
-                }
-                return <ProductFormGet handleSelect={handleSelect}
-                                       listProducts={data.data}
-                                       selectedProduct={selectedProduct}/>
-
             case "get all":
-                return <ProductFormGetAll handler={handlers.getAll}/>;
+                return <ProductFormGetAll token={props.token}/>
 
             case "update":
                 /* Start by getting all products */

@@ -3,7 +3,7 @@ import {Card, FormControl, FormLabel, TextField} from "@material-ui/core";
 
 function ActionsForm(props) {
 
-    const actions = ["none", "add", "get", "get all", "update", "softDelete", "delete"];
+    const actions = ["none", "add", "get all", "update", "softDelete", "delete"];
     const handleAction = (event) => {
         props.setAction(event.target.value);
     };
