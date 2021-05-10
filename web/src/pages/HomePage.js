@@ -10,6 +10,7 @@ import Spinner from "../utils/Spinner";
 import UserManagementMenu from "../admin/user/UserManagementMenu";
 import Location from "../admin/location/Location";
 import StocksManagerMenu from "../admin/stocks/StocksManagerMenu";
+import UserLogManager from "../admin/logs/LogsManagement/UserLogManager";
 
 /* This home page is specific to Admins
     #TODO later for manager
@@ -93,9 +94,8 @@ function HomePage(props) {
                     {/* QR management page */}
                     <Route path="/QR" exact component={() => <QR token={props.token}/>}/>
 
-                    {/* #TODO Pages below are not implemented yet */}
 
-                    <Route path="/logs" exact component={() => <About/>}/>
+                    <Route path="/logs" exact component={() => <UserLogManager token={props.token}/>}/>
                 </Switch>
             </Router>
         </div>

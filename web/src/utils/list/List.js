@@ -12,11 +12,12 @@ const NUMBER_OF_ELEMENT_PER_FETCH = 10;
  * @param item the item to display in the list (the item will be given with props.item)
  * @param token the token to make a request
  * @param sort a sort function
+ * @param queryOptions query options for the request (populate, sort)
  * @param itemProps all remaining props will be given to the item
  * @returns {JSX.Element}
  * @constructor
  */
-function List({refetch, spinner, url, item, token, sort, ...itemProps}) {
+function List({refetch, spinner, url, item, token, sort, queryOptions, ...itemProps}) {
     const [page, setPage] = useState(0);
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +27,7 @@ function List({refetch, spinner, url, item, token, sort, ...itemProps}) {
 
     const fetchStories = (pageTarget, limit = 10) => {
         setIsLoading(true);
-        fetch(getUrl(pageTarget) + '&limit=' + limit, {
+        fetch(getUrl(pageTarget) + '&limit=' + limit+"&"+queryOptions, {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
