@@ -156,6 +156,7 @@ exports.getAll = Model => async (req, res, next) => {
     try {
         const features = new APIFeatures(Model.find(), req.query)
             .sort()
+            .populate()
             .paginate();
 
         const doc = await features.query;
@@ -201,6 +202,7 @@ exports.getDocumentWithFilter = (Model, filter, param = "id") => async (req, res
     try {
         const features = new APIFeatures(Model.find(obj), req.query)
             .sort()
+            .populate()
             .paginate();
         const doc = await features.query;
         if (!doc) {
