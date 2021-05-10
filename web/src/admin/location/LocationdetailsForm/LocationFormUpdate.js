@@ -26,11 +26,15 @@ function LocationFormUpdate(props) {
                             onChange={props.handleSelect}
                         >
                             <option selected>Select the id</option>
-                            {props.listLocations.map((option, index) => (
-                                <option key={index} value={index}>
-                                    {option._id}
-                                </option>
-                            ))}
+                            {props.listLocations.map((option, index) => {
+                                if (option.active) {
+                                    return <option key={index} value={index}>
+                                        {option._id}
+                                    </option>;
+                                } else {
+                                    return "";
+                                }
+                            })}
                         </select>
                         <br/><br/>
 

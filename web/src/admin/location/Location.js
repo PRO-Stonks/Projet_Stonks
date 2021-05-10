@@ -233,6 +233,7 @@ function Location(props) {
                                            handler={handlers.sofDelete}
                                            handleSelect={handleSelect}
                                            listLocations={data.data}
+                                           filter={true}
                                            selectedLocation={selectedLocation}/>;
 
             case "delete":
