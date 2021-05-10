@@ -533,13 +533,59 @@ describe('elementController', function () {
             // Get Elements
             await chai
                 .request(app)
-                .get(mainRoute + "/elements/local/" + idLocation1 + "/")
+                .get(mainRoute + "/elements/local/" + idLocation1)
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
                     expect(res.body.results).to.be.equal(2);
+                });
+        });
+    });
+
+    describe('Get all elements for a given product', function () {
+        it('should fail when not logged in or without token', async () => {
+            // Get Elements
+            await chai
+                .request(app)
+                .get(mainRoute + "/elements/product/" + idProduct)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(401);
+                    expect(res.body.status).to.be.equal('fail');
+                });
+        });
+
+        it('should fail with invalid token', async () => {
+            // Fake token
+            let token = "fakeTokenIsNotVeryGentle";
+
+            // Get Elements
+            await chai
+                .request(app)
+                .get(mainRoute + "/elements/product/" + idProduct)
+                .set("Authorization", "Bearer " + token)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(500);
+                    expect(res.body.status).to.be.equal('error');
+                })
+        });
+
+        it('should work', async () => {
+            // Get Elements
+            await chai
+                .request(app)
+                .get(mainRoute + "/elements/product/" + idProduct)
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    expect(res.status).to.be.equal(200);
+                    expect(res.body.status).to.be.equal("success");
+                    expect(res.body.results).to.be.equal(3);
                 });
         });
     });

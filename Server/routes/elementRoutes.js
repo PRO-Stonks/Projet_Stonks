@@ -18,6 +18,10 @@ router
     .get(elementController.getAllElementsByLocation);
 
 router
+    .route('/product/:product/')
+    .get(elementController.getAllElementsByProduct);
+
+router
     .route('/move/:id/:location')
     .patch(elementController.moveElement);
 
