@@ -1,34 +1,7 @@
 import React, {useEffect, useState} from "react";
-import RNPickerSelect from "react-native-picker-select";
-import {StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback} from "react-native";
-import getCurrentDate from "../utils/getDate.js";
 import Scan from './Scan.js';
+import deleteElement from '../request/deleteElement.js';
 import API_URL from "../url";
-
-async function deleteElement(url, token, data) {
-    //console.log(token)
-    try {
-        const response = await fetch(url, {
-            method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: 'same-origin', // include, *same-origin, omit
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            redirect: 'follow', // manual, *follow, error
-            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-            body: JSON.stringify(data)
-        });
-        return response.json();
-    } catch (e) {
-        console.log("Error")
-        console.log(e);
-    }
-}
-
 
 export default function Delete({route}) {
     console.log("DELETE")
@@ -47,17 +20,16 @@ export default function Delete({route}) {
     }, [scanId])
 
     async function fetchData(data) {
-        const res = await deleteElement(API_URL + 'elements/delete', token, data);
-        console.log(data)
+        const res = await deleteElement(API_URL + 'elements/QR/' + data, token);
         if (res.status === 'success') {
-            console.log("YOUHOUHOU");
+            console.log("DELETED SUCCESSFULLY")
+            alert(res.message);
             return res;
         } else {
-            console.log("BAAAAAAAAAAAAAA");
+            alert(res.message);
             throw res;
         }
     }
 
     return <Scan scanId={scanId} setScanId={setScanId}/>
-
 }
