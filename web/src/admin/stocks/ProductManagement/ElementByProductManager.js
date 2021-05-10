@@ -4,16 +4,14 @@ import ElementListElement from "./ElementListElement";
 import {groupBy} from "lodash";
 import Spinner from "../../../utils/Spinner";
 
-function ElementByLocationManager({locationId, token, ...props}) {
+function ElementByProductManager({productId, token, ...props}) {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
 
-
     useEffect(() => {
         const fetchStories = () => {
-
-                fetch(API_URL + "elements/local/" + locationId, {
+                fetch(API_URL + "elements/product/" + productId, {
                     method: 'GET', // *GET, POST, PUT, DELETE, etc.
                     mode: 'cors', // no-cors, *cors, same-origin
                     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -34,14 +32,21 @@ function ElementByLocationManager({locationId, token, ...props}) {
                         setError(result.message);
                     } else {
                         setData(groupBy(result.data, function (element) {
-                            return element.idProduct._id;
+                            if(!element.idLocation){
+                                console.log(element);
+                            }
+
+                            return element.idLocation._id;
                         }));
                     }
-                }).catch(err => setError("an error occured"));
+                }).catch(err => {
+                    console.log(err)
+                    setError("an error occured")
+                });
         }
 
             fetchStories();
-        }, [locationId]
+        }, [productId]
     );
 
     if (error) {
@@ -55,15 +60,15 @@ function ElementByLocationManager({locationId, token, ...props}) {
         return Object.keys(data).map(key => {
             console.log(key)
             return <div key={key}>
-                <h2>{data[key][0].idProduct.name}</h2>
+                <h2>{data[key][0].idLocation.name}</h2>
                 {data[key].map(item => {
                     return <ElementListElement key={item._id} item={item}/>
                 })} </div>
         });
     }else{
-        return <h3>No element in this site</h3>
+        return <h3>No element for this product</h3>
     }
 
 };
 
-export default ElementByLocationManager;
+export default ElementByProductManager;
