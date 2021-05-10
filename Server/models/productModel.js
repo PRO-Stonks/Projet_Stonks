@@ -17,7 +17,6 @@ const productSchema = new mongoose.Schema({
     active: { // Still don't completely understand this part
         type: Boolean,
         default: true,
-        select: false,
     },
 });
 
