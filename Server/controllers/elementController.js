@@ -90,6 +90,7 @@ exports.deleteElementByQR = async (req, res, next) => {
     if (!element) {
         return next(new AppError(404, 'fail', 'No element found with that id'), req, res, next);
     }
+    req.params.id = element._id;
     return softDeleteElement(req, res, next);
 };
 
