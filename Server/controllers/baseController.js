@@ -217,3 +217,33 @@ exports.getDocumentWithFilter = (Model, filter, param = "id") => async (req, res
         next(error);
     }
 };
+
+/**
+ *
+ * Util function to get a document based on a criteria
+ * @param Model the model to make the request from
+ * @param filter criteria of the search
+ * @param param where to get the value of the filter
+ * @param populate which filed to populate
+ * @returns {function(req, res, next): Promise<Document[]>}
+ */
+exports.getDocumentWithFilterAndPopulate = (Model, filter, param = "id", populate ) => async (req, res, next) => {
+    let obj = {};
+    obj[filter] = req.params[param];
+    try {
+
+        const doc = await Model.find(obj).populate(populate);
+        if (!doc) {
+            return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
+        }
+
+
+        res.status(200).json({
+            status: 'success',
+            results: doc.length,
+            data: doc
+        });
+    } catch (error) {
+        next(error);
+    }
+};

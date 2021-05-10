@@ -241,7 +241,13 @@ exports.updateElement = async (req, res, next) => {
  * Get All handler
  * @type {function(Response.req, res, next): Promise<Document[]>}
  */
-exports.getAllElementsByLocation = base.getDocumentWithFilter(Element, "idLocation", "location");
+exports.getAllElementsByLocation = base.getDocumentWithFilterAndPopulate(Element, "idLocation", "location", [{path: "idProduct"}]);
+
+/**
+ * Get All handler
+ * @type {function(Response.req, res, next): Promise<Document[]>}
+ */
+exports.getAllElementsByProduct = base.getDocumentWithFilterAndPopulate(Element, "idProduct", "product", [{path: "idLocation", select: "name"}]);
 
 /**
  * Hard delete element handler
