@@ -9,6 +9,7 @@ import ItemTest from "../utils/list/Itemtest";
 import Spinner from "../utils/Spinner";
 import UserManagementMenu from "../admin/user/UserManagementMenu";
 import Location from "../admin/location/Location";
+import StocksManagerMenu from "../admin/stocks/StocksManagerMenu";
 
 /* This home page is specific to Admins
     #TODO later for manager
@@ -62,7 +63,7 @@ function HomePage(props) {
                                             {/* Buttons for specific management page item */}
                                             <Link className="nav-link btn btn-secondary" to="/users">Users</Link><br/>
                                             <Link className="nav-link btn btn-secondary" to="/products">Products</Link><br/>
-                                            <Link className="nav-link btn btn-secondary" to="/elements">Elements</Link><br/>
+                                            <Link className="nav-link btn btn-secondary" to="/stocks">Stocks</Link><br/>
                                             <Link className="nav-link btn btn-secondary"
                                                   to="/locations">Locations</Link><br/>
                                             <Link className="nav-link btn btn-secondary" to="/QR">QR</Link><br/>
@@ -86,11 +87,14 @@ function HomePage(props) {
                     {/* Location management page */}
                     <Route path="/locations" exact component={() => <Location token={props.token}/>}/>
 
+                    {/* Stocks management page */}
+                    <Route path="/stocks" exact component={() => <StocksManagerMenu token={props.token} />}/>
+
                     {/* QR management page */}
                     <Route path="/QR" exact component={() => <QR token={props.token}/>}/>
 
                     {/* #TODO Pages below are not implemented yet */}
-                    <Route path="/elements" exact component={() => <List token={props.token} item={ItemTest} spinner={Spinner} url={"QR"} proptest={"ajjajajaj"} select={"code"}/>}/>
+
                     <Route path="/logs" exact component={() => <About/>}/>
                 </Switch>
             </Router>
