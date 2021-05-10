@@ -1366,12 +1366,6 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '403':
           $ref: '#/components/responses/ForbiddenError'
-        '404':
-          description: No document found with that id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
   '/QR/{id}':
     get:
       tags:
