@@ -439,6 +439,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  '/elements/product/{product}':
+    get:
+      tags:
+        - Element
+      summary: Get element by product
+      operationId: getElementByProduct
+      parameters:
+        - name: product
+          in: path
+          description: Product id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                      $ref: '#/components/schemas/Element'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: No document found with that id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   '/elements/move/{id}/{location}':
     patch:
       tags:
@@ -1320,6 +1353,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - QR
+      summary: Delete QR
+      description: This can only be done by the admin.
+      operationId: deleteQRAll
+      responses:
+        '204':
+          description: successful operation
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
   '/QR/{id}':
     get:
       tags:
@@ -1751,3 +1797,5 @@ security:
 servers:
   - url: 'http://127.0.0.1:4000/api/v1'
     description: Dev server (uses test data)
+  - url: 'https://heig-vd-pro-stonks.herokuapp.com/api/v1'
+    description: Demo server (uses demo data)
