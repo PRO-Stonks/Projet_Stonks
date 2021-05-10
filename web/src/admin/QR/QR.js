@@ -3,7 +3,6 @@ import QRCodeCreator from "./QRCodeCreator";
 import PrinterWrapper from "./PrinterWrapper";
 import API_URL from "../../utils/URL";
 
-
 async function askForQR(token) {
     try {
         console.log(token)
@@ -29,7 +28,6 @@ async function askForQR(token) {
 
 function QR(props) {
     const [data, setFetching] = useState({fetching: false, code: ""});
-
 
     useEffect( () => {
         async function createQR(){
