@@ -2,8 +2,8 @@ import React, {useState} from "react";
 import List from "../../utils/list/List";
 import Spinner from "../../utils/Spinner";
 import {Col, Container, Row, Tab, Tabs} from 'react-bootstrap';
-import LocationListElement from "./LocationListElement";
-import ElementByLocationManager from "./ElementByLocationManager";
+import LocationListElement from "./LocationManagement/LocationListElement";
+import ElementByLocationManager from "./LocationManagement/ElementByLocationManager";
 
 
 function StocksManagerMenu(props) {

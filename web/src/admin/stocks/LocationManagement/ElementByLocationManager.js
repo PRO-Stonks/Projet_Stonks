@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
-import API_URL from "../../utils/URL";
+import API_URL from "../../../utils/URL";
 import ElementListElement from "./ElementListElement";
 import {groupBy} from "lodash";
-import Spinner from "../../utils/Spinner";
+import Spinner from "../../../utils/Spinner";
 
 function ElementByLocationManager({locationId, token, ...props}) {
     const [data, setData] = useState([]);
