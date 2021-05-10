@@ -1,6 +1,6 @@
 function ElementListElement({item, onSelect}) {
     const a = new Date(item.entryDate);
-    return <div className={"ProductList"} onClick={() => onSelect(item)}>
+    return <div className={"ProductList"} >
         Price {item.price} | Entry Date: {a.toLocaleString('en-gb',
         { year: 'numeric', month: 'numeric', day: 'numeric' })}
     </div>;
