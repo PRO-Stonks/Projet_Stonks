@@ -1797,5 +1797,5 @@ security:
 servers:
   - url: 'http://127.0.0.1:4000/api/v1'
     description: Dev server (uses test data)
-  - url: 'https://heig-vd-pro-stonks.herokuapp.com//api/v1'
+  - url: 'https://heig-vd-pro-stonks.herokuapp.com/api/v1'
     description: Demo server (uses demo data)
