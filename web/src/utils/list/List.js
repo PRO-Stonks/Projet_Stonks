@@ -19,7 +19,7 @@ const NUMBER_OF_ELEMENT_PER_FETCH = 10;
 function List({refetch, spinner, url, item, token, sort, ...itemProps}) {
     const [page, setPage] = useState(0);
     const [data, setData] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
     const [nbFetchedElement, setNbFetchedElement] = useState(NUMBER_OF_ELEMENT_PER_FETCH);
 
@@ -61,7 +61,7 @@ function List({refetch, spinner, url, item, token, sort, ...itemProps}) {
                         setPage(pageTarget);
                     }
                 }
-            });
+            }).catch(err => setError("an error occured"));;
     };
 
     const getUrl = (page) =>
@@ -99,7 +99,7 @@ function List({refetch, spinner, url, item, token, sort, ...itemProps}) {
                     More
                 </button>}
             </div>
-            {error !== "" && <div>{error}</div>}
+            {error !== "" && <div className="Error">{error}</div>}
             {Spinner && <Spinner enable={isLoading}/>}
         </div>
     );
