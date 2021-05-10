@@ -25,7 +25,7 @@ function ProductManager({token}) {
         <br/>
         <Row>
             <Col>
-                <h2>Location selection</h2>
+                <h2>Products Selection</h2>
                 <List token={token} item={ProductListElement} spinner={Spinner} url={"products"}
                       onSelect={onSelectHandler} sort={sortElement}/>
             </Col>

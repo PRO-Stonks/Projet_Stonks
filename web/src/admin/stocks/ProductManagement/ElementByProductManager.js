@@ -67,7 +67,6 @@ function ElementByProductManager({productId, token, ...props}) {
     }else{
         return <h3>No element for this product</h3>
     }
-
 };
 
 export default ElementByProductManager;

@@ -25,7 +25,7 @@ function LocationManager({token}) {
         <br/>
         <Row>
             <Col>
-                <h2>Location selection</h2>
+                <h2>Location Selection</h2>
                 <List token={token} item={LocationListElement} spinner={Spinner} url={"locations"}
                       onSelect={onSelectHandler} sort={sortElement}/>
             </Col>
