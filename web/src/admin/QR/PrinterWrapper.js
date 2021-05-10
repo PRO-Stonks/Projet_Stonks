@@ -1,20 +1,28 @@
 import React, {useRef} from "react";
 import ReactToPrint from "react-to-print";
+import QRCodeCreator from "./QRCodeCreator";
+import {Col} from "react-bootstrap";
 
-export default function PrinterWrapper({children}) {
+const QRCode = require('qrcode.react');
+
+export default function PrinterWrapper(props) {
     const linkToPrint = () => {
         return (
-            <button>Click To Print</button>
+            <button className="btn-secondary">Click To Print</button>
         )
     }
 
     const componentRef = useRef();
     return (
-        <>
-            <ReactToPrint trigger={linkToPrint} content={() => componentRef.current}/>
+        <div>
             <div ref={componentRef}>
-                {children}
+                {
+                    props.codes.map((code) => {
+                        return <React.Fragment><QRCode value={code} includeMargin="true"/>&nbsp;&nbsp;</React.Fragment>;
+                    })
+                }
             </div>
-        </>
+            <ReactToPrint trigger={linkToPrint} content={() => componentRef.current}/>
+        </div>
     );
 }

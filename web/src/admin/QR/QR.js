@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from "react";
-import QRCodeCreator from "./QRCodeCreator";
 import PrinterWrapper from "./PrinterWrapper";
 import API_URL from "../../utils/URL";
+import {useFormik} from "formik";
+import {Col, Row} from "react-bootstrap";
+
 
 async function askForQR(token) {
     try {
@@ -17,7 +19,7 @@ async function askForQR(token) {
                 // 'Content-Type': 'application/x-www-form-urlencoded',
             },
             redirect: 'follow', // manual, *follow, error
-            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            referrerPolicy: 'no-referrer',
             //body: JSON.stringify(data) // body data type must match "Content-Type" header
         });
         return response.json();
@@ -27,27 +29,76 @@ async function askForQR(token) {
 }
 
 function QR(props) {
-    const [data, setFetching] = useState({fetching: false, code: ""});
 
-    useEffect( () => {
-        async function createQR(){
-            return await askForQR(props.token);
+    const [codes, setCodes] = useState([]);
+    const handleGeneration = useFormik({
+        initialValues: {
+            nbQr: 0
+        },
+        onSubmit: async (values) => {
+            if (values.nbQr < 1) {
+                handleGeneration.errors.submit = "Requested number of QR to generate must be > 0!";
+            } else {
+                let tmpCodes = [];
+                for (let i = 0; i < values.nbQr; ++i) {
+                    await askForQR(props.token).then(qr => {
+                            tmpCodes.push(qr.data.code);
+                        }
+                    );
+                }
+                setCodes(tmpCodes);
+            }
         }
-        if(data.fetching){
-             createQR().then(qr => {
-                     setFetching({code: qr.data.code, fetching: false})
-                 }
-             );
-        }
-    }, [data.fetching, props]);
+    })
 
     return (
-        <div>
-            <button onClick={() => setFetching({data, fetching: true})}>
-                Generate QR
-            </button>
-            <PrinterWrapper children={QRCodeCreator({setFetching, data})}/>
+        <div className="container">
+            <h2>QR management</h2>
+            <br/>
+            <Row>
+                {/* Generation */}
+                <Col>
+                    <h4>Generate</h4>
+
+                    {/* Number orm */}
+                    <div className="container w-50">
+                        <label className="form-check-label">Enter the number</label>
+                        <form className="form-group" onSubmit={handleGeneration.handleSubmit}>
+                            {/* Number of QR */}
+                            <input
+                                className="form-control"
+                                placeholder="Number of QR"
+                                id="nbQr"
+                                name="nbQr"
+                                type="number"
+                                value={handleGeneration.values.nbQr}
+                                min="1"
+                                max="12"
+                                onChange={handleGeneration.handleChange}
+                                onBlur={handleGeneration.handleBlur}
+                            />
+                            <br/>
+
+                            {/* Submit button */}
+                            <button className="btn-success" type="submit">Submit</button>
+                        </form>
+                    </div>
+                    <br/>
+
+                    {/* QR images and print button*/}
+                    <div className="container-fluid">
+                        {codes.length ? <PrinterWrapper codes={codes}/> : ""}
+                    </div>
+                </Col>
+
+                {/* Deletion */}
+                <Col>
+                    <h4>Delete</h4>
+                    #todo
+                </Col>
+            </Row>
         </div>
     );
 }
+
 export default QR;
