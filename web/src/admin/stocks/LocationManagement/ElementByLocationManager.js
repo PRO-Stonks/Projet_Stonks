@@ -53,7 +53,6 @@ function ElementByLocationManager({locationId, token, ...props}) {
 
     if (Object.keys(data).length > 0){
         return Object.keys(data).map(key => {
-            console.log(key)
             return <div key={key}>
                 <h2>{data[key][0].idProduct.name}</h2>
                 {data[key].map(item => {
