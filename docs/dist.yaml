@@ -1358,7 +1358,7 @@ paths:
         - QR
       summary: Delete QR
       description: This can only be done by the admin.
-      operationId: deleteQR
+      operationId: deleteQRAll
       responses:
         '204':
           description: successful operation
