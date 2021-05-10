@@ -1,7 +1,5 @@
 import React, {useRef} from "react";
 import ReactToPrint from "react-to-print";
-import QRCodeCreator from "./QRCodeCreator";
-import {Col} from "react-bootstrap";
 
 const QRCode = require('qrcode.react');
 

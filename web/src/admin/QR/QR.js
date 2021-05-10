@@ -1,32 +1,51 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import PrinterWrapper from "./PrinterWrapper";
 import API_URL from "../../utils/URL";
 import {useFormik} from "formik";
 import {Col, Row} from "react-bootstrap";
 
-
 async function askForQR(token) {
     try {
-        console.log(token)
         const response = await fetch(API_URL + 'QR/add', {
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: 'same-origin', // include, *same-origin, omit
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + token
-                // 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            redirect: 'follow', // manual, *follow, error
+            redirect: 'follow',
             referrerPolicy: 'no-referrer',
-            //body: JSON.stringify(data) // body data type must match "Content-Type" header
         });
         return response.json();
     } catch (e) {
         console.log(e);
     }
 }
+
+async function clear(token) {
+    try {
+        const response = await fetch(
+            API_URL + "QR/",
+            {
+                method: 'DELETE',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+            });
+        return response.status === 204 ? {status: "success"} : response.json();
+    } catch (e) {
+        console.log(e);
+    }
+}
+
 
 function QR(props) {
 
@@ -36,8 +55,8 @@ function QR(props) {
             nbQr: 0
         },
         onSubmit: async (values) => {
-            if (values.nbQr < 1) {
-                handleGeneration.errors.submit = "Requested number of QR to generate must be > 0!";
+            if (values.nbQr < 1 || values.nbQr > 12) {
+                handleGeneration.errors.submit = "Requested number of QR to generate belongs to [1, 12]";
             } else {
                 let tmpCodes = [];
                 for (let i = 0; i < values.nbQr; ++i) {
@@ -50,6 +69,7 @@ function QR(props) {
             }
         }
     })
+
 
     return (
         <div className="container">
@@ -93,8 +113,14 @@ function QR(props) {
 
                 {/* Deletion */}
                 <Col>
-                    <h4>Delete</h4>
-                    #todo
+                    <h4>Clear All</h4>
+                    <br/>
+                    {/* Delete button */}
+                    <button className="btn-danger" onClick={() => {
+                        clear(props.token).then(() => alert("All QR have been deleted"));
+                    }}>
+                        Delete
+                    </button>
                 </Col>
             </Row>
         </div>
