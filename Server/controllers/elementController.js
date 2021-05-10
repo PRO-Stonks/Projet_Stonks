@@ -18,7 +18,7 @@ const mongoose = require("mongoose");
  * @param next handler
  * @returns {Promise<void>}
  */
-exports.softDeleteElement = async (req, res, next) => {
+const softDeleteElement = async (req, res, next) => {
     let session;
     try {
         session = await mongoose.startSession();
@@ -49,6 +49,48 @@ exports.softDeleteElement = async (req, res, next) => {
             session.endSession();
         }
     }
+};
+
+/**
+ * Soft delete handler
+ * @behaviour Disable an element, and create an event to journal it
+ * @param req user request
+ * @param res response
+ * @param next handler
+ * @returns {Promise<void>}
+ */
+exports.softDeleteElement = softDeleteElement;
+
+/**
+ * Delete handler
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<void|*>}
+ */
+exports.deleteElementByQR = async (req, res, next) => {
+    const QR = await QRModel.findOne({
+        code: req.params.code,
+    });
+
+    if (!QR) {
+        return next(
+            new AppError(404, "fail", "The QR code does not exist"),
+            req,
+            res,
+            next,
+        );
+    }
+
+    const element = await Element.findOne({
+        idQR: QR._id,
+        active: true
+    });
+
+    if (!element) {
+        return next(new AppError(404, 'fail', 'No element found with that id'), req, res, next);
+    }
+    return softDeleteElement(req, res, next);
 };
 
 /**

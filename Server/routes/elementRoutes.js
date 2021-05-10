@@ -27,7 +27,8 @@ router
 
 router
     .route('/QR/:code')
-    .get(elementController.getElementByQR);
+    .get(elementController.getElementByQR)
+    .delete(elementController.deleteElementByQR);
 
 router
     .route('/')
