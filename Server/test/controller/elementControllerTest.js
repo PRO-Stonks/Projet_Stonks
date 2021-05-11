@@ -168,7 +168,7 @@ before(async function () {
         return doc._id;
     });
     idElement2 = await Element.create({
-        idQR: idQR1,
+        idQR: idQR2,
         entryDate: new Date('2020-04-02'),
         exitDate: new Date('2021-11-13'),
         price: 2,

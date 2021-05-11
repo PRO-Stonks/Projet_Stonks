@@ -9,6 +9,7 @@ const {ElementEvent} = require("../models/eventModel");
 const base = require("./baseController");
 const AppError = require("../utils/appError");
 const mongoose = require("mongoose");
+const APIFeatures = require("../utils/apiFeatures");
 
 /**
  * Soft delete handler
@@ -186,18 +187,22 @@ exports.getElementByQR = async (req, res, next) => {
             );
         }
 
-        const element = await Element.findOne({
+        const features = new APIFeatures(Element.findOne({
             idQR: QR._id,
             active: true
-        });
+        }), req.query)
+            .sort()
+            .populate()
+            .paginate();
+        const doc = await features.query;
 
-        if (!element) {
+        if (!doc) {
             return next(new AppError(404, 'fail', 'No element found with that id'), req, res, next);
         }
 
         res.status(200).json({
             status: 'success',
-            data: element
+            data: doc
         });
 
 
