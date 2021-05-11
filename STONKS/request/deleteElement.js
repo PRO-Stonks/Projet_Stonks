@@ -2,7 +2,7 @@
  * DELETE request of an element
  * @param url : path
  * @param token : user token
- * @returns {Promise<any>} : server response
+ * @returns {Promise<any>} : true if the element has been deleted, server response otherwise
  */
 export default async function deleteElement(url, token) {
     try {
@@ -19,7 +19,12 @@ export default async function deleteElement(url, token) {
             redirect: 'follow', // manual, *follow, error
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         });
-        return response.json();
+        console.log(response.status)
+        if (response.status === 204) {
+            return true;
+        } else {
+            return response.json();
+        }
     } catch (e) {
         console.log("Error")
         console.log(e);

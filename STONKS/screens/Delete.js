@@ -4,11 +4,9 @@ import deleteElement from '../request/deleteElement.js';
 import API_URL from "../url";
 
 export default function Delete({route}) {
-    console.log("DELETE")
-
+    // get user token
     const {token} = route.params;
-
-    // state to store scan id
+    // store scan id
     const [scanId, setScanId] = useState(null);
 
     useEffect(() => {
@@ -19,14 +17,19 @@ export default function Delete({route}) {
         }
     }, [scanId])
 
+    /**
+     * Call request to delete an element
+     * @param data : id of the scanned element
+     * @returns {Promise<*>} : request response
+     */
     async function fetchData(data) {
+        console.log(API_URL + 'elements/QR/' + data)
         const res = await deleteElement(API_URL + 'elements/QR/' + data, token);
-        if (res.status === 'success') {
-            console.log("DELETED SUCCESSFULLY")
-            alert(res.message);
+        if (res === true) {
+            alert("Element has been deleted successfully");
             return res;
         } else {
-            alert(res.message);
+            alert("Error: " + res.message);
             throw res;
         }
     }
