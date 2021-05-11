@@ -33,6 +33,7 @@ function UserLogManager({token}) {
 
             </Col>
             <Col>
+                <h2>Select user for more details</h2>
                 <List token={token} item={UserListElement} spinner={Spinner} url={"users"}
                       onSelect={onSelectHandler} sort={sortElement}/>
             </Col>
