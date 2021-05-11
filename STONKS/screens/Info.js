@@ -14,10 +14,11 @@ export default function Info({route, navigation}) {
 
     useEffect(() => {
         if (scanId) {
-            console.log("SCAN CHANGED")
             fetchData(scanId).then(r => console.log(r)).catch(r => console.log(r));
             setScanId(null);
-            navigation.navigate('DisplayInfo')
+            navigation.navigate('DisplayInfo', {
+                element: elementInfo,
+            });
         }
     }, [scanId])
 
@@ -37,7 +38,6 @@ export default function Info({route, navigation}) {
                 entryDate: new Date(res.data.entryDate).toISOString().split('T')[0],
                 exitDate: new Date(res.data.exitDate).toISOString().split('T')[0],
             })
-            console.log(elementInfo)
             return res;
         } else {
             alert("Error: " + res.message);
