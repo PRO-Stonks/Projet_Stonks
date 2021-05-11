@@ -206,6 +206,7 @@ function Product(props) {
                                           handler={handlers.sofDelete}
                                           handleSelect={handleSelect}
                                           listProducts={data.data}
+                                          filter={true}
                                           selectedProduct={selectedProduct}/>;
 
             case "delete":
