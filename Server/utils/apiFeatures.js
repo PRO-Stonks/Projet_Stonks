@@ -27,7 +27,6 @@ class APIFeatures {
         // -----/route?populateField=a,b,c&populateValue[a]=blue&populateValue[b]=red
         console.log("Request");
         if (this.queryString.populateField && this.queryString.populateValue) {
-            console.log(this.queryString)
             const populateField = this.queryString.populateField.split(",");
             const populateValue = this.queryString.populateValue;
             populateField.forEach(field =>{
