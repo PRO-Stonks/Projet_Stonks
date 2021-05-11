@@ -3,6 +3,8 @@
  */
 'use strict';
 
+const AppError = require("./appError");
+
 class APIFeatures {
     constructor(query, queryString) {
         this.query = query;
@@ -17,6 +19,22 @@ class APIFeatures {
         if (this.queryString.sort) {
             const sortBy = this.queryString.sort.split(",").join(" ");
             this.query = this.query.sort(sortBy);
+        }
+        return this;
+    }
+
+    populate() {
+        // -----/route?populateField=a,b,c&populateValue[a]=blue&populateValue[b]=red
+        console.log("Request");
+        if (this.queryString.populateField && this.queryString.populateValue) {
+            const populateField = this.queryString.populateField.split(",");
+            const populateValue = this.queryString.populateValue;
+            populateField.forEach(field =>{
+                if(! populateValue[field]){
+                    throw new AppError(400,"fail", "populate field "+populateField+" has no value");
+                }
+                this.query = this.query.populate([{path: field, select: populateValue[field]}]);
+            })
         }
         return this;
     }
