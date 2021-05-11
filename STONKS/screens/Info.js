@@ -9,6 +9,8 @@ export default function Info({route, navigation}) {
     const {token} = route.params;
     // store scan id
     const [scanId, setScanId] = useState(null);
+    // state to store element info
+    const [elementInfo, setElementInfo] = useState({});
 
     useEffect(() => {
         if (scanId) {
@@ -26,9 +28,16 @@ export default function Info({route, navigation}) {
      */
     async function fetchData(data) {
         console.log(API_URL + 'elements/QR/' + data)
-        const res = await getElement(API_URL + 'elements/QR/' + data, token);
+        const res = await getElement(API_URL + 'elements/QR/' + data + '?populateField=idProduct,idLocation&populateValue[idProduct]=name&populateValue[idLocation]=name', token);
         if (res.status === 'success') {
-            console.log(res)
+            //TO DO: deal with location
+            setElementInfo({...elementInfo,
+                name: res.data.idProduct.name,
+                price: res.data.price,
+                entryDate: new Date(res.data.entryDate).toISOString().split('T')[0],
+                exitDate: new Date(res.data.exitDate).toISOString().split('T')[0],
+            })
+            console.log(elementInfo)
             return res;
         } else {
             alert("Error: " + res.message);
