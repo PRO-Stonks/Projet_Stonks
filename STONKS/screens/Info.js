@@ -9,17 +9,20 @@ export default function Info({route, navigation}) {
     const {token} = route.params;
     // store scan id
     const [scanId, setScanId] = useState(null);
-    // state to store element info
-    const [elementInfo, setElementInfo] = useState({});
 
     useEffect(() => {
         if (scanId) {
-            setElementInfo({...elementInfo})
-            fetchData(scanId).then(r => console.log(r)).catch(r => console.log(r));
+           fetchData(scanId).then(r => {
+                console.log(r)
+                    console.log("RES                               AHHAHAHHHHHHHHHHHHHHHHhAHHAHAHAHAHAHHA");
+                    console.log(r);
+                    navigation.navigate('Info', {
+                        element: r,
+                    });
+            }
+            ).catch(r => console.log(r));
+
             setScanId(null);
-            navigation.navigate('Info', {
-                element: elementInfo,
-            });
         }
     }, [scanId])
 
@@ -33,13 +36,12 @@ export default function Info({route, navigation}) {
         const res = await getElement(API_URL + 'elements/QR/' + data + '?populateField=idProduct,idLocation&populateValue[idProduct]=name&populateValue[idLocation]=name', token);
         if (res.status === 'success') {
             //TO DO: deal with location
-            setElementInfo({...elementInfo,
+            return {
                 name: res.data.idProduct.name,
                 price: res.data.price,
-                entryDate: new Date(res.data.entryDate).toISOString().split('T')[0],
+                entryDate: new Date(res.data.entryDate).toLocaleDateString(),
                 exitDate: new Date(res.data.exitDate).toISOString().split('T')[0],
-            })
-            return res;
+            };
         } else {
             alert("Error: " + res.message);
             throw res;
