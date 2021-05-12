@@ -16,7 +16,11 @@ export default function Options({navigation, data, token}) {
     return (
             <View style={styles.bodyContainer}>
                 <TouchableOpacity
-                    onPress={() => alert('Bouton visualiser')}
+                    onPress={() => {
+                        navigation.navigate('Scan for info', {
+                            token: token,
+                        });
+                    }}
                     style={styles.bVisualize}>
                     <Text style={styles.bText}>Get info</Text>
                 </TouchableOpacity>

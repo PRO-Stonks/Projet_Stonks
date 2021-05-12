@@ -7,18 +7,18 @@ export default function DisplayInfo({navigation, route}) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.info}>
-                <Text style={styles.name}>Product: {element.name}</Text>
-                <Text style={styles.name}>Price: {element.price}</Text>
-                <Text style={styles.name}>Entry date: {element.entryDate}</Text>
-                <Text style={styles.name}>Exit date: {element.exitDate}</Text>
+            <View style={styles.iView}>
+                <Text style={styles.text}>Product: {element.name}</Text>
+                <Text style={styles.text}>Price: {element.price} .-</Text>
+                <Text style={styles.text}>Entry date: {element.entryDate}</Text>
+                <Text style={styles.text}>Exit date: {element.exitDate}</Text>
             </View>
-            <View style={styles.b}>
+            <View style={styles.bView}>
                 <TouchableOpacity
                     onPress={() => {
                         navigation.navigate('Menu');
                     }}
-                    style={styles.bVisualize}>
+                    style={styles.button}>
                     <Text style={styles.bText}>Back to menu</Text>
                 </TouchableOpacity>
             </View>
@@ -34,21 +34,21 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-start",
     },
-    info: {
+    iView: {
         flex: 3,
         marginTop: '10%',
         backgroundColor: "white",
         alignItems: 'center',
         flexDirection: 'column',
     },
-    name: {
+    text: {
         fontSize: 25,
         marginBottom: '10%',
         fontWeight: 'bold',
         alignItems: 'center',
         justifyContent: 'center',
     },
-    b: {
+    bView: {
         flex: 2,
         backgroundColor: 'white',
         alignItems: 'center',
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
     },
-    bVisualize: {
+    button: {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'lightskyblue',

@@ -14,9 +14,10 @@ export default function Info({route, navigation}) {
 
     useEffect(() => {
         if (scanId) {
+            setElementInfo({...elementInfo})
             fetchData(scanId).then(r => console.log(r)).catch(r => console.log(r));
             setScanId(null);
-            navigation.navigate('DisplayInfo', {
+            navigation.navigate('Info', {
                 element: elementInfo,
             });
         }
