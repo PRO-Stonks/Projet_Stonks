@@ -7,6 +7,7 @@ import Menu from '../screens/Menu.js';
 import Add from '../screens/Add.js';
 import Info from '../screens/Info.js';
 import DisplayInfo from '../screens/DisplayInfo.js'
+import Delete from '../screens/Delete';
 import {UserContext} from '../UserContext'
 
 export default function StackScreen() {
@@ -89,6 +90,7 @@ export default function StackScreen() {
                 <Stack.Screen name="Add" component={Add}/>
                 <Stack.Screen name="Scan for info" component={Info}/>
                 <Stack.Screen name="Info" component={DisplayInfo}/>
+                <Stack.Screen name="Delete" component={Delete}/>
 
             </Stack.Navigator>
         </UserContext.Provider>
