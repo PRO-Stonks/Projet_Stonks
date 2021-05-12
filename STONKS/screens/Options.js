@@ -33,7 +33,11 @@ export default function Options({navigation, data, token}) {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    onPress={() => displaySan()}
+                    onPress={() => {
+                        navigation.navigate('Delete', {
+                            token: token,
+                        });
+                    }}
                     style={styles.bSupress}>
                     <Text style={styles.bText}>Delete</Text>
                 </TouchableOpacity>

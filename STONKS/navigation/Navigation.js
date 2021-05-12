@@ -6,6 +6,7 @@ import {Button} from "react-native";
 import Login from '../screens/Login.js';
 import Menu from '../screens/Menu.js';
 import Add from '../screens/Add.js';
+import Delete from '../screens/Delete';
 import {UserContext} from '../UserContext'
 
 
@@ -88,6 +89,7 @@ export default function StackScreen() {
                 >
                 </Stack.Screen>
                 <Stack.Screen name="Add" component={Add}/>
+                <Stack.Screen name="Delete" component={Delete}/>
 
 
             </Stack.Navigator>
