@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, {useState, useEffect, useContext} from 'react';
+import {Button, Text, View} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
 import Options from "./Options";
 import API_URL from "../url";
 import {UserContext} from "../UserContext";
@@ -18,6 +18,25 @@ export default function Menu(props) {
     // state to check if we should scan
     const [isScan, setScan] = useState(false);
 
+
+    React.useLayoutEffect(() => {
+        props.navigation.setOptions({
+            headerRight: () => (
+                <Button
+                    onPress={() => {
+                        console.log("Logout")
+                        userData.setUserData({loggedIn: false, user: {}, token: ""});
+                        props.navigation.navigate("Login");
+                    }
+                    }
+                    title="Logout"
+                    color="black"
+                />
+
+            )
+        })
+    })
+
     /**
      * Get products when we get on this screen
      */
@@ -32,20 +51,20 @@ export default function Menu(props) {
 
     useEffect(() => {
         fetchData().then(r => setProduct(r)).catch(r => console.log(r))
-    },[]);
+    }, []);
 
     /**
      * Menu view
      */
     return (
         isScan ? <Scan/> :
-        <View style={styles.buttonsContainer}>
-            <View style={styles.headerContainer}>
-                <Text style={styles.titleText}>Options</Text>
+            <View style={styles.buttonsContainer}>
+                <View style={styles.headerContainer}>
+                    <Text style={styles.titleText}>Options</Text>
+                </View>
+
+                <Options navigation={props.navigation} data={product} token={userData.state.token}/>
+
             </View>
-
-            <Options navigation={props.navigation} data={product} token={userData.state.token}/>
-
-        </View>
     );
 }

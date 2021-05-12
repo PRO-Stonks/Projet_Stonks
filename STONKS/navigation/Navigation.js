@@ -73,15 +73,6 @@ export default function StackScreen() {
             >
                 <Stack.Screen name="Login" component={Login}/>
                 <Stack.Screen name="Menu" component={Menu} options={{
-                    headerRight: () => (
-
-                        <Button
-                            onPress={() => alert("logout")} //TO DO
-                            title="Logout"
-                            color="black"
-                        />
-
-                    ),
                     headerLeft: null,
                     gestureEnabled: false,
                 }}
