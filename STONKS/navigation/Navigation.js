@@ -2,14 +2,13 @@ import * as React from 'react';
 import {useState} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Button} from "react-native";
-
 import Login from '../screens/Login.js';
 import Menu from '../screens/Menu.js';
 import Add from '../screens/Add.js';
+import Info from '../screens/Info.js';
+import DisplayInfo from '../screens/DisplayInfo.js'
 import Delete from '../screens/Delete';
 import {UserContext} from '../UserContext'
-
-
 
 export default function StackScreen() {
     // state to store user info
@@ -89,8 +88,9 @@ export default function StackScreen() {
                 >
                 </Stack.Screen>
                 <Stack.Screen name="Add" component={Add}/>
+                <Stack.Screen name="Scan for info" component={Info}/>
+                <Stack.Screen name="Info" component={DisplayInfo}/>
                 <Stack.Screen name="Delete" component={Delete}/>
-
 
             </Stack.Navigator>
         </UserContext.Provider>
