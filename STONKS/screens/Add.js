@@ -4,6 +4,9 @@ import {StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, Touchable
 import getCurrentDate from "../utils/getDate.js";
 import Scan from './Scan.js';
 import API_URL from "../url";
+import List from "../components/List";
+import ItemListLocation from "../components/ItemListLocation";
+import ItemListProduct from "../components/ItemListProduct";
 
 //Refaire styles car valeur brute like a pig
 
@@ -41,6 +44,7 @@ export default function Add({route, navigation}) {
     const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate, exitDate:"2021-04-26", idLocation:location._id});
     // state to check if we should scan
     const [isScan, setScan] = useState(false);
+    const [isEnableProductList, setIsEnableProductList] = useState(false);
     // state to store scan id
     const [scanId, setScanId] = useState(null);
 
@@ -49,7 +53,10 @@ export default function Add({route, navigation}) {
             console.log("SCAN CHANGED")
             setProductInfo({...productInfo, code: scanId})
             console.log(productInfo)
-            fetchData({...productInfo, code: scanId, idLocation: scanId}).then(r => console.log(r)).catch(r => console.log(r));
+            const body = {
+                ...productInfo, code: scanId, idLocation: scanId, idProduct: productInfo.idProduct._id
+            }
+            fetchData(body).then(r => console.log(r)).catch(r => console.log(r));
             setScanId(null);
         }
     }, [scanId])
@@ -93,10 +100,28 @@ export default function Add({route, navigation}) {
         }
     }
 
+    function setProductId(item){
+        setProductInfo({...productInfo, idProduct: item});
+        setIsEnableProductList(false);
+    }
+
+    const renderProductItem = ( {item} ) => {
+        if (!item){
+            throw DOMError;
+        }
+        return (
+            <ItemListProduct
+                item={item}
+                onPress={() => setProductId(item)}
+            />
+        );
+    };
+
     /**
      * Add view
      */
     return (
+        isEnableProductList ? <List token={token} url="products" renderItemHandler={renderProductItem}/> :
         isScan ? <Scan scanId={scanId} setScanId={setScanId}/> :
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
@@ -105,6 +130,7 @@ export default function Add({route, navigation}) {
                     <TextInput
                         style={{textAlign: 'right', fontSize: 28}}
                         placeholder="Price"
+                        defaultValue= {productInfo.price == null ? 0: productInfo.price}
                         onChangeText={(price) => setProductInfo({...productInfo, price: price})}
                         keyboardType={"decimal-pad"}
                     />
@@ -113,12 +139,9 @@ export default function Add({route, navigation}) {
 
                 <Text style={styles.productText}>Product selection</Text>
                 <View style={styles.selection}>
-                    <RNPickerSelect
-                        placeholder={{label: 'Select a product', value: null}}
-                        onValueChange={(value) => setProductInfo({...productInfo, idProduct: value})}
-                        items={productList()}
-                        style={pickerSelectStyles}
-                    />
+                    <TouchableOpacity onPress={() => setIsEnableProductList(true)} style={styles.item}>
+                        <Text style={styles.productElement}>{productInfo.idProduct == null ? "Click to select": productInfo.idProduct.name}</Text>
+                    </TouchableOpacity>
                 </View>
 
                <TouchableOpacity
@@ -183,6 +206,13 @@ const styles = StyleSheet.create({
         paddingRight: 15,
         fontSize: 25,
     },
+    productElement: {
+            padding: 20,
+            marginVertical: 8,
+            marginHorizontal: 16,
+            textAlign: 'center',
+            fontSize: 32,
+    }
 });
 
 
