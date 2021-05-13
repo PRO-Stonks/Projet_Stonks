@@ -16,7 +16,6 @@ function List({token, renderItemHandler, url, ...props}) {
         API_URL + url + `/?page=${page}`;
 
     const fetchStories = (pageTarget, limit = 10) => {
-        console.log("Loading")
         setIsLoading(true);
         fetch(getUrl(pageTarget) + '&limit=' + limit, {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
@@ -43,7 +42,6 @@ function List({token, renderItemHandler, url, ...props}) {
                 } else {
                     setData(prevState => ([...prevState, ...result.data]));
                 }
-                console.log("Setting data for location list")
                 console.log(result.data);
                 if (result.results < NUMBER_OF_ELEMENT_PER_FETCH) {
                     setNbFetchedElement(result.results);
@@ -55,8 +53,10 @@ function List({token, renderItemHandler, url, ...props}) {
     };
 
     useEffect(() => {
-        fetchStories(1);
-        console.log("Effect")
+        const onInitialSearch = () => {
+            fetchStories(1);
+        }
+        onInitialSearch();
     }, []);
 
 
@@ -69,10 +69,9 @@ function List({token, renderItemHandler, url, ...props}) {
             data={data}
             keyExtractor={(item) => item._id}
             onEndReached={onPaginatedSearch}
-            onEndReachedThreshold={0.2}
+            onEndReachedThreshold={0.5}
             renderItem={renderItemHandler}
         />
-
     </SafeAreaView>
 }
 
