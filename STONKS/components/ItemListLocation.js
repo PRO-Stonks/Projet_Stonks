@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
         padding: 20,
         marginVertical: 8,
         marginHorizontal: 16,
-        backgroundColor: "#f9c2ff",
+        backgroundColor: "#3cdbff",
         textAlign: 'center'
     },
     title: {

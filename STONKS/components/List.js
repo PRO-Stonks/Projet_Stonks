@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {FlatList, StatusBar, StyleSheet, Text} from 'react-native';
+import {Dimensions, FlatList, StatusBar, StyleSheet, Text} from 'react-native';
 import NUMBER_OF_ELEMENT_PER_FETCH from "../utils/getNumberOfElementPerFetch";
 import API_URL from "../url";
 import {SafeAreaView} from "react-navigation";
@@ -8,7 +8,7 @@ import {SafeAreaView} from "react-navigation";
 function List({token, renderItemHandler, url, ...props}) {
     const [data, setData] = useState([]);
     const [loading, setIsLoading] = useState(true);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(0);
     const [error, setError] = useState("");
     const [nbFetchedElement, setNbFetchedElement] = useState(NUMBER_OF_ELEMENT_PER_FETCH);
 
@@ -16,6 +16,7 @@ function List({token, renderItemHandler, url, ...props}) {
         API_URL + url + `/?page=${page}`;
 
     const fetchStories = (pageTarget, limit = 10) => {
+        console.log("Loading")
         setIsLoading(true);
         fetch(getUrl(pageTarget) + '&limit=' + limit, {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
@@ -42,6 +43,7 @@ function List({token, renderItemHandler, url, ...props}) {
                 } else {
                     setData(prevState => ([...prevState, ...result.data]));
                 }
+                console.log("Setting data for location list")
                 console.log(result.data);
                 if (result.results < NUMBER_OF_ELEMENT_PER_FETCH) {
                     setNbFetchedElement(result.results);
@@ -53,10 +55,8 @@ function List({token, renderItemHandler, url, ...props}) {
     };
 
     useEffect(() => {
-        const onInitialSearch = () => {
-            fetchStories(1);
-        }
-        onInitialSearch();
+        fetchStories(1);
+        console.log("Effect")
     }, []);
 
 
@@ -64,18 +64,21 @@ function List({token, renderItemHandler, url, ...props}) {
         fetchStories(page + 1);
     }
     return <SafeAreaView style={styles.container}>
+        {error.length > 0 && <Text>{error}</Text>}
         <FlatList
             data={data}
             keyExtractor={(item) => item._id}
             onEndReached={onPaginatedSearch}
-            onEndReachedThreshold={0.5}
+            onEndReachedThreshold={0.2}
             renderItem={renderItemHandler}
         />
+
     </SafeAreaView>
 }
 
 const styles = StyleSheet.create({
     container: {
+        minHeight: Dimensions.get('window').height,
         flex: 1,
         marginTop: StatusBar.currentHeight || 0,
     },
