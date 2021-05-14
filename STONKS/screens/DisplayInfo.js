@@ -22,7 +22,7 @@ export default function DisplayInfo({navigation, route}) {
         if (isLocationChange) {
             return <TouchableOpacity
                 onPress={changeLocation}
-                style={styles.button}>
+                style={styles.bLocation}>
                 <Text style={styles.bText}>Change location</Text>
             </TouchableOpacity>
         } else {
@@ -65,7 +65,7 @@ export default function DisplayInfo({navigation, route}) {
                 <Text style={styles.text}>Price: {element.price} .-</Text>
                 <Text style={styles.text}>Entry date: {element.entryDate}</Text>
                 <Text style={styles.text}>Exit date: {element.exitDate}</Text>
-                <Text style={styles.text}>Location: {locationName}</Text>
+                <Text style={styles.textL}>Location: {locationName}</Text>
             </View>
 
             <View style={styles.bView}>
@@ -104,10 +104,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    bView: {
-        flex: 2,
-        backgroundColor: 'white',
+    textL:{
+        fontSize: 25,
+        marginBottom: '10%',
+        fontWeight: 'bold',
         alignItems: 'center',
+        justifyContent: 'center',
+    },
+    bView: {
+        flex: 1.8,
+        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        marginBottom: '15%',
     },
     bText: {
         fontSize: 25,
@@ -119,11 +128,18 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'lightskyblue',
-        marginTop: '5%',
         padding: 15,
         borderRadius: 5,
-        width : '70%',
-        height: '35%',
+        width: '100%',
+        height: '40%',
     },
-
+    bLocation: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'darkseagreen',
+        padding: 15,
+        borderRadius: 5,
+        width : '100%',
+        height: '40%',
+    }
 });
