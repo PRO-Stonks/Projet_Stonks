@@ -1,6 +1,5 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from "react";
-import addElement from "../request/addElement";
 import API_URL from "../url";
 
 
@@ -26,6 +25,29 @@ async function moveElement(url, token) {
     }
 }
 
+async function getLocation(url, token) {
+    try {
+        const response = await fetch(url, {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        });
+        return response.json();
+    } catch (e) {
+        console.log("Error")
+        console.log(e);
+    }
+}
+
+
 
 export default function DisplayInfo({navigation, route}) {
 
@@ -33,14 +55,16 @@ export default function DisplayInfo({navigation, route}) {
 
     const [isLocationChange, setLocationChange] = useState();
 
+    const [locationName, setLocationName] = useState(element.location.name)
+
     const changeLocation = () => {
         moveData().then(r => console.log(r)).catch(r => console.log(r));
+        fetchData().then(r => { setLocationName(r.data.name)}).catch(r => console.log(r));
+        setLocationChange(false)
     }
 
     function ShowLocationChange(){
-        console.log("Before update")
-        console.log(element)
-        if(isLocationChange) {
+        if (isLocationChange) {
             return <TouchableOpacity
                 onPress={changeLocation}
                 style={styles.button}>
@@ -59,11 +83,20 @@ export default function DisplayInfo({navigation, route}) {
     }, [])
 
     async function moveData() {
-        console.log(API_URL + 'elements/move/' + element.id + '/' + location._id)
         const res = await moveElement(API_URL + 'elements/move/' + element.id + '/' + location._id, token);
         if (res.status === 'success') {
-            console.log(res)
             alert("Element has been moved successfully")
+            return res;
+        } else {
+            alert("Error: " + res.message)
+            throw res;
+        }
+    }
+
+    async function fetchData() {
+        const res = await getLocation(API_URL + 'locations/' + location._id, token);
+        if (res.status === 'success') {
+            console.log('Fetch' + res)
             return res;
         } else {
             alert("Error: " + res.message)
@@ -78,7 +111,7 @@ export default function DisplayInfo({navigation, route}) {
                 <Text style={styles.text}>Price: {element.price} .-</Text>
                 <Text style={styles.text}>Entry date: {element.entryDate}</Text>
                 <Text style={styles.text}>Exit date: {element.exitDate}</Text>
-                <Text style={styles.text}>Location: {element.location.name}</Text>
+                <Text style={styles.text}>Location: {locationName}</Text>
             </View>
 
             <View style={styles.bView}>
