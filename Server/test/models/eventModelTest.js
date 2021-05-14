@@ -106,6 +106,7 @@ describe('EventModel', function () {
                             element: "606afdb5aa09d43a84b6181a",
                             user: "606afdb5aa09d43a84b6181a",
                             change: 'Creation',
+                            product: "606afdb5aa09d43a84b6181a"
                         };
                         delete test[key];
                         it('should throws when ' + key + ' is not present', async () => {
@@ -120,6 +121,8 @@ describe('EventModel', function () {
                 await expect(ElementEvent.create({
                     element: "606afdb5aa09d43a84b618",
                     user: "606afdb5aa09d43a84b6181a",
+                    change: 'Creation',
+                    product: "606afdb5aa09d43a84b6181a"
                 })).to.be.rejectedWith(Error);
             });
         });
@@ -128,6 +131,8 @@ describe('EventModel', function () {
                 await expect(ElementEvent.create({
                     element: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b618",
+                    change: 'Creation',
+                    product: "606afdb5aa09d43a84b6181a"
                 })).to.be.rejectedWith(Error);
             });
         });
@@ -136,16 +141,18 @@ describe('EventModel', function () {
                 await expect(ElementEvent.create({
                     element: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b618",
-                    change: "Nothing"
+                    change: "Nothing",
+                    product: "606afdb5aa09d43a84b6181a"
                 })).to.be.rejectedWith(Error);
             });
         });
-        describe('change', function () {
+        describe("product", function () {
             it('should throws when value is not in the enum', async () => {
                 await expect(ElementEvent.create({
                     element: "606afdb5aa09d43a84b6181a",
-                    user: "606afdb5aa09d43a84b618",
-                    change: "Nothing"
+                    user: "606afdb5aa09d43a84b618a",
+                    change: "Nothing",
+                    product: "606afdb5aa09d43a84b6181"
                 })).to.be.rejectedWith(Error);
             });
         });
@@ -154,7 +161,8 @@ describe('EventModel', function () {
                 await expect(ElementEvent.create({
                     element: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b6181a",
-                    change: "Move"
+                    change: "Move",
+                    product: "606afdb5aa09d43a84b6181a"
                 })).to.be.rejectedWith(Error);
             });
             it('should throws when value is not an id', async () => {
@@ -162,7 +170,8 @@ describe('EventModel', function () {
                     element: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b6181a",
                     change: "Move",
-                    oldLocation: "606afdb5aa09d43a84b618"
+                    oldLocation: "606afdb5aa09d43a84b618",
+                    product: "606afdb5aa09d43a84b6181a"
                 })).to.be.rejectedWith(Error);
             });
             it('should throws when value is specified when it should not', async () => {
@@ -170,7 +179,8 @@ describe('EventModel', function () {
                     element: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b6181a",
                     change: "Creation",
-                    oldLocation: "606afdb5aa09d43a84b6181a"
+                    oldLocation: "606afdb5aa09d43a84b6181a",
+                    product: "606afdb5aa09d43a84b6181a"
                 })).to.be.rejectedWith(Error);
             });
             it('should resolve when everything is ok', () => {
@@ -178,7 +188,8 @@ describe('EventModel', function () {
                     element: "606afdb5aa09d43a84b6181a",
                     user: "606afdb5aa09d43a84b6181a",
                     change: "Move",
-                    oldLocation: "606afdb5aa09d43a84b6181a"
+                    oldLocation: "606afdb5aa09d43a84b6181a",
+                    product: "606afdb5aa09d43a84b6181a"
                 })).to.be.fulfilled;
             });
         });

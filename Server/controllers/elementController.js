@@ -35,7 +35,8 @@ const softDeleteElement = async (req, res, next) => {
             await ElementEvent.create({
                 user: req.user.id,
                 element: doc._id,
-                change: "Remove"
+                change: "Remove",
+                product: doc.idProduct
             });
             return doc
         }).then(dat => {
@@ -142,7 +143,8 @@ exports.addElement = async (req, res, next) => {
 
             await ElementEvent.create({
                 user: req.user.id,
-                element: doc._id
+                element: doc._id,
+                product: doc.idProduct
             });
             return doc
         });
@@ -247,7 +249,8 @@ exports.moveElement = async (req, res, next) => {
                 user: req.user.id,
                 element: doc._id,
                 change: "Move",
-                oldLocation: doc.idLocation
+                oldLocation: doc.idLocation,
+                product: doc.idProduct
 
             });
         }).then(dat => {
