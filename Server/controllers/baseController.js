@@ -249,3 +249,31 @@ exports.getDocumentWithFilterAndPopulate = (Model, filter, param = "id", populat
         next(error);
     }
 };
+
+/**
+ *
+ * @param Model
+ * @param filter
+ * @param param
+ * @returns {(function(*=, *=, *=): Promise<*|undefined>)|*}
+ */
+exports.getDocumentWithFilterAndNoPagination = (Model, filter, param = "id" ) => async (req, res, next) => {
+    let obj = {};
+    obj[filter] = req.params[param];
+    try {
+
+        const doc = await Model.find(obj);
+        if (!doc) {
+            return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
+        }
+
+
+        res.status(200).json({
+            status: 'success',
+            results: doc.length,
+            data: doc
+        });
+    } catch (error) {
+        next(error);
+    }
+};
