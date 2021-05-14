@@ -129,6 +129,7 @@ export default function Add({route, navigation}) {
                         <DateTimePickerModal
                             isVisible={isDatePickerVisible}
                             mode="date"
+                            minimumDate={new Date(getCurrentDate)}
                             onConfirm={handleConfirm}
                             onCancel={hideDatePicker}
                         />

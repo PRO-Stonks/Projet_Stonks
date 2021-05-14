@@ -51,7 +51,6 @@ export default function DisplayInfo({navigation, route}) {
     async function fetchData() {
         const res = await getLocation(API_URL + 'locations/' + location._id, token);
         if (res.status === 'success') {
-            console.log('Fetch' + res)
             return res;
         } else {
             alert("Error: " + res.message)
