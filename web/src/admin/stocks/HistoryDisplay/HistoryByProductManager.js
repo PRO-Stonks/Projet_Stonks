@@ -2,10 +2,7 @@ import {useEffect, useState} from "react";
 import API_URL from "../../../utils/URL";
 import {groupBy} from "lodash";
 import Spinner from "../../../utils/Spinner";
-import ReactDOM from 'react-dom';
-import {VictoryBar, VictoryChart, VictoryAxis,
-    VictoryTheme, VictoryStack} from 'victory';
-import ElementListElement from "../ProductManagement/ElementListElement";
+import {VictoryAxis, VictoryBar, VictoryChart, VictoryStack} from 'victory';
 
 function HistoryByProductManager({productId, token, ...props}) {
     const [data, setData] = useState([]);
@@ -14,7 +11,7 @@ function HistoryByProductManager({productId, token, ...props}) {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        const fetchStories = () => {
+            const fetchStories = () => {
                 fetch(API_URL + "events/element/product/" + productId, {
                     method: 'GET', // *GET, POST, PUT, DELETE, etc.
                     mode: 'cors', // no-cors, *cors, same-origin
@@ -44,7 +41,7 @@ function HistoryByProductManager({productId, token, ...props}) {
                     console.log(err)
                     setError("an error occured")
                 });
-        }
+            }
 
             fetchStories();
         }, [productId]
@@ -57,53 +54,92 @@ function HistoryByProductManager({productId, token, ...props}) {
         return <Spinner enable={isLoading}/>
     }
 
-    const nbCreated = data.Creation ?  data.Creation.length : 0;
-    const nbMoved = data.Move ?  data.Move.length : 0;
-    const nbRemoved = data.Remove ?  data.Remove.length : 0;
+    const nbCreated = data.Creation ? data.Creation.length : 0;
+    const nbMoved = data.Move ? data.Move.length : 0;
+    const nbRemoved = data.Remove ? data.Remove.length : 0;
     const dataWithDate = rawData.map(item => {
-        item.time = new Date(item.time).setMinutes(0,0,0);
+        item.time = new Date(item.time).setHours(0, 0, 0, 0);
         return item;
     });
-    const dataToDisplay = groupBy(dataWithDate, function(item) {
-        return item.time;
+    const dataToDisplay = groupBy(dataWithDate, function (item) {
+        return item.change;
     });
 
-    console.log(dataToDisplay);
-    console.log("dataToDisplay");
-    Object.keys(dataToDisplay).forEach(keys =>{
-        dataToDisplay[keys] = groupBy(dataToDisplay[keys], function(item) {
-            return item.change;
+    Object.keys(dataToDisplay).forEach(keys => {
+        dataToDisplay[keys] = groupBy(dataToDisplay[keys], function (item) {
+            return item.time;
         })
-        if (dataToDisplay[keys].Creation){
-            dataToDisplay[keys].Creation = dataToDisplay[keys].Creation.length
-        }
-    if (dataToDisplay[keys].Remove){
-        dataToDisplay[keys].Remove = dataToDisplay[keys].Remove.length
-        }
-    if (dataToDisplay[keys].Move){
-        dataToDisplay[keys].Move = dataToDisplay[keys].Move.length
-        }
-        console.log(keys)
-        dataToDisplay[keys].date= new Date(parseInt(keys))
+        Object.keys(dataToDisplay[keys]).forEach(item => {
+            dataToDisplay[keys][item] = {value: dataToDisplay[keys][item].length, date: new Date(parseInt(item))}
+        })
     })
-    console.log(dataToDisplay)
-    if (Object.keys(data).length > 0){
+
+
+    if (Object.keys(data).length > 0) {
         return <>
-            <h3>Current quantity: {nbCreated-nbRemoved}</h3>
+            <h3>Current quantity: {nbCreated - nbRemoved}</h3>
             <h3>Element added: {nbCreated}</h3>
             {data.Remove && <h3>Element removed: {nbRemoved}</h3>}
             {data.Move && <h3>Element moved: {nbMoved}</h3>}
-            {/*<VictoryChart>*/}
-            {/*    <VictoryStack>*/}
-            {/*    <VictoryBar*/}
-            {/*        data={Object.values(dataToDisplay)}*/}
-            {/*        x="date"*/}
-            {/*        y="Creation"*/}
-            {/*    />*/}
-            {/*    </VictoryStack>*/}
-            {/*</VictoryChart>*/}
+            <VictoryChart>
+                <VictoryAxis
+
+                    tickFormat={(x) => new Date(x).toLocaleString('en-gb',
+                        {year: 'numeric', month: 'numeric', day: 'numeric'})}
+                />
+                <VictoryStack>
+                    {dataToDisplay.Creation && <VictoryBar
+                        data={Object.values(dataToDisplay.Creation)}
+                        x="date"
+                        y="value"
+                        style={{
+                            data: {
+                                fill: "#18ff00",
+                                fillOpacity: 0.7,
+                                strokeWidth: 3
+                            },
+                            labels: {
+                                fontSize: 15,
+                                fill: "#c43a31"
+                            }
+                        }}
+                    /> }
+                    { dataToDisplay.Remove && <VictoryBar
+                        data={Object.values(dataToDisplay.Remove)}
+                        x="date"
+                        y="value"
+                        style={{
+                            data: {
+                                fill: "#ff0000",
+                                fillOpacity: 0.7,
+                                strokeWidth: 3
+                            },
+                            labels: {
+                                fontSize: 15,
+                                fill: "#c43a31"
+                            }
+                        }}
+                    />}
+                    {dataToDisplay.Move && <VictoryBar
+                        data={Object.values(dataToDisplay.Move)}
+                        x="date"
+                        y="value"
+                        style={{
+                            data: {
+                                fill: "#ffbf00",
+                                fillOpacity: 0.7,
+                                strokeWidth: 3
+                            },
+                            labels: {
+                                fontSize: 15,
+                                fill: "#c43a31"
+                            }
+                        }}
+                    />}
+                </VictoryStack>
+            </VictoryChart>
         </>
-    }else{
+    } else {
         return <h3>No element for this product</h3>
     }
 };
