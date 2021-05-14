@@ -16,7 +16,8 @@ export default function Info({route, navigation}) {
                 console.log("LOCATION:" + location)
                     navigation.navigate('Info', {
                         element: r,
-                        location: location
+                        location: location,
+                        token: token
                     });
             }
             ).catch(r => console.log(r));
@@ -34,12 +35,14 @@ export default function Info({route, navigation}) {
         console.log(API_URL + 'elements/QR/' + data)
         const res = await getElement(API_URL + 'elements/QR/' + data + '?populateField=idProduct,idLocation&populateValue[idProduct]=name&populateValue[idLocation]=name', token);
         if (res.status === 'success') {
+            console.log(res)
             return {
                 name: res.data.idProduct.name,
+                id: res.data._id,
                 price: res.data.price,
                 entryDate: new Date(res.data.entryDate).toLocaleDateString(),
                 exitDate: new Date(res.data.exitDate).toISOString().split('T')[0],
-                location: res.data.idLocation.name,
+                location: res.data.idLocation,
             };
         } else {
             alert("Error: " + res.message);

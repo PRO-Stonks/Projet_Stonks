@@ -1,17 +1,45 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from "react";
+import addElement from "../request/addElement";
+import API_URL from "../url";
+
+
+async function moveElement(url, token) {
+    try {
+        const response = await fetch(url, {
+            method: 'PATCH', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        });
+        return response.json();
+    } catch (e) {
+        console.log("Error")
+        console.log(e);
+    }
+}
+
 
 export default function DisplayInfo({navigation, route}) {
 
-    const {element, location} = route.params;
+    const {element, location, token} = route.params;
 
     const [isLocationChange, setLocationChange] = useState();
 
     const changeLocation = () => {
-        console.log("lol")
+        moveData().then(r => console.log(r)).catch(r => console.log(r));
     }
 
     function ShowLocationChange(){
+        console.log("Before update")
+        console.log(element)
         if(isLocationChange) {
             return <TouchableOpacity
                 onPress={changeLocation}
@@ -22,13 +50,26 @@ export default function DisplayInfo({navigation, route}) {
             return null;
         }
     }
-    
+
     useEffect(() => {
         setLocationChange(false)
-        if (location.name !== element.location) {
+        if (location.name !== element.location.name) {
             setLocationChange(true);
         }
     }, [])
+
+    async function moveData() {
+        console.log(API_URL + 'elements/move/' + element.id + '/' + location._id)
+        const res = await moveElement(API_URL + 'elements/move/' + element.id + '/' + location._id, token);
+        if (res.status === 'success') {
+            console.log(res)
+            alert("Element has been moved successfully")
+            return res;
+        } else {
+            alert("Error: " + res.message)
+            throw res;
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -37,9 +78,8 @@ export default function DisplayInfo({navigation, route}) {
                 <Text style={styles.text}>Price: {element.price} .-</Text>
                 <Text style={styles.text}>Entry date: {element.entryDate}</Text>
                 <Text style={styles.text}>Exit date: {element.exitDate}</Text>
-                <Text style={styles.text}>Location: {element.location}</Text>
+                <Text style={styles.text}>Location: {element.location.name}</Text>
             </View>
-
 
             <View style={styles.bView}>
                 <ShowLocationChange/>
@@ -92,9 +132,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'lightskyblue',
-        marginTop: '10%',
+        marginTop: '5%',
         padding: 15,
         borderRadius: 5,
+        width : '70%',
         height: '35%',
     },
 
