@@ -1,9 +1,34 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 export default function DisplayInfo({navigation, route}) {
 
-    const {element} = route.params;
+    const {element, location} = route.params;
+
+    const [isLocationChange, setLocationChange] = useState();
+
+    const changeLocation = () => {
+        console.log("lol")
+    }
+
+    function ShowLocationChange(){
+        if(isLocationChange) {
+            return <TouchableOpacity
+                onPress={changeLocation}
+                style={styles.button}>
+                <Text style={styles.bText}>Change location</Text>
+            </TouchableOpacity>
+        } else {
+            return null;
+        }
+    }
+    
+    useEffect(() => {
+        setLocationChange(false)
+        if (location.name !== element.location) {
+            setLocationChange(true);
+        }
+    }, [])
 
     return (
         <View style={styles.container}>
@@ -14,7 +39,10 @@ export default function DisplayInfo({navigation, route}) {
                 <Text style={styles.text}>Exit date: {element.exitDate}</Text>
                 <Text style={styles.text}>Location: {element.location}</Text>
             </View>
+
+
             <View style={styles.bView}>
+                <ShowLocationChange/>
                 <TouchableOpacity
                     onPress={() => {
                         navigation.navigate('Menu');
@@ -44,7 +72,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 25,
-        marginBottom: '10%',
+        marginBottom: '8%',
         fontWeight: 'bold',
         alignItems: 'center',
         justifyContent: 'center',

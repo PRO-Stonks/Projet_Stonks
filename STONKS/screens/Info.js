@@ -6,18 +6,17 @@ import getElement from '../request/getElement.js'
 
 export default function Info({route, navigation}) {
     // get user token
-    const {token} = route.params;
+    const {token, location} = route.params;
     // store scan id
     const [scanId, setScanId] = useState(null);
 
     useEffect(() => {
         if (scanId) {
            fetchData(scanId).then(r => {
-                console.log(r)
-                    console.log("RES                               AHHAHAHHHHHHHHHHHHHHHHhAHHAHAHAHAHAHHA");
-                    console.log(r);
+                console.log("LOCATION:" + location)
                     navigation.navigate('Info', {
                         element: r,
+                        location: location
                     });
             }
             ).catch(r => console.log(r));
@@ -35,7 +34,6 @@ export default function Info({route, navigation}) {
         console.log(API_URL + 'elements/QR/' + data)
         const res = await getElement(API_URL + 'elements/QR/' + data + '?populateField=idProduct,idLocation&populateValue[idProduct]=name&populateValue[idLocation]=name', token);
         if (res.status === 'success') {
-            console.log(res)
             return {
                 name: res.data.idProduct.name,
                 price: res.data.price,
