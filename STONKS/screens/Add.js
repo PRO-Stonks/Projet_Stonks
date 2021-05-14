@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from "react";
-import RNPickerSelect from "react-native-picker-select";
-import {StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback} from "react-native";
+import {StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback, Button} from "react-native";
 import getCurrentDate from "../utils/getDate.js";
 import Scan from './Scan.js';
 import API_URL from "../url";
 import List from "../components/List";
-import ItemListLocation from "../components/ItemListLocation";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ItemListProduct from "../components/ItemListProduct";
 
 //Refaire styles car valeur brute like a pig
@@ -41,7 +40,7 @@ export default function Add({route, navigation}) {
 
     const {products, token, location} = route.params;
     // state to store product info
-    const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate, exitDate:"2021-04-26", idLocation:location._id});
+    const [productInfo, setProductInfo] = useState({entryDate: getCurrentDate, idLocation:location._id});
     // state to check if we should scan
     const [isScan, setScan] = useState(false);
     const [isEnableProductList, setIsEnableProductList] = useState(false);
@@ -56,22 +55,13 @@ export default function Add({route, navigation}) {
             const body = {
                 ...productInfo, code: scanId, idLocation: scanId, idProduct: productInfo.idProduct._id
             }
+            console.log("body:")
+            console.log(body)
             fetchData(body).then(r => console.log(r)).catch(r => console.log(r));
             setScanId(null);
         }
     }, [scanId])
 
-
-    /**
-     * Generate list of products name to display in RNPickerSelect
-     * @returns {*} : array of products label and value
-     */
-    const productList = () => {
-        return products.data.map(product => ({
-            label: product.name,
-            value: product._id,
-        }));
-    }
 
     /**
      * Validate users entries
@@ -117,6 +107,21 @@ export default function Add({route, navigation}) {
         );
     };
 
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+    const showDatePicker = () => {
+        setDatePickerVisibility(true);
+    };
+
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false);
+    };
+
+    const handleConfirm = (date) => {
+        setProductInfo({...productInfo, exitDate: date.toISOString().split('T')[0]})
+        hideDatePicker();
+    };
+
     /**
      * Add view
      */
@@ -143,6 +148,15 @@ export default function Add({route, navigation}) {
                         <Text style={styles.productElement}>{productInfo.idProduct == null ? "Click to select": productInfo.idProduct.name}</Text>
                     </TouchableOpacity>
                 </View>
+
+                <Button title="Select an exit date" onPress={showDatePicker} />
+                <DateTimePickerModal
+                    isVisible={isDatePickerVisible}
+                    mode="date"
+                    onConfirm={handleConfirm}
+                    onCancel={hideDatePicker}
+                />
+
 
                <TouchableOpacity
                     onPress={() => dataValidate()}
@@ -207,34 +221,16 @@ const styles = StyleSheet.create({
         fontSize: 25,
     },
     productElement: {
-            padding: 20,
-            marginVertical: 8,
-            marginHorizontal: 16,
-            textAlign: 'center',
-            fontSize: 32,
-    }
+        padding: 20,
+        marginVertical: 8,
+        marginHorizontal: 16,
+        textAlign: 'center',
+        fontSize: 32,
+    },
+    datePickerStyle: {
+        width: 200,
+        marginTop: 20,
+    },
 });
 
 
-const pickerSelectStyles = StyleSheet.create({
-    inputIOS: {
-        fontSize: 25,
-        paddingVertical: 12,
-        paddingHorizontal: 10,
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 4,
-        color: 'black',
-        paddingRight: 30, // to ensure the text is never behind the icon
-    },
-    inputAndroid: {
-        fontSize: 25,
-        paddingHorizontal: 10,
-        paddingVertical: 8,
-        borderWidth: 0.5,
-        borderColor: 'purple',
-        borderRadius: 8,
-        color: 'black',
-        paddingRight: 30, // to ensure the text is never behind the icon
-    },
-});
