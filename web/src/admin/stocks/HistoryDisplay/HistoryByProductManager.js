@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
 import API_URL from "../../../utils/URL";
-import ElementListElement from "./ElementListElement";
+import EventListElement from "./EventListElement";
 import {groupBy} from "lodash";
 import Spinner from "../../../utils/Spinner";
 
-function ElementByProductManager({productId, token, ...props}) {
+function HistoryByProductManager({productId, token, ...props}) {
     const [data, setData] = useState([]);
     const [rawData, setRawData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -12,7 +12,7 @@ function ElementByProductManager({productId, token, ...props}) {
 
     useEffect(() => {
         const fetchStories = () => {
-                fetch(API_URL + "elements/product/" + productId, {
+                fetch(API_URL + "events/element/product/" + productId, {
                     method: 'GET', // *GET, POST, PUT, DELETE, etc.
                     mode: 'cors', // no-cors, *cors, same-origin
                     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -34,11 +34,7 @@ function ElementByProductManager({productId, token, ...props}) {
                     } else {
                         setRawData(result.data);
                         setData(groupBy(result.data, function (element) {
-                            if(!element.idLocation){
-                                console.log(element);
-                            }
-
-                            return element.idLocation._id;
+                            return element.change;
                         }));
                     }
                 }).catch(err => {
@@ -58,20 +54,20 @@ function ElementByProductManager({productId, token, ...props}) {
         return <Spinner enable={isLoading}/>
     }
 
+    const nbCreated = data.Creation ?  data.Creation.length : 0;
+    const nbMoved = data.Moved ?  data.Moved.length : 0;
+    const nbRemoved = data.Remove ?  data.Remove.length : 0;
+    console.log(data)
     if (Object.keys(data).length > 0){
-        return <div>
-            <h2>In stock: {rawData.length}</h2>
-            {Object.keys(data).map(key => {
-            return <div key={key}>
-                <h2>{data[key][0].idLocation.name}</h2>
-                {data[key].map(item => {
-                    return <ElementListElement key={item._id} item={item}/>
-                })} </div>
-        })}
-            </div>
+        return <>
+            <h3>Current quantity: {nbCreated-nbRemoved}</h3>
+            <h3>Element added: {nbCreated}</h3>
+            {data.Remove && <h3>Element removed: {nbRemoved}</h3>}
+            {data.Moved && <h3>Element moved: {nbMoved}</h3>}
+        </>
     }else{
         return <h3>No element for this product</h3>
     }
 };
 
-export default ElementByProductManager;
+export default HistoryByProductManager;
