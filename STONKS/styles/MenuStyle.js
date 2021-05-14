@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         width: '60%',
         height: '25%',
     },
-    bSupress: {
+    bDelete: {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'lightsalmon',

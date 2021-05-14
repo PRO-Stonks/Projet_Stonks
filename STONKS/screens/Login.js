@@ -1,12 +1,17 @@
 import {Formik} from 'formik';
 import * as yup from 'yup'
 import * as React from 'react';
-import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import API_URL from "../url";
 import {UserContext} from "../UserContext";
 import verifyUser from '../request/verifyUser.js';
 import styles from '../styles/LoginStyle';
 
+/**
+ * Login component displaying the Login view and handling user login
+ * @param props: properties to hold navigator
+ * @returns {JSX.Element} Login view
+ */
 const Login = (props) => {
 
     /**
@@ -28,7 +33,7 @@ const Login = (props) => {
      */
     return (
         <UserContext.Consumer>
-            {({userData, setUserData}) => (
+            {({setUserData}) => (
                 <View style={styles.container}>
                     <Image
                         style={{width: 200, height: 200}}
@@ -40,9 +45,8 @@ const Login = (props) => {
                         onSubmit={async values => {
                             const res = await verifyUser(API_URL + "users/login", values);
                             if (res.status === 'fail') {
-                                console.log("LOGIN FAIL") // to do error message
+                                alert("Error: invalid credentials")
                             } else {
-                                console.log("LOGIN OK")
                                 setUserData({loggedIn: true, user: res.data.user, token: res.token})
                                 props.navigation.navigate('Menu')
                             }

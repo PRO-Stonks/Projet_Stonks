@@ -7,7 +7,6 @@ import {
     TouchableOpacity,
     Keyboard,
     TouchableWithoutFeedback,
-    Button
 } from "react-native";
 import getCurrentDate from "../utils/getDate.js";
 import Scan from './Scan.js';
@@ -33,19 +32,14 @@ export default function Add({route, navigation}) {
 
     useEffect(() => {
         if (scanId) {
-            console.log("SCAN CHANGED")
             setProductInfo({...productInfo, code: scanId})
-            console.log(productInfo)
             const body = {
                 ...productInfo, code: scanId, idProduct: productInfo.idProduct._id
             }
-            console.log("body:")
-            console.log(body)
             fetchData(body).then(r => console.log(r)).catch(r => console.log(r));
             setScanId(null);
         }
     }, [scanId])
-
 
     /**
      * Validate users entries
@@ -66,7 +60,7 @@ export default function Add({route, navigation}) {
         const res = await addElement(API_URL + 'elements/add', token, data);
         console.log(data)
         if (res.status === 'success') {
-            alert("Product added successfully")
+            alert("Element has been added successfully")
             return res;
         } else {
             alert("Error: " + res.message)
@@ -105,9 +99,6 @@ export default function Add({route, navigation}) {
         hideDatePicker();
     };
 
-    /**
-     * Add view
-     */
     return (
         isEnableProductList ? <List token={token} url="products" renderItemHandler={renderProductItem}/> :
             isScan ? <Scan scanId={scanId} setScanId={setScanId}/> :
