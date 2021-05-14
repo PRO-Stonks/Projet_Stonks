@@ -6,6 +6,8 @@ import {UserContext} from "../UserContext";
 import getProducts from '../request/getProducts.js';
 import styles from '../styles/MenuStyle';
 import Scan from "./Scan";
+import List from "../components/List";
+import ItemListLocation from "../components/ItemListLocation";
 
 
 export default function Menu(props) {
@@ -13,6 +15,7 @@ export default function Menu(props) {
     const userData = useContext(UserContext);
     // state to store list of products
     const [product, setProduct] = useState([]);
+    const [location, setLocation] = useState({});
     // to keep?
     const [isFetchingProduct, setIsFetchingProduct] = useState(false);
     // state to check if we should scan
@@ -53,18 +56,34 @@ export default function Menu(props) {
         fetchData().then(r => setProduct(r)).catch(r => console.log(r))
     }, []);
 
+    const renderLocation = ( {item} ) => {
+        if (!item){
+            throw DOMError;
+        }
+        return (
+            <ItemListLocation
+                item={item}
+                onPress={() => setLocation(item)}
+            />
+        );
+    };
+
     /**
      * Menu view
      */
-    return (
-        isScan ? <Scan/> :
-            <View style={styles.buttonsContainer}>
-                <View style={styles.headerContainer}>
-                    <Text style={styles.titleText}>Options</Text>
+    if (location._id) {
+        return (
+            isScan ? <Scan/> :
+                <View style={styles.buttonsContainer}>
+                    <View style={styles.headerContainer}>
+                        <Text style={styles.titleText}>Options</Text>
+                    </View>
+
+                    <Options navigation={props.navigation} data={product} token={userData.state.token} location={location}/>
                 </View>
+        );
+    } else {
+        return <List token={userData.state.token} url="locations" renderItemHandler={renderLocation}/>
+    }
 
-                <Options navigation={props.navigation} data={product} token={userData.state.token}/>
-
-            </View>
-    );
 }

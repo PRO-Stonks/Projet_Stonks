@@ -7,7 +7,7 @@ import styles from '../styles/MenuStyle';
  * TO DO: Requêtes pour visualiser et supprimer
  */
 
-export default function Options({navigation, data, token}) {
+export default function Options({navigation, data, token, location}) {
     console.log("OPTIONS")
 
     /**
@@ -30,6 +30,7 @@ export default function Options({navigation, data, token}) {
                         navigation.navigate('Add', {
                             products: data,
                             token: token,
+                            location
                         });
                     }}
                     style={styles.bAdd}>
