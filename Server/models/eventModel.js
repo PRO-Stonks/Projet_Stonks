@@ -66,6 +66,12 @@ const eventElement = new mongoose.Schema({
         required: true,
         immutable: true
     },
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true,
+        immutable: true
+    },
     change: {
         type: String,
         enum: ["Creation", "Move", "Remove"],
