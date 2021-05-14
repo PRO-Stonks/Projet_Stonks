@@ -1,8 +1,11 @@
 import {useEffect, useState} from "react";
 import API_URL from "../../../utils/URL";
-import EventListElement from "./EventListElement";
 import {groupBy} from "lodash";
 import Spinner from "../../../utils/Spinner";
+import ReactDOM from 'react-dom';
+import {VictoryBar, VictoryChart, VictoryAxis,
+    VictoryTheme, VictoryStack} from 'victory';
+import ElementListElement from "../ProductManagement/ElementListElement";
 
 function HistoryByProductManager({productId, token, ...props}) {
     const [data, setData] = useState([]);
@@ -57,13 +60,48 @@ function HistoryByProductManager({productId, token, ...props}) {
     const nbCreated = data.Creation ?  data.Creation.length : 0;
     const nbMoved = data.Moved ?  data.Moved.length : 0;
     const nbRemoved = data.Remove ?  data.Remove.length : 0;
-    console.log(data)
+    const dataWithDate = rawData.map(item => {
+        item.time = new Date(item.time).setMinutes(0,0,0);
+        return item;
+    });
+    const dataToDisplay = groupBy(dataWithDate, function(item) {
+        return item.time;
+    });
+
+    console.log(dataToDisplay);
+    console.log("dataToDisplay");
+    Object.keys(dataToDisplay).forEach(keys =>{
+        dataToDisplay[keys] = groupBy(dataToDisplay[keys], function(item) {
+            return item.change;
+        })
+        if (dataToDisplay[keys].Creation){
+            dataToDisplay[keys].Creation = dataToDisplay[keys].Creation.length
+        }
+    if (dataToDisplay[keys].Remove){
+        dataToDisplay[keys].Remove = dataToDisplay[keys].Remove.length
+        }
+    if (dataToDisplay[keys].Move){
+        dataToDisplay[keys].Move = dataToDisplay[keys].Move.length
+        }
+        console.log(keys)
+        dataToDisplay[keys].date= new Date(parseInt(keys))
+    })
+    console.log(dataToDisplay)
     if (Object.keys(data).length > 0){
         return <>
             <h3>Current quantity: {nbCreated-nbRemoved}</h3>
             <h3>Element added: {nbCreated}</h3>
             {data.Remove && <h3>Element removed: {nbRemoved}</h3>}
             {data.Moved && <h3>Element moved: {nbMoved}</h3>}
+            {/*<VictoryChart>*/}
+            {/*    <VictoryStack>*/}
+            {/*    <VictoryBar*/}
+            {/*        data={Object.values(dataToDisplay)}*/}
+            {/*        x="date"*/}
+            {/*        y="Creation"*/}
+            {/*    />*/}
+            {/*    </VictoryStack>*/}
+            {/*</VictoryChart>*/}
         </>
     }else{
         return <h3>No element for this product</h3>
