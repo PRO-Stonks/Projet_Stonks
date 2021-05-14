@@ -58,7 +58,7 @@ function HistoryByProductManager({productId, token, ...props}) {
     }
 
     const nbCreated = data.Creation ?  data.Creation.length : 0;
-    const nbMoved = data.Moved ?  data.Moved.length : 0;
+    const nbMoved = data.Move ?  data.Move.length : 0;
     const nbRemoved = data.Remove ?  data.Remove.length : 0;
     const dataWithDate = rawData.map(item => {
         item.time = new Date(item.time).setMinutes(0,0,0);
@@ -92,7 +92,7 @@ function HistoryByProductManager({productId, token, ...props}) {
             <h3>Current quantity: {nbCreated-nbRemoved}</h3>
             <h3>Element added: {nbCreated}</h3>
             {data.Remove && <h3>Element removed: {nbRemoved}</h3>}
-            {data.Moved && <h3>Element moved: {nbMoved}</h3>}
+            {data.Move && <h3>Element moved: {nbMoved}</h3>}
             {/*<VictoryChart>*/}
             {/*    <VictoryStack>*/}
             {/*    <VictoryBar*/}
