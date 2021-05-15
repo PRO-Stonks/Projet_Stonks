@@ -5,12 +5,32 @@
 const {ElementAlert, ProductAlert} = require('../models/alertModel');
 const base = require('./baseController');
 const Element = require("../models/elementModel");
+const APIFeatures = require("../utils/apiFeatures");
 
 /**
  * getAllElementAlert handler
  * @type {function(Response.req, res, next): Promise<Document[]>}
  */
-exports.getAllElementAlert = base.getAll(ElementAlert);
+exports.getAllElementAlert = async (req, res, next) => {
+    try {
+        const features = new APIFeatures(ElementAlert.find().populate([{
+            path: "idElement",
+            select: "exitDate idProduct",
+            populate : {path: 'idProduct'}
+        }]), req.query).sort().paginate()
+
+        const doc = await features.query;
+
+        res.status(200).json({
+            status: 'success',
+            results: doc.length,
+            data: doc
+        });
+
+    } catch (error) {
+        next(error);
+    }
+}
 
 /**
  * getAllProductAlert handler
