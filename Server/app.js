@@ -51,6 +51,7 @@ app.use('/api/v1/elements', require('./routes/elementRoutes'));
 app.use('/api/v1/users', require('./routes/userRoutes'));
 app.use('/api/v1/events', require('./routes/eventRoutes'));
 app.use('/api/v1/QR', require('./routes/QRRoutes'));
+app.use('/api/v1/alerts/', require('./routes/alertRoutes'));
 
 
 // handle undefined Routes

@@ -226,6 +226,7 @@ exports.getDocumentWithFilter = (Model, filter, param = "id") => async (req, res
 /**
  *
  * Util function to get a document based on a criteria
+ * (To use when you when to populate field but not allow the populate to be specified by query)
  * @param Model the model to make the request from
  * @param filter criteria of the search
  * @param populate which filed to populate
@@ -241,7 +242,6 @@ exports.getDocumentWithFilterAndPopulate = (Model, filter, populate, param = "id
         if (!doc) {
             return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
         }
-
 
         res.status(200).json({
             status: 'success',
