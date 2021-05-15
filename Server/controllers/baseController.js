@@ -225,11 +225,11 @@ exports.getDocumentWithFilter = (Model, filter, param = "id") => async (req, res
  * Util function to get a document based on a criteria
  * @param Model the model to make the request from
  * @param filter criteria of the search
- * @param param where to get the value of the filter
  * @param populate which filed to populate
+ * @param param where to get the value of the filter
  * @returns {function(req, res, next): Promise<Document[]>}
  */
-exports.getDocumentWithFilterAndPopulate = (Model, filter, param = "id", populate ) => async (req, res, next) => {
+exports.getDocumentWithFilterAndPopulate = (Model, filter, populate, param = "id") => async (req, res, next) => {
     let obj = {};
     obj[filter] = req.params[param];
     try {

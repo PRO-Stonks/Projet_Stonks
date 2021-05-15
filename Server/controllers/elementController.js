@@ -137,7 +137,7 @@ exports.addElement = async (req, res, next) => {
         delete req.body.code;
         session = await mongoose.startSession();
 
-        const doc = await session.withTransaction(async () => {
+        const data = await session.withTransaction(async () => {
             const doc = await Element.create(req.body);
 
             await ElementEvent.create({
@@ -148,7 +148,7 @@ exports.addElement = async (req, res, next) => {
         });
         res.status(201).json({
             status: 'success',
-            data: doc
+            data: data
         });
 
     } catch (err) {
@@ -289,13 +289,16 @@ exports.updateElement = async (req, res, next) => {
  * Get All handler
  * @type {function(Response.req, res, next): Promise<Document[]>}
  */
-exports.getAllElementsByLocation = base.getDocumentWithFilterAndPopulate(Element, "idLocation", "location", [{path: "idProduct"}]);
+exports.getAllElementsByLocation = base.getDocumentWithFilterAndPopulate(Element, "idLocation", [{path: "idProduct"}], "location");
 
 /**
  * Get All handler
  * @type {function(Response.req, res, next): Promise<Document[]>}
  */
-exports.getAllElementsByProduct = base.getDocumentWithFilterAndPopulate(Element, "idProduct", "product", [{path: "idLocation", select: "name"}]);
+exports.getAllElementsByProduct = base.getDocumentWithFilterAndPopulate(Element, "idProduct", [{
+    path: "idLocation",
+    select: "name"
+}], "product");
 
 /**
  * Hard delete element handler
