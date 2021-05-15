@@ -73,8 +73,11 @@ rule.minute = 15;
 rule.second = 0;
 rule.dayOfWeek = new schedule.Range(0,6);
 
-const job = schedule.scheduleJob(rule, function(){
-    alertController.createAlert();
-});
+if(!process.env.TEST){
+    const job = schedule.scheduleJob(rule, function(){
+        alertController.createAlert();
+    });
+}
+
 
 module.exports = app;

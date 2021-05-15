@@ -4,8 +4,8 @@
   "description": "The best stocks manager application to ever exists",
   "main": "Server/server.js",
   "scripts": {
-    "test-server": "cd Server && mocha \"test/**/*.js\"",
-    "coverage-server": "cd Server && nyc --reporter=text mocha \"test/**/*.js\"",
+    "test-server": "cd Server && TEST=true mocha \"test/**/*.js\"",
+    "coverage-server": "cd Server && nyc --reporter=text TEST=true mocha \"test/**/*.js\"",
     "debug-server": "cd Server && ndb server.js",
     "start-server": "cd Server && PORT=4000 nodemon server.js"
   },
