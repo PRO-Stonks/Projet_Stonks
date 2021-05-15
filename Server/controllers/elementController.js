@@ -74,7 +74,7 @@ exports.deleteElementByQR = async (req, res, next) => {
     const QR = await QRModel.findOne({
         code: req.params.code,
     });
-
+    // TODO Add test
     if (!QR) {
         return next(
             new AppError(404, "fail", "The QR code does not exist"),
