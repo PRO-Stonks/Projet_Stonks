@@ -36,5 +36,9 @@
   },
   "devDependencies": {
     "nyc": "^15.1.0"
+  },
+  "nyc": {
+    "include": "Server",
+    "exclude": "Server/test/*"
   }
 }

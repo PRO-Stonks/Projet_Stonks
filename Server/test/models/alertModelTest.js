@@ -83,7 +83,7 @@ after(async function () {
         idElement: value
     });
     await ProductAlert.deleteMany({
-        idElement: value2
+        idProduct: value2
     });
 });
 
