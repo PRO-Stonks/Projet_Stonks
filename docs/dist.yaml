@@ -933,6 +933,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  '/events/element/event/{id}':
+    get:
+      tags:
+        - Event
+      summary: Get all element events by element id
+      operationId: getElementEventByElementID
+      parameters:
+        - name: id
+          in: path
+          description: product id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ElementEvent'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          description: No document found with that id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /locations:
     get:
