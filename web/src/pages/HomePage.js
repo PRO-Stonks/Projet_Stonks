@@ -11,6 +11,7 @@ import UserManagementMenu from "../admin/user/UserManagementMenu";
 import Location from "../admin/location/Location";
 import StocksManagerMenu from "../admin/stocks/StocksManagerMenu";
 import UserLogManager from "../admin/logs/LogsManagement/UserLogManager";
+import AlertManager from "../admin/alert/AlertDisplay";
 
 /* This home page is specific to Admins
     #TODO later for manager
@@ -48,6 +49,12 @@ function HomePage(props) {
                                                     Email: {props.user.email}<br/>
                                                     Role: {props.user.role}
                                                 </p>
+                                            </div>
+                                        </div>
+                                        <div className="card bg-dark mb-3">
+                                            <div className="card-body">
+                                                <h3 className="card-title">Alert</h3>
+                                                <AlertManager token={props.token}/>
                                             </div>
                                         </div>
                                     </div>
