@@ -24,7 +24,7 @@ const productAlertSchema = new mongoose.Schema({
 });
 
 const ElementAlert = mongoose.model("ElementAlert", elementAlertSchema);
-const ProductAlert = mongoose.model("ProductAlert", elementAlertSchema);
+const ProductAlert = mongoose.model("ProductAlert", productAlertSchema);
 
 module.exports = {
     ElementAlert,
