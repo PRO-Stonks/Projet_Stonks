@@ -35,7 +35,8 @@ const softDeleteElement = async (req, res, next) => {
             await ElementEvent.create({
                 user: req.user.id,
                 element: doc._id,
-                change: "Remove"
+                change: "Remove",
+                product: doc.idProduct
             });
             return doc
         }).then(dat => {
@@ -73,7 +74,7 @@ exports.deleteElementByQR = async (req, res, next) => {
     const QR = await QRModel.findOne({
         code: req.params.code,
     });
-
+    // TODO Add test
     if (!QR) {
         return next(
             new AppError(404, "fail", "The QR code does not exist"),
@@ -105,8 +106,7 @@ exports.deleteElementByQR = async (req, res, next) => {
  * @returns {Promise<*>}
  */
 exports.addElement = async (req, res, next) => {
-    let session;
-    try {
+
         const QR = await QRModel.findOne({
             code: req.body.code,
         });
@@ -135,6 +135,8 @@ exports.addElement = async (req, res, next) => {
         // Setup object as expected by DB
         req.body.idQR = QR._id;
         delete req.body.code;
+    let session;
+    try {
         session = await mongoose.startSession();
 
         const doc = await session.withTransaction(async () => {
@@ -142,29 +144,20 @@ exports.addElement = async (req, res, next) => {
 
             await ElementEvent.create({
                 user: req.user.id,
-                element: doc._id
+                element: doc._id,
+                product: doc.idProduct
             });
             return doc
         });
+        session.endSession();
+        session = null;
         res.status(201).json({
             status: 'success',
             data: doc
         });
 
     } catch (err) {
-        if (err instanceof mongoose.Error.ValidationError) {
-            let errorOutput = ""
-            Object.keys(err.errors).forEach((key) => {
-                errorOutput += err.errors[key].message + "\n";
-            });
-
-            next(new AppError(400, "Invalid Input", errorOutput),
-                req,
-                res,
-                next);
-        } else {
-            next(err);
-        }
+        base.manageValidationError(err,req,res,next);
     } finally {
         if (session) {
             session.endSession();
@@ -247,7 +240,8 @@ exports.moveElement = async (req, res, next) => {
                 user: req.user.id,
                 element: doc._id,
                 change: "Move",
-                oldLocation: doc.idLocation
+                oldLocation: doc.idLocation,
+                product: doc.idProduct
 
             });
         }).then(dat => {

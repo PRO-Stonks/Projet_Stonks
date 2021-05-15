@@ -11,7 +11,7 @@ exports.getAllQR = base.getAll(QR);
 // Admin only
 /**
  * QR creation
- * @behaviour Automaticly assign a uid to the QRdata and returns it to the client
+ * @behaviour Automatically assign a uid to the QRdata and returns it to the client
  * @param req user request
  * @param res response
  * @param next handler
@@ -26,19 +26,7 @@ exports.addQR = async (req, res, next) => {
 
         });
     } catch (err) {
-        if (err instanceof mongoose.Error.ValidationError) {
-            let errorOutput = ""
-            Object.keys(err.errors).forEach((key) => {
-                errorOutput += err.errors[key].message + "\n";
-            });
-
-            next(new AppError(400, "Invalid Input", errorOutput),
-                req,
-                res,
-                next);
-        } else {
-            next(err);
-        }
+        next(err);
     }
 };
 
