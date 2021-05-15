@@ -14,11 +14,11 @@ router
 
 
 router
-    .route('/products')
+    .route('/products/')
     .get(alertController.getAllProductAlert);
 
 router
-    .route('/elements')
+    .route('/elements/')
     .get(alertController.getAllElementAlert);
 
 router

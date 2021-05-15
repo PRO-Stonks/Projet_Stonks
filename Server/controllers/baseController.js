@@ -262,6 +262,9 @@ exports.getDocumentWithFilterAndPopulate = (Model, filter, populate, param = "id
  */
 exports.getDocumentWithFilterAndNoPagination = (Model, filter, param = "id" ) => async (req, res, next) => {
     let obj = {};
+    if(!req.params[param]){
+        return next(new AppError(404, 'fail', 'Missing parameter'), req, res, next);
+    }
     obj[filter] = req.params[param];
     try {
 

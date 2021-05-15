@@ -39,6 +39,6 @@
   },
   "nyc": {
     "include": "Server",
-    "exclude": "Server/test/*"
+    "exclude": ["Server/test/*","Server/controllers/alertController.js"]
   }
 }

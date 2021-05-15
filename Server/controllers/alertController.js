@@ -69,9 +69,7 @@ exports.verifyElement = async (req, res, next) => {
         results: doc.length,
         data: doc
     });
-
     exports.createAlert();
-
 }
 
 /**

@@ -190,6 +190,33 @@ describe('Product alert', function () {
                 expect(alert.length).to.be.equal(1);
             });
     });
+    it('Get alert should work', async () => {
+        // Create Element
+
+        // Delete previous element
+        await chai
+            .request(app)
+            .get(mainRoute +"/alerts/elements/")
+            .set("Authorization", "Bearer " + tokenAdmin)
+            .timeout(timeoutDuration)
+            .then(async (res) => {
+                expect(res.status).to.be.equal(200);
+            });
+    });
+
+    it('Get alert for product should work', async () => {
+        // Create Element
+
+        // Delete previous element
+        await chai
+            .request(app)
+            .get(mainRoute +"/alerts/products/")
+            .set("Authorization", "Bearer " + tokenAdmin)
+            .timeout(timeoutDuration)
+            .then(async (res) => {
+                expect(res.status).to.be.equal(200);
+            });
+    });
 
 });
 
