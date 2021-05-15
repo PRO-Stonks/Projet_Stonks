@@ -48,6 +48,33 @@ exports.softDeleteOne = Model => async (req, res, next) => {
 };
 
 /**
+ *
+ * @param err
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<*>}
+ */
+async function manageValidationError(err, req, res, next) {
+    if (err instanceof mongoose.Error.ValidationError) {
+        let errorOutput = ""
+        Object.keys(err.errors).forEach((key) => {
+            errorOutput += err.errors[key].message + "\n";
+        });
+
+        return next(new AppError(400, "Invalid Input", errorOutput),
+            req,
+            res,
+            next);
+    } else {
+        return next(err);
+    }
+}
+
+
+exports.manageValidationError = manageValidationError;
+
+/**
  * Update Handler
  *
  * @behaviour Expects params.id to exist
@@ -76,19 +103,7 @@ exports.updateOne = Model => async (req, res, next) => {
         });
 
     } catch (err) {
-        if (err instanceof mongoose.Error.ValidationError) {
-            let errorOutput = ""
-            Object.keys(err.errors).forEach((key) => {
-                errorOutput += err.errors[key].message + "\n";
-            });
-            console.log(err)
-            next(new AppError(400, "Invalid Input", errorOutput),
-                req,
-                res,
-                next);
-        } else {
-            next(err);
-        }
+        return manageValidationError(err, next, req, res);
     }
 };
 
@@ -108,19 +123,7 @@ exports.createOne = Model => async (req, res, next) => {
         });
 
     } catch (err) {
-        if (err instanceof mongoose.Error.ValidationError) {
-            let errorOutput = ""
-            Object.keys(err.errors).forEach((key) => {
-                errorOutput += err.errors[key].message + "\n";
-            });
-
-            next(new AppError(400, "Invalid Input", errorOutput),
-                req,
-                res,
-                next);
-        } else {
-            next(err);
-        }
+        manageValidationError(err,req,res,next)
     }
 };
 

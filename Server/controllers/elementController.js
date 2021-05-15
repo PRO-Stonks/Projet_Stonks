@@ -106,8 +106,7 @@ exports.deleteElementByQR = async (req, res, next) => {
  * @returns {Promise<*>}
  */
 exports.addElement = async (req, res, next) => {
-    let session;
-    try {
+
         const QR = await QRModel.findOne({
             code: req.body.code,
         });
@@ -136,6 +135,8 @@ exports.addElement = async (req, res, next) => {
         // Setup object as expected by DB
         req.body.idQR = QR._id;
         delete req.body.code;
+    let session;
+    try {
         session = await mongoose.startSession();
 
         const doc = await session.withTransaction(async () => {
@@ -148,25 +149,15 @@ exports.addElement = async (req, res, next) => {
             });
             return doc
         });
+        session.endSession();
+        session = null;
         res.status(201).json({
             status: 'success',
             data: doc
         });
 
     } catch (err) {
-        if (err instanceof mongoose.Error.ValidationError) {
-            let errorOutput = ""
-            Object.keys(err.errors).forEach((key) => {
-                errorOutput += err.errors[key].message + "\n";
-            });
-
-            next(new AppError(400, "Invalid Input", errorOutput),
-                req,
-                res,
-                next);
-        } else {
-            next(err);
-        }
+        base.manageValidationError(err,req,res,next);
     } finally {
         if (session) {
             session.endSession();
