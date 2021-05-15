@@ -781,7 +781,6 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-
                     expect(res.status).to.be.equal(204);
                 });
 

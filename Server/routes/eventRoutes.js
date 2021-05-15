@@ -44,6 +44,10 @@ router
 
 router
     .route('/element/product/:id')
+    .get(eventController.getElementEventForProduct);
+
+router
+    .route('/element/event/:id')
     .get(eventController.getElementEventForElement);
 
 router

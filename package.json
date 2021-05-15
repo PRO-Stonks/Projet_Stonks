@@ -5,7 +5,7 @@
   "main": "Server/server.js",
   "scripts": {
     "test-server": "cd Server && mocha \"test/**/*.js\"",
-    "coverage-server": "cd Server && nyc --reporter=lcov mocha -R @danmasta/mocha-sonar \"test/**/*.js\"",
+    "coverage-server": "cd Server && nyc --reporter=text mocha \"test/**/*.js\"",
     "debug-server": "cd Server && ndb server.js",
     "start-server": "cd Server && PORT=4000 nodemon server.js"
   },
@@ -34,7 +34,6 @@
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
-    "@danmasta/mocha-sonar": "^1.0.1",
     "nyc": "^15.1.0"
   }
 }
