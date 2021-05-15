@@ -15,8 +15,8 @@ exports.getAllElementAlert = async (req, res, next) => {
     try {
         const features = new APIFeatures(ElementAlert.find().populate([{
             path: "idElement",
-            select: "exitDate idProduct",
-            populate : {path: 'idProduct'}
+            select: "exitDate idProduct idLocation",
+            populate : [{path: 'idProduct'}, {path: 'idLocation', select: 'name'}]
         }]), req.query).sort().paginate()
 
         const doc = await features.query;
