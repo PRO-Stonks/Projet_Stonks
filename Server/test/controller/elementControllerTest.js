@@ -663,6 +663,42 @@ describe('elementController', function () {
                 });
         });
 
+        it('move should fail with invalid elementid', async () => {
+            // Update Element
+            await chai
+                .request(app)
+                .patch(mainRoute + "/elements/move/" + mongoose.Types.ObjectId.createFromTime(42) + "/" + idLocation2)
+                .send({
+                    price: 666
+                })
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal("fail");
+                    expect(res.body.message).to.be.equal("No document found with that id");
+                });
+        });
+
+        it('move should fail with invalid location id', async () => {
+            // Update Element
+            await chai
+                .request(app)
+                .patch(mainRoute + "/elements/move/" + idElement2 + "/" + mongoose.Types.ObjectId.createFromTime(42))
+                .send({
+                    price: 666
+                })
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal("fail");
+                    expect(res.body.message).to.be.equal("IdLocation not found");
+                });
+        });
+
         it('should work with correct id', async () => {
             // Update Element
             await chai

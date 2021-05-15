@@ -227,9 +227,6 @@ exports.getElementByQR = async (req, res, next) => {
  * @returns {Promise<*>}
  */
 exports.moveElement = async (req, res, next) => {
-    if (!req.params.location) {
-        return next(new AppError(400, 'fail', 'IdLocation is missing'), req, res, next);
-    }
     const location = await Location.findById(
         req.params.location
     );
@@ -257,19 +254,15 @@ exports.moveElement = async (req, res, next) => {
                 change: "Move",
                 oldLocation: doc.idLocation,
                 product: doc.idProduct
-
             });
         }).then(dat => {
             doc.idLocation = req.params.location;
             res.status(200).json({
-                status: 'success',
-                data: doc
+                status: 'success'
             });
         }).catch(err => {
-            console.log(err);
             return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
         });
-
     } catch (error) {
         next(error);
     } finally {
