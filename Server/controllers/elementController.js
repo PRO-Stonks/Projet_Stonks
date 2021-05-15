@@ -6,10 +6,12 @@ const Element = require("../models/elementModel");
 const QRModel = require("../models/QRModel");
 const Location = require("../models/locationModel");
 const {ElementEvent} = require("../models/eventModel");
+const {ProductAlert} = require('../models/alertModel');
 const base = require("./baseController");
 const AppError = require("../utils/appError");
 const mongoose = require("mongoose");
 const APIFeatures = require("../utils/apiFeatures");
+
 
 /**
  * Soft delete handler
@@ -87,11 +89,24 @@ exports.deleteElementByQR = async (req, res, next) => {
     const element = await Element.findOne({
         idQR: QR._id,
         active: true
-    });
+    }).populate("idProduct", "lowQuantity");
 
     if (!element) {
         return next(new AppError(404, 'fail', 'No element found with that id'), req, res, next);
     }
+
+    try {
+        if (element.idProduct.lowQuantity !== 0){
+            const count = await Element.countDocuments({idProduct : element.idProduct._id, active: true})
+            if (count < element.idProduct.lowQuantity){
+                await ProductAlert.create({idProduct: element.idProduct._id}).catch(err => console.log(err));
+            }
+        }
+    }catch (err){
+        next(new AppError(404, 'fail', 'An error occurred while trying to verify the item quantity'), req, res, next)
+    }
+
+
     req.params.id = element._id;
     return softDeleteElement(req, res, next);
 };
@@ -157,7 +172,7 @@ exports.addElement = async (req, res, next) => {
         });
 
     } catch (err) {
-        base.manageValidationError(err,req,res,next);
+        return base.manageValidationError(err,req,res,next);
     } finally {
         if (session) {
             session.endSession();
