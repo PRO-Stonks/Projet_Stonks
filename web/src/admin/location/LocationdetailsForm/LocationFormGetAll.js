@@ -3,7 +3,7 @@ import List from "../../../utils/list/List";
 import LocationListElement from "./LocationListElement";
 import Spinner from "../../../utils/Spinner";
 
-function ProductFormGetAll(props) {
+function LocationFormGetAll(props) {
 
     return (
         <React.Fragment>
@@ -13,4 +13,4 @@ function ProductFormGetAll(props) {
     );
 }
 
-export default ProductFormGetAll;
+export default LocationFormGetAll;

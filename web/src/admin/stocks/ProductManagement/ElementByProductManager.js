@@ -6,6 +6,7 @@ import Spinner from "../../../utils/Spinner";
 
 function ElementByProductManager({productId, token, ...props}) {
     const [data, setData] = useState([]);
+    const [rawData, setRawData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -31,6 +32,7 @@ function ElementByProductManager({productId, token, ...props}) {
                     if (result.status === "fail") {
                         setError(result.message);
                     } else {
+                        setRawData(result.data);
                         setData(groupBy(result.data, function (element) {
                             if(!element.idLocation){
                                 console.log(element);
@@ -57,13 +59,16 @@ function ElementByProductManager({productId, token, ...props}) {
     }
 
     if (Object.keys(data).length > 0){
-        return Object.keys(data).map(key => {
+        return <div>
+            <h2>In stock: {rawData.length}</h2>
+            {Object.keys(data).map(key => {
             return <div key={key}>
                 <h2>{data[key][0].idLocation.name}</h2>
                 {data[key].map(item => {
                     return <ElementListElement key={item._id} item={item}/>
                 })} </div>
-        });
+        })}
+            </div>
     }else{
         return <h3>No element for this product</h3>
     }

@@ -63,6 +63,6 @@ function ElementByLocationManager({locationId, token, ...props}) {
         return <h3>No element in this site</h3>
     }
 
-};
+}
 
 export default ElementByLocationManager;
