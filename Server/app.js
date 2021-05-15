@@ -62,4 +62,19 @@ app.use('*', (req, res, next) => {
 
 app.use(globalErrHandler);
 
+
+
+const schedule = require('node-schedule');
+const alertController = require('./controllers/alertController');
+
+const rule = new schedule.RecurrenceRule();
+rule.hour = 0;
+rule.minute = 15;
+rule.second = 0;
+rule.dayOfWeek = new schedule.Range(0,6);
+
+const job = schedule.scheduleJob(rule, function(){
+    alertController.createAlert();
+});
+
 module.exports = app;

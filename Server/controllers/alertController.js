@@ -31,10 +31,18 @@ exports.deleteProductAlert = base.deleteOne(ProductAlert);
  */
 exports.deleteElementAlert = base.deleteOne(ElementAlert);
 
-
+/**
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<void>}
+ */
 exports.verifyElement = async (req, res, next) => {
-    const doc = await Element.find({ active: true
-        , exitDate: {$lt: new Date()}});
+    const doc = await Element.find({
+        active: true
+        , exitDate: {$lt: new Date()}
+    });
 
     res.status(200).json({
         status: 'success',
@@ -42,4 +50,25 @@ exports.verifyElement = async (req, res, next) => {
         data: doc
     });
 
+    exports.createAlert();
+
 }
+
+/**
+ * Create alert based on db
+ */
+exports.createAlert = async () => {
+    const doc = await Element.find({
+        active: true
+        , exitDate: {$lt: new Date()}
+    });
+
+    doc.forEach(docKey => {
+        ElementAlert.findOne({idElement: docKey._id}).then(res => {
+            if(!res){
+                ElementAlert.create({idElement: docKey._id}).catch(err => console.log(err));
+            }
+        }).catch(err => console.log("Error while reading"));
+    })
+}
+
