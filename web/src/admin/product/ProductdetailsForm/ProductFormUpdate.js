@@ -62,6 +62,19 @@ function ProductFormUpdate(props) {
                                         /* With this, we give the original tag to update */
                                         props.handler.values.tag}
                                 />
+                                <br/>
+                                <label className="form-check-label">Low Quantity Threshold</label>
+                                <input
+                                    className="form-control w-50"
+                                    placeholder="Low quantity threshold"
+                                    id="add_lowQuantity"
+                                    name="lowQuantity"
+                                    type="number"
+                                    min="0"
+                                    onChange={props.handler.handleChange}
+                                    onBlur={props.handler.handleBlur}
+                                    value={props.handler.values.lowQuantity}
+                                />
                             </>
                             : ""}
                     </>

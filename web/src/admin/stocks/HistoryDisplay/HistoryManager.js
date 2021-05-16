@@ -35,5 +35,5 @@ function HistoryManager({token}) {
         </Row>
     </Container>
         ;
-};
+}
 export default HistoryManager;

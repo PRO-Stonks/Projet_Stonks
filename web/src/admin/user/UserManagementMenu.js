@@ -65,5 +65,5 @@ function UserManagementMenu(props) {
             </Row>
         </Container>
     );
-};
+}
 export default UserManagementMenu;

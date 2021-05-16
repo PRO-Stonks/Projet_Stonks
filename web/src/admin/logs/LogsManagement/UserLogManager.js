@@ -45,5 +45,5 @@ function UserLogManager({token}) {
 
     </Container>
         ;
-};
+}
 export default UserLogManager;

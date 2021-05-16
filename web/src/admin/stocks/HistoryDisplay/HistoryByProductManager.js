@@ -142,6 +142,6 @@ function HistoryByProductManager({productId, token, ...props}) {
     } else {
         return <h3>No element for this product</h3>
     }
-};
+}
 
 export default HistoryByProductManager;
