@@ -4,6 +4,12 @@
 'use strict';
 
 class AppError extends Error {
+    /**
+     *
+     * @param statusCode
+     * @param status
+     * @param message
+     */
     constructor(statusCode, status, message) {
         super(message);
         this.statusCode = statusCode;

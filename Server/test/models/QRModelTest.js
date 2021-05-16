@@ -59,7 +59,7 @@ describe('QRModel', function () {
         });
     });
     describe('Creation', function () {
-        it('should create the correct Location', async () => {
+        it('should create the correct QR', async () => {
             value = new mongoose.Types.ObjectId();
             await QR.create({
                 code: value
