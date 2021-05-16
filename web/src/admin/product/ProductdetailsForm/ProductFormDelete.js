@@ -13,11 +13,15 @@ function ProductFormDelete(props){
                             onChange={props.handleSelect}
                         >
                             <option selected>Select the name</option>
-                            {props.listProducts.map((option, index) => (
-                                <option key={index} value={index}>
-                                    {option.name}
-                                </option>
-                            ))}
+                            {props.listProducts.map((option, index) => {
+                                if (props.filter && !option.active) {
+                                    return "";
+                                } else {
+                                    return <option key={index} value={index}>
+                                        {option.name}
+                                    </option>
+                                }
+                            })}
                         </select>
                         <br/>
 

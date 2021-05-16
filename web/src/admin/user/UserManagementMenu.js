@@ -35,8 +35,18 @@ function UserManagementMenu(props) {
         }
     }
 
+    function compareActive(a, b) {
+        if (a.active && !b.active) {
+            return -1;
+        } else if (!a.active && b.active) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
     function sortElement(a, b) {
-        return a.role.localeCompare(b.role) || a.lastName.localeCompare(b.lastName) || a.firstName.localeCompare(b.firstName);
+        return compareActive(a, b) || a.role.localeCompare(b.role) || a.lastName.localeCompare(b.lastName) || a.firstName.localeCompare(b.firstName);
     }
 
     return (

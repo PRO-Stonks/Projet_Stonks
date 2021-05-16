@@ -1,6 +1,6 @@
 import React from "react";
 
-function LocationFormDelete(props){
+function LocationFormDelete(props) {
     return (
         <React.Fragment>
             <h3>{props.title}</h3>
@@ -13,11 +13,15 @@ function LocationFormDelete(props){
                             onChange={props.handleSelect}
                         >
                             <option selected>Select the name</option>
-                            {props.listLocations.map((option, index) => (
-                                <option key={index} value={index}>
-                                    {option.name}
-                                </option>
-                            ))}
+                            {props.listLocations.map((option, index) => {
+                                if (props.filter && !option.active) {
+                                    return "";
+                                } else {
+                                    return <option key={index} value={index}>
+                                        {option.name}
+                                    </option>
+                                }
+                            })}
                         </select>
                         <br/>
 

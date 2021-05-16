@@ -22,11 +22,15 @@ function ProductFormUpdate(props) {
                             onChange={props.handleSelect}
                         >
                             <option selected>Select the id</option>
-                            {props.listProducts.map((option, index) => (
-                                <option key={index} value={index}>
-                                    {option._id}
-                                </option>
-                            ))}
+                            {props.listProducts.map((option, index) => {
+                                if(option.active) {
+                                    return <option key={index} value={index}>
+                                        {option._id}
+                                    </option>
+                                } else {
+                                    return ""
+                                }
+                            })}
                         </select>
                         <br/><br/>
 
