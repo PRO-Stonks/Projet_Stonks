@@ -10,10 +10,10 @@ const ItemListLocation = ({item, onPress}) => {
 
 const styles = StyleSheet.create({
     item: {
-        padding: 20,
+        padding: 15,
         marginVertical: 8,
         marginHorizontal: 16,
-        backgroundColor: "#3cdbff",
+        backgroundColor: "#DCDCDC",
         textAlign: 'center'
     },
     title: {

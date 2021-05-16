@@ -81,7 +81,7 @@ export default function StackScreen() {
                 <Stack.Screen name="Add" component={Add}/>
                 <Stack.Screen name="Scan for info" component={Info}/>
                 <Stack.Screen name="Info" component={DisplayInfo}/>
-                <Stack.Screen name="Delete" component={Delete}/>
+                <Stack.Screen name="Scan for delete" component={Delete}/>
 
             </Stack.Navigator>
         </UserContext.Provider>
