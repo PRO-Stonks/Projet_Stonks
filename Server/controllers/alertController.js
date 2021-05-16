@@ -45,11 +45,6 @@ exports.getAllProductAlert = base.getAll(ProductAlert);
  */
 exports.deleteProductAlert = base.deleteOne(ProductAlert);
 
-/**
- * Delete handler
- * @type {(function(Response.req=, res=, handler=): Promise<*|undefined>)|*}
- */
-exports.deleteElementAlert = base.deleteOne(ElementAlert);
 
 /**
  *
