@@ -3,7 +3,7 @@ import List from "../../utils/list/List";
 import AlertListElement from "./AlertListElement";
 
 
-function AlertManager(props) {
+function AlertDisplay(props) {
 
     return <div className="AlertManager">
         <em>Element are close to their limit date</em>
@@ -11,4 +11,4 @@ function AlertManager(props) {
     </div>;
 }
 
-export default AlertManager;
+export default AlertDisplay;

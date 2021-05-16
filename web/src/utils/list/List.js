@@ -62,7 +62,7 @@ function List({refetch, spinner, url, item, token, sort, queryOptions, ...itemPr
                         setPage(pageTarget);
                     }
                 }
-            }).catch(err => setError("an error occured"));;
+            }).catch(err => setError("an error occured"));
     };
 
     const getUrl = (page) =>

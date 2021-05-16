@@ -35,5 +35,5 @@ function LocationManager({token}) {
         </Row>
     </Container>
         ;
-};
+}
 export default LocationManager;

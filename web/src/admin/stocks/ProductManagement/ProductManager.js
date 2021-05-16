@@ -35,5 +35,5 @@ function ProductManager({token}) {
         </Row>
     </Container>
         ;
-};
+}
 export default ProductManager;
