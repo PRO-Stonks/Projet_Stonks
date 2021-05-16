@@ -21,7 +21,8 @@ function Product(props) {
         add: useFormik({
             initialValues: {
                 name: '',
-                tag: ''
+                tag: '',
+                lowQuantity: 0
             },
             onSubmit: async (values) => {
                 /* Send http request and get response */
@@ -82,13 +83,15 @@ function Product(props) {
         update: useFormik({
             initialValues: {
                 name: '',
-                tag: ''
+                tag: '',
+                lowQuantity: 0
             },
             onSubmit: async (values) => {
                 /* Send http request and get response */
                 const res = await management.update(props.token, selectedProduct.id, {
                     name: values.name,
-                    tag: values.tag
+                    tag: values.tag,
+                    lowQuantity: values.lowQuantity
                 });
 
                 /* Display updated Product */

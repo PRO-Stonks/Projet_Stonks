@@ -16,6 +16,14 @@ function ProductListElement({item}) {
             disabled
         />
         <br/>
+        <label className="form-check-label">Low Quantity Threshold</label>
+        <textarea
+            className="form-control w-25 h-25"
+            name="lowQuantity"
+            value={item.lowQuantity}
+            disabled
+        />
+        <br/>
         <br/>
     </div>;
 }
