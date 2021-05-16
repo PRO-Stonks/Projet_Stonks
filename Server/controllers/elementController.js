@@ -6,7 +6,7 @@ const Element = require("../models/elementModel");
 const QRModel = require("../models/QRModel");
 const Location = require("../models/locationModel");
 const {ElementEvent} = require("../models/eventModel");
-const {ProductAlert} = require('../models/alertModel');
+const {ProductAlert, ElementAlert} = require('../models/alertModel');
 const base = require("./baseController");
 const AppError = require("../utils/appError");
 const mongoose = require("mongoose");
@@ -40,6 +40,9 @@ const softDeleteElement = async (req, res, next) => {
                 change: "Remove",
                 product: doc.idProduct
             });
+            // Remove alert about this element
+            await ElementAlert.findByIdAndDelete(req.params.id);
+
             return doc
         }).then(dat => {
             res.status(204).send();
@@ -76,7 +79,6 @@ exports.deleteElementByQR = async (req, res, next) => {
     const QR = await QRModel.findOne({
         code: req.params.code,
     });
-    // TODO Add test
     if (!QR) {
         return next(
             new AppError(404, "fail", "The QR code does not exist"),
@@ -93,6 +95,17 @@ exports.deleteElementByQR = async (req, res, next) => {
 
     if (!element) {
         return next(new AppError(404, 'fail', 'No element found with that id'), req, res, next);
+    }
+
+    try {
+        if (element.idProduct.lowQuantity !== 0){
+            const count = await Element.countDocuments({idProduct : element.idProduct._id, active: true})
+            if (count < element.idProduct.lowQuantity){
+                await ProductAlert.create({idProduct: element.idProduct._id}).catch(err => console.log(err));
+            }
+        }
+    }catch (err){
+        next(new AppError(404, 'fail', 'An error occurred while trying to verify the item quantity'), req, res, next)
     }
 
     try {
