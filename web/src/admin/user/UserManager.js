@@ -5,7 +5,7 @@ import {useEffect, useState} from "react";
 
 async function del(url, token) {
     try {
-        return  fetch(url, {
+        return fetch(url, {
             method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -29,10 +29,8 @@ function UserManager({user, token, refreshHandler, formRefresh, deleteHandler}) 
     const softDelete = async () => {
         const res = await del(API_URL + "users/" + user._id, token);
         if (res.status !== 204) {
-            res.json();
-            if (res.status === "fail") {
-                console.log(res.message);
-            }
+            await res.json();
+            console.log(res.message);
         } else {
             refreshHandler();
         }
@@ -44,10 +42,9 @@ function UserManager({user, token, refreshHandler, formRefresh, deleteHandler}) 
         const res = await del(API_URL + "users/hardDel/" + user._id, token);
         console.log(res);
         if (res.status !== 204) {
-            res.json();
-            if (res.status === "fail") {
-                console.log(res.message);
-            }
+            await res.json();
+            console.log(res.message);
+
         } else {
             console.log("Calling handler")
             deleteHandler();

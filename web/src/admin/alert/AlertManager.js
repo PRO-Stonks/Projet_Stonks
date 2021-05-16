@@ -1,9 +1,7 @@
 import React from "react";
 import {Col, Container, Row} from 'react-bootstrap';
 import AlertDisplay from "./AlertDisplay";
-import List from "../../utils/list/List";
-import Spinner from "../../utils/Spinner";
-import AlertListProduct from "./AlertListProduct";
+import AlertProductDisplay from "./AlertProductDisplay";
 
 
 function AlertManager({token}) {
@@ -16,9 +14,7 @@ function AlertManager({token}) {
                 <AlertDisplay token={token}/>
             </Col>
             <Col>
-                <h2>Low Quantity threshold</h2>
-                <List token={token} item={AlertListProduct} spinner={Spinner} url={"alerts/products/"}
-                      queryOptions={"populateField=idProduct&populateValue[idProduct]=name&populateValue[idProduct]=lowQuantity"}/>
+                <AlertProductDisplay token={token}/>
             </Col>
         </Row>
     </Container>
