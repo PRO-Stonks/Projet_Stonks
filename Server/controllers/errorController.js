@@ -11,6 +11,6 @@ module.exports = (err, req, res, next) => {
         status: err.status,
         error: err,
         message: err.message,
-        stack: err.stack
+        ...(process.env.NODE_ENV !== 'production' && {stack: err.stack}),
     });
 };
