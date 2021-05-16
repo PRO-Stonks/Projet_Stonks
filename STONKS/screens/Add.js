@@ -54,7 +54,7 @@ export default function Add({route, navigation}) {
             setProductInfo({...productInfo, code: scanId})
             console.log(productInfo)
             const body = {
-                ...productInfo, code: scanId, idLocation: scanId, idProduct: productInfo.idProduct._id
+                ...productInfo, code: scanId, idLocation: location, idProduct: productInfo.idProduct._id
             }
             fetchData(body).then(r => console.log(r)).catch(r => console.log(r));
             setScanId(null);
