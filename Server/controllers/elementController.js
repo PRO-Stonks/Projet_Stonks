@@ -107,19 +107,6 @@ exports.deleteElementByQR = async (req, res, next) => {
     }catch (err){
         next(new AppError(404, 'fail', 'An error occurred while trying to verify the item quantity'), req, res, next)
     }
-
-    try {
-        if (element.idProduct.lowQuantity !== 0){
-            const count = await Element.countDocuments({idProduct : element.idProduct._id, active: true})
-            if (count < element.idProduct.lowQuantity){
-                await ProductAlert.create({idProduct: element.idProduct._id}).catch(err => console.log(err));
-            }
-        }
-    }catch (err){
-        next(new AppError(404, 'fail', 'An error occurred while trying to verify the item quantity'), req, res, next)
-    }
-
-
     req.params.id = element._id;
     return softDeleteElement(req, res, next);
 };
