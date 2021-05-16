@@ -8,9 +8,6 @@ import AlertListProduct from "./AlertListProduct";
 
 function AlertManager({token}) {
 
-    function sortElement(a, b) {
-        return a.role.localeCompare(b.role) || a.lastName.localeCompare(b.lastName) || a.firstName.localeCompare(b.firstName);
-    }
 
     return <Container fluid>
         <Row>
@@ -21,7 +18,7 @@ function AlertManager({token}) {
             <Col>
                 <h2>Low Quantity threshold</h2>
                 <List token={token} item={AlertListProduct} spinner={Spinner} url={"alerts/products/"}
-                      sort={sortElement}/>
+                      queryOptions={"populateField=idProduct&populateValue[idProduct]=name&populateValue[idProduct]=lowQuantity"}/>
             </Col>
         </Row>
     </Container>
