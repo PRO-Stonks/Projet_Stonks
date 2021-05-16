@@ -504,7 +504,7 @@ describe('elementController', function () {
             // Get Elements
             await chai
                 .request(app)
-                .get(mainRoute + "/elements/")
+                .get(mainRoute + "/elements/"+"?page=1&populateField=idProduct&populateValue[idProduct]=name&sort=name")
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
