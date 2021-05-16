@@ -58,13 +58,19 @@ exports.verifyElement = async (req, res, next) => {
         active: true
         , exitDate: {$lt: new Date()}
     });
-
+    exports.createAlert();
     res.status(200).json({
         status: 'success',
         results: doc.length,
         data: doc
     });
-    exports.createAlert();
+}
+
+
+function addDays(date, days) {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
 }
 
 /**
@@ -73,7 +79,7 @@ exports.verifyElement = async (req, res, next) => {
 exports.createAlert = async () => {
     const doc = await Element.find({
         active: true
-        , exitDate: {$lt: new Date()}
+        , exitDate: {$lt: addDays(new Date(), 3)}
     });
 
     doc.forEach(docKey => {
