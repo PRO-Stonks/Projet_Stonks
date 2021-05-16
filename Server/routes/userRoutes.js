@@ -34,4 +34,9 @@ router
     .route('/hardDel/:id')
     .delete(userController.deleteUser);
 
+
+router
+    .route('/hardDel/')
+    .delete(userController.deleteAlluser);
+
 module.exports = router;

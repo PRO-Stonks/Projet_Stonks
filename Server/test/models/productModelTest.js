@@ -44,7 +44,7 @@ describe('ProductModel', function () {
     });
 
     describe('Creation', function () {
-        it('should create the correct Product', async () => {
+        it('should create the correct Product (without lowQuantity)', async () => {
             await Product.create({
                 name: "ProducttestTest",
                 tag: "philosophical ignorance"
@@ -52,7 +52,21 @@ describe('ProductModel', function () {
                 expect(data.name).to.be.equal("ProducttestTest");
                 expect(data.tag).to.be.equal("philosophical ignorance");
                 expect(data.active).to.be.true;
+                expect(data.lowQuantity).to.be.equal(0);
                 expect(data.id).to.be.not.empty;
+            });
+        });
+        it('should create the correct Product (with lowQuantity)', async () => {
+            await Product.create({
+                name: "ProducttestTest",
+                tag: "philosophical ignorance",
+                lowQuantity: 2
+            }).then((data) => {
+                expect(data.name).to.be.equal("ProducttestTest");
+                expect(data.tag).to.be.equal("philosophical ignorance");
+                expect(data.active).to.be.true;
+                expect(data.id).to.be.not.empty;
+                expect(data.lowQuantity).to.be.equal(2);
             });
         });
     });

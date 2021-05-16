@@ -49,4 +49,8 @@ router
     .route('/hardDel/:id')
     .delete(elementController.deleteElement);
 
+router
+    .route('/hardDel/')
+    .delete(elementController.deleteAllElement);
+
 module.exports = router;

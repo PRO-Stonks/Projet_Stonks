@@ -217,6 +217,22 @@ describe('AuthControler', function () {
             expect(res.body.status).to.be.equal('success');
             requester.close();
         });
+        it("Delete user works", async () => {
+            const requester = chai.request(app).keepOpen()
+            let res = await requester.post("/api/v1/users/login").send({
+                "email": "admin@email.test",
+                "password": "012345678"
+            });
+            await ConnectionEvent.deleteMany({
+                user: res.body.data.user._id
+            });
+            res = await requester
+                .delete("/api/v1/users/hardDel/"+userData.body.data.user._id)
+                .set('Authorization', 'Bearer ' + res.body.token)
+                .send();
+            expect(res.status).to.be.equal(204);
+            requester.close();
+        });
     });
 });
 

@@ -97,6 +97,36 @@ describe('EventController', function () {
     });
 });
 
+describe('EventController', function () {
+    describe('ElementEvent', function () {
+        describe('Get All', function () {
+            it("Return all element event", async () => {
+                const requester = chai.request(app);
+                const res = await requester
+                    .get("/api/v1/events/element/product/"+user._id)
+                    .set('Authorization', 'Bearer ' + token)
+                    .send()
+                expect(res.status).to.be.equal(200);
+                expect(res.body.status).to.be.equal('success');
+                requester.close();
+
+            });
+        });
+        describe('Get event made by user', function () {
+            it("Return the event made by the user", async () => {
+                const requester = chai.request(app).keepOpen();
+                const query = await requester
+                    .get("/api/v1/events/element/user/" + user._id)
+                    .set('Authorization', 'Bearer ' + token)
+                    .send();
+                expect(query.status).to.be.equal(200);
+                expect(query.body.status).to.be.equal('success');
+                requester.close();
+            });
+        });
+    });
+});
+
 after(async function () {
     await User.deleteMany({
         firstName: "testEvent"
