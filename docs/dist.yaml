@@ -6,8 +6,8 @@ info:
     email: leonard.besseau@heig-vd.ch
   version: 1.0.0
 tags:
-  - name: User
-    description: Operations about user
+  - name: Alerts
+    description: Operations about alerts
   - name: Element
     description: Operations about element
   - name: Event
@@ -18,6 +18,9 @@ tags:
     description: Operations about product
   - name: QR
     description: Operations about product
+  - name: User
+    description: Operations about user
+  
 paths:
   /users/login:
     post:
@@ -240,7 +243,53 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
+  '/users/hardDel/{id}':
+    delete:
+      tags:
+        - User
+      summary: Delete user
+      description: This can only be done by the admin. Delete an user
+      operationId: hardDeleteUser
+      parameters:
+        - name: id
+          in: path
+          description: user id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: successful operation
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          description: No document found with that id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/users/hardDel/':
+    delete:
+      tags:
+        - User
+      summary: Delete user
+      description: This can only be done by the admin. Delete an user
+      operationId: hardDeleteAllUser
+      responses:
+        '204':
+          description: successful operation
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          description: No document found with that id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /elements:
     get:
       tags:
@@ -596,6 +645,94 @@ paths:
       responses:
         '204':
           description: successful operation
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          description: No document found with that id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/elements/hardDel':
+    delete:
+      tags:
+        - Element
+      summary: Delete element
+      description: Only possible as admin
+      operationId: HardDeleteAllElements
+      responses:
+        '204':
+          description: successful operation
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          description: No document found with that id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /alerts/products:
+    get:
+      tags:
+        - Alerts
+      summary: Get all products alert
+      description: Only possible as admin
+      operationId: getAllProductAlert
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProductAlert'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          description: No document found with that id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /alerts/elements:
+    get:
+      tags:
+        - Alerts
+      summary: Get all products element
+      description: Only possible as admin
+      operationId: getAllElementAlert
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ElementAlert'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
@@ -1849,10 +1986,29 @@ components:
         code:
           type: string
           format: uuid
+          
     QRAdd:
       type: object
       properties:
         code:
+          type: string
+          format: uuid
+    ProductAlert:
+      type: object
+      properties:
+        id:
+          type: string
+          format: mongoId
+        idProduct:
+          type: string
+          format: uuid
+    ElementAlert:
+      type: object
+      properties:
+        id:
+          type: string
+          format: mongoId
+        idElement:
           type: string
           format: uuid
 security:
