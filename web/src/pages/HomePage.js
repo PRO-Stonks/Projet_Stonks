@@ -48,12 +48,6 @@ function HomePage(props) {
                                                 </p>
                                             </div>
                                         </div>
-                                        <div className="card bg-dark mb-3">
-                                            <div className="card-body">
-                                                <h3 className="card-title">Alert</h3>
-                                                <AlertManager token={props.token}/>
-                                            </div>
-                                        </div>
                                     </div>
 
                                     {/* Management card with links to specific pages */}
