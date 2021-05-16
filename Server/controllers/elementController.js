@@ -327,7 +327,23 @@ exports.getAllElementsByProduct = base.getDocumentWithFilterAndPopulate(Element,
  * Hard delete element handler
  * @type {(function(Response.req=, res=, handler=): Promise<*|undefined>)|*}
  */
-exports.deleteElement = base.deleteOne(Element);
+exports.deleteElement = async (req, res, next) => {
+    try {
+        const doc = await Element.findByIdAndDelete(req.params.id);
+
+        if (!doc) {
+            return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
+        }
+
+        await Promise.allSettled([
+            ElementAlert.deleteMany({idElement: req.params.id}),
+            ElementEvent.deleteMany({element: req.params.id}),
+        ]);
+        res.status(204).send();
+    } catch (error) {
+        next(error);
+    }
+}
 
 /**
  * Standard getElement handler
@@ -340,3 +356,17 @@ exports.getElement = base.getOne(Element);
  * @type {(function(Response.req=, res=, handler=): Promise<*|undefined>)|*}
  */
 exports.getAllElements = base.getAll(Element);
+
+
+exports.deleteAllElement = async (req, res, next) => {
+    try {
+        await Promise.allSettled([
+            Element.deleteMany({}),
+            ElementEvent.deleteMany({}),
+            ElementAlert.deleteMany({})
+        ]);
+        res.status(204).send();
+    } catch (error) {
+        next(error);
+    }
+}
