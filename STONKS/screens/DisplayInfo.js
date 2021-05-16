@@ -64,7 +64,7 @@ export default function DisplayInfo({navigation, route}) {
                 <Text style={styles.text}>Product: {element.name}</Text>
                 <Text style={styles.text}>Price: {element.price} .-</Text>
                 <Text style={styles.text}>Entry date: {element.entryDate}</Text>
-                <Text style={styles.text}>Exit date: {element.exitDate}</Text>
+                {element.exitDate && <Text style={styles.text}>Exit date: {element.exitDate}</Text>}
                 <Text style={styles.textL}>Location: {locationName}</Text>
             </View>
 
