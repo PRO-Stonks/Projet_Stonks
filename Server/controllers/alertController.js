@@ -39,12 +39,6 @@ exports.getAllElementAlert = async (req, res, next) => {
 exports.getAllProductAlert = base.getAll(ProductAlert);
 
 
-/**
- * Delete handler
- * @type {(function(Response.req=, res=, handler=): Promise<*|undefined>)|*}
- */
-exports.deleteProductAlert = base.deleteOne(ProductAlert);
-
 
 /**
  *

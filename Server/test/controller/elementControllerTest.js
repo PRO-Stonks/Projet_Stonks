@@ -42,7 +42,6 @@ const codeQR5 = "QRcode5";
 let idProduct;
 let idProduct2;
 before(async function () {
-    console.log(process.env.DATABASE)
     const database = process.env.DATABASE.replace(
         '${MONGO_USERNAME}', process.env.MONGO_USERNAME).replace(
         '${MONGO_PASSWORD}', process.env.MONGO_PASSWORD).replace(

@@ -106,7 +106,6 @@ describe('EventController', function () {
                     .get("/api/v1/events/element/product/"+user._id)
                     .set('Authorization', 'Bearer ' + token)
                     .send()
-                console.log(res.body)
                 expect(res.status).to.be.equal(200);
                 expect(res.body.status).to.be.equal('success');
                 requester.close();

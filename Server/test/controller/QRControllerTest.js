@@ -497,7 +497,6 @@ describe('QRController', function () {
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {
-                    console.log(res.body)
                     expect(res.status).to.be.equal(204);
                 });
 

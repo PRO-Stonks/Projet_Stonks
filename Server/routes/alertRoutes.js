@@ -21,8 +21,4 @@ router
     .route('/elements/')
     .get(alertController.getAllElementAlert);
 
-router
-    .route('/products/:id')
-    .get(alertController.deleteProductAlert);
-
 module.exports = router;

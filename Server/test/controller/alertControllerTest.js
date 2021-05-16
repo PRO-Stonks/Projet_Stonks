@@ -210,7 +210,6 @@ describe('Product alert', function () {
                 idLocation: idLocation1
             }).timeout(timeoutDuration)
             .then(async (res) => {
-                console.log(res.body)
                 expect(res.status).to.be.equal(201);
                 expect(res.body.status).to.be.equal('success');
                 const alert = await ProductAlert.find({});
