@@ -121,17 +121,17 @@ before(async function () {
         return doc._id;
     });
     idQR2 = await QR.create({
-            code: codeQR2
-        }).then((doc) => {
-            return doc._id;
-        });
+        code: codeQR2
+    }).then((doc) => {
+        return doc._id;
+    });
 
 
     // Create a product
     idProduct = await Product.create({
         name: "ElementTest",
         tag: "bad food",
-        lowQuantity: 2
+        lowQuantity: 1
     }).then((doc) => {
         return doc._id;
     });
@@ -156,17 +156,15 @@ before(async function () {
         return doc._id;
     });
 
+
 });
 
 
 describe('Product alert', function () {
     it('should not create an event when not going under the threshold', async () => {
-        // Create Element
-
-        // Delete previous element
         await chai
             .request(app)
-            .delete(mainRoute +"/elements/QR/" + codeQR1)
+            .delete(mainRoute + "/elements/QR/" + codeQR1)
             .set("Authorization", "Bearer " + tokenManager)
             .timeout(timeoutDuration)
             .then(async (res) => {
@@ -176,12 +174,9 @@ describe('Product alert', function () {
             });
     });
     it('should create an event when going under the threshold', async () => {
-        // Create Element
-
-        // Delete previous element
         await chai
             .request(app)
-            .delete(mainRoute +"/elements/QR/" + codeQR2)
+            .delete(mainRoute + "/elements/QR/" + codeQR2)
             .set("Authorization", "Bearer " + tokenManager)
             .timeout(timeoutDuration)
             .then(async (res) => {
@@ -190,27 +185,11 @@ describe('Product alert', function () {
                 expect(alert.length).to.be.equal(1);
             });
     });
-    it('Get alert should work', async () => {
-        // Create Element
-
-        // Delete previous element
-        await chai
-            .request(app)
-            .get(mainRoute +"/alerts/elements/")
-            .set("Authorization", "Bearer " + tokenAdmin)
-            .timeout(timeoutDuration)
-            .then(async (res) => {
-                expect(res.status).to.be.equal(200);
-            });
-    });
 
     it('Get alert for product should work', async () => {
-        // Create Element
-
-        // Delete previous element
         await chai
             .request(app)
-            .get(mainRoute +"/alerts/products/")
+            .get(mainRoute + "/alerts/products/")
             .set("Authorization", "Bearer " + tokenAdmin)
             .timeout(timeoutDuration)
             .then(async (res) => {
@@ -218,6 +197,43 @@ describe('Product alert', function () {
             });
     });
 
+    it('should create an event when going under the threshold', async () => {
+        await chai
+            .request(app)
+            .post(mainRoute + "/elements/add")
+            .set("Authorization", "Bearer " + tokenManager)
+            .send({
+                code: codeQR2,
+                entryDate: new Date('2021-04-02'),
+                price: 2,
+                idProduct: idProduct,
+                idLocation: idLocation1
+            }).timeout(timeoutDuration)
+            .then(async (res) => {
+                console.log(res.body)
+                expect(res.status).to.be.equal(201);
+                expect(res.body.status).to.be.equal('success');
+                const alert = await ProductAlert.find({});
+                expect(alert.length).to.be.equal(0);
+            });
+
+
+    });
+
+
+});
+
+describe('Product alert', function () {
+    it('Get alert should work', async () => {
+        await chai
+            .request(app)
+            .get(mainRoute + "/alerts/elements/")
+            .set("Authorization", "Bearer " + tokenAdmin)
+            .timeout(timeoutDuration)
+            .then(async (res) => {
+                expect(res.status).to.be.equal(200);
+            });
+    });
 });
 
 after(async function () {
@@ -238,7 +254,7 @@ after(async function () {
         }), User.deleteMany({
             firstName: "testElement"
         }), QR.findByIdAndDelete(idQR1),
-        QR.findByIdAndDelete(idQR2),
+            QR.findByIdAndDelete(idQR2),
             ProductAlert.deleteMany({idProduct: idProduct})
         ]
     );

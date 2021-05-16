@@ -5,6 +5,7 @@
 const Element = require("../models/elementModel");
 const QRModel = require("../models/QRModel");
 const Location = require("../models/locationModel");
+const Product = require("../models/productModel");
 const {ElementEvent} = require("../models/eventModel");
 const {ProductAlert, ElementAlert} = require('../models/alertModel');
 const base = require("./baseController");
@@ -98,15 +99,16 @@ exports.deleteElementByQR = async (req, res, next) => {
     }
 
     try {
-        if (element.idProduct.lowQuantity !== 0){
-            const count = await Element.countDocuments({idProduct : element.idProduct._id, active: true})
-            if (count < element.idProduct.lowQuantity){
+        if (element.idProduct.lowQuantity !== 0) {
+            const count = await Element.countDocuments({idProduct: element.idProduct._id, active: true})
+            if (count-1 < element.idProduct.lowQuantity) {
                 await ProductAlert.create({idProduct: element.idProduct._id}).catch(err => console.log(err));
             }
         }
-    }catch (err){
+    } catch (err) {
         next(new AppError(404, 'fail', 'An error occurred while trying to verify the item quantity'), req, res, next)
     }
+
     req.params.id = element._id;
     return softDeleteElement(req, res, next);
 };
@@ -122,34 +124,44 @@ exports.deleteElementByQR = async (req, res, next) => {
  */
 exports.addElement = async (req, res, next) => {
 
-        const QR = await QRModel.findOne({
-            code: req.body.code,
-        });
+    const QR = await QRModel.findOne({
+        code: req.body.code,
+    });
 
-        if (!QR) {
-            return next(
-                new AppError(404, "fail", "The QR code does not exist"),
-                req,
-                res,
-                next,
-            );
-        }
+    if (!QR) {
+        return next(
+            new AppError(404, "fail", "The QR code does not exist"),
+            req,
+            res,
+            next,
+        );
+    }
 
-        const element = await Element.findOne({
-            idQR: QR._id,
-            active: true
-        });
-        if (element) {
-            return next(
-                new AppError(400, "fail", "The QR code is already used by another element"),
-                req,
-                res,
-                next,
-            );
-        }
-        // Setup object as expected by DB
-        req.body.idQR = QR._id;
-        delete req.body.code;
+    const element = await Element.findOne({
+        idQR: QR._id,
+        active: true
+    });
+    if (element) {
+        return next(
+            new AppError(400, "fail", "The QR code is already used by another element"),
+            req,
+            res,
+            next,
+        );
+    }
+    const product = await Product.findById(req.body.idProduct);
+    if(!product){
+        return next(
+            new AppError(400, "fail", "The product selected does not exist"),
+            req,
+            res,
+            next,
+        );
+    }
+
+    // Setup object as expected by DB
+    req.body.idQR = QR._id;
+    delete req.body.code;
     let session;
     try {
         session = await mongoose.startSession();
@@ -162,6 +174,15 @@ exports.addElement = async (req, res, next) => {
                 element: doc._id,
                 product: doc.idProduct
             });
+
+            if (product.lowQuantity !== 0) {
+                const count = await Element.countDocuments({idProduct: product._id, active: true})
+                if (count >= product.lowQuantity) {
+                    await ProductAlert.deleteOne({idProduct: product._id}).catch(err => console.log(err));
+                }
+            }
+
+
             return doc
         });
         session.endSession();
@@ -172,7 +193,7 @@ exports.addElement = async (req, res, next) => {
         });
 
     } catch (err) {
-        return base.manageValidationError(err,req,res,next);
+        return base.manageValidationError(err, req, res, next);
     } finally {
         if (session) {
             session.endSession();
