@@ -9,6 +9,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cors = require('cors');
+const path = require('path');
 
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -56,7 +57,7 @@ app.use('/api/v1/alerts/', require('./routes/alertRoutes'));
 
 // handle undefined Routes
 app.get('*', (req,res) =>{
-    res.sendFile('./client/build/index.html');
+    res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
 
 app.use(globalErrHandler);
