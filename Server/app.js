@@ -56,8 +56,7 @@ app.use('/api/v1/alerts/', require('./routes/alertRoutes'));
 
 // handle undefined Routes
 app.get('*', (req,res) =>{
-    console.log('./client/build/index.html')
-    res.sendFile(path.join(__dirname+'/client/build/index.html'));
+    res.sendFile('./client/build/index.html');
 });
 
 app.use(globalErrHandler);
