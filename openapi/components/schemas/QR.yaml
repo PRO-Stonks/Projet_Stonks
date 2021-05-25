@@ -1,8 +1,0 @@
-type: object
-properties:
-  id:
-    type: string
-    format: mongoId
-  code:
-    type: string
-    format: uuid
