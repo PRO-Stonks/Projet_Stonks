@@ -46,7 +46,7 @@ app.use(xss());
 // Prevent parameter pollution
 app.use(hpp());
 
-
+app.use(express.static(path.join(__dirname, 'client/build')));
 // Routes
 app.use('/api/v1/products', require('./routes/productRoutes'));
 app.use('/api/v1/locations', require('./routes/locationRoutes'));
