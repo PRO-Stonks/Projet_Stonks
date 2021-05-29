@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Scan from './Scan.js';
-import API_URL from "../url";
+import API_URL from "../utils/url";
 import getElement from '../request/getElement.js'
 
 /**

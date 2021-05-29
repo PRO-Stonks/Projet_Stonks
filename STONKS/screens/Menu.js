@@ -1,13 +1,13 @@
 import {Button, Text, View} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import Options from "./Options";
-import API_URL from "../url";
-import {UserContext} from "../UserContext";
+import API_URL from "../utils/url";
+import {UserContext} from "../utils/UserContext";
 import getProducts from '../request/getProducts.js';
 import styles from '../styles/MenuStyle';
 import Scan from "./Scan";
-import List from "../components/List";
-import ItemListLocation from "../components/ItemListLocation";
+import List from "../lists/List";
+import ItemListLocation from "../lists/ItemListLocation";
 
 /**
  * Menu component to display list of products and navigate to Options screen

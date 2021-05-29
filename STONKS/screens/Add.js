@@ -2,10 +2,10 @@ import React, {useEffect, useState} from "react";
 import {Text, View, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback,} from "react-native";
 import getCurrentDate from "../utils/getDate.js";
 import Scan from './Scan.js';
-import API_URL from "../url";
-import List from "../components/List";
+import API_URL from "../utils/url";
+import List from "../lists/List";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import ItemListProduct from "../components/ItemListProduct";
+import ItemListProduct from "../lists/ItemListProduct";
 import addElement from "../request/addElement";
 import styles from "../styles/AddStyle";
 

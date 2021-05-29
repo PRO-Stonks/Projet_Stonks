@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Scan from './Scan.js';
 import deleteElement from '../request/deleteElement.js';
-import API_URL from "../url";
+import API_URL from "../utils/url";
 
 /**
  * Delete componenet to handle deletion of an item

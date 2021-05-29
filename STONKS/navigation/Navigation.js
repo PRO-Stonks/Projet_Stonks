@@ -8,7 +8,7 @@ import Add from '../screens/Add.js';
 import Info from '../screens/Info.js';
 import DisplayInfo from '../screens/DisplayInfo.js'
 import Delete from '../screens/Delete';
-import {UserContext} from '../UserContext'
+import {UserContext} from '../utils/UserContext'
 
 export default function StackScreen() {
     // state to store user info

@@ -1,6 +1,6 @@
 import {Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from "react";
-import API_URL from "../url";
+import API_URL from "../utils/url";
 import moveElement from "../request/moveElement";
 import getLocation from "../request/getLocation";
 import styles from "../styles/DisplayInfoStyle.js";
