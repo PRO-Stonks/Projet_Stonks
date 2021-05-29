@@ -8,9 +8,9 @@ import About from "./pages/About";
 import Footer from "./pages/Footer";
 import logo from "./assets/stonks4.png";
 
-
 function App() {
     const [state, setState] = useState({loggedIn: false, user: {}, token: ""})
+
     const handleLogIn = e => {
         console.log(e)
         setState(e);
@@ -64,10 +64,6 @@ function App() {
                                     <div className="col">
                                         <h2>Log-in</h2>
                                         <LogInForm2 handleChangeProps={handleLogIn}/>
-                                    </div>
-                                    <div className="col">
-                                        <h2>Sign-up</h2>
-                                        #TODO
                                     </div>
                                 </div>
                             </div>

@@ -15,7 +15,7 @@ function NavWelcome(props) {
                             <li className={`nav-item ${props.location.pathname === "/" ? "active" : ""}`}>
                                 <Link class="nav-link" to="/">
                                     Home
-                                    <span class="sr-only">(current)</span>
+                                    <span className="sr-only">(current)</span>
                                 </Link>
                             </li>
                             <li className={`nav-item ${props.location.pathname === "/about" ? "active" : ""}`}>

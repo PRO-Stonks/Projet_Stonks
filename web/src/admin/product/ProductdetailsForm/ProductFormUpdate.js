@@ -1,6 +1,14 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 function ProductFormUpdate(props) {
+
+    /* Init values only once */
+    const [init, setInit] = useState(false);
+    useEffect(() => {
+        props.handler.values.tag = props.selectedProduct.tag;
+        props.handler.values.name = props.selectedProduct.name;
+        setInit(!init);
+    }, [props.selectedProduct]);
 
     return (
         <React.Fragment>
@@ -14,11 +22,15 @@ function ProductFormUpdate(props) {
                             onChange={props.handleSelect}
                         >
                             <option selected>Select the id</option>
-                            {props.listProducts.map((option, index) => (
-                                <option key={index} value={index}>
-                                    {option._id}
-                                </option>
-                            ))}
+                            {props.listProducts.map((option, index) => {
+                                if(option.active) {
+                                    return <option key={index} value={index}>
+                                        {option._id}
+                                    </option>
+                                } else {
+                                    return ""
+                                }
+                            })}
                         </select>
                         <br/><br/>
 
@@ -34,11 +46,7 @@ function ProductFormUpdate(props) {
                                     type="text"
                                     onChange={props.handler.handleChange}
                                     onBlur={props.handler.handleBlur}
-
-                                    value={
-                                        /* With this, we give the original name to update */
-                                        props.handler.values.name === "\o" ?
-                                            props.selectedProduct.name : props.handler.values.name}
+                                    value={props.handler.values.name}
                                 />
                                 <br/>
 
@@ -52,8 +60,20 @@ function ProductFormUpdate(props) {
                                     onBlur={props.handler.handleBlur}
                                     value={
                                         /* With this, we give the original tag to update */
-                                        props.handler.values.tag === props.baseHandlerValue ?
-                                            props.selectedProduct.tag : props.handler.values.tag}
+                                        props.handler.values.tag}
+                                />
+                                <br/>
+                                <label className="form-check-label">Low Quantity Threshold</label>
+                                <input
+                                    className="form-control w-50"
+                                    placeholder="Low quantity threshold"
+                                    id="add_lowQuantity"
+                                    name="lowQuantity"
+                                    type="number"
+                                    min="0"
+                                    onChange={props.handler.handleChange}
+                                    onBlur={props.handler.handleBlur}
+                                    value={props.handler.values.lowQuantity}
                                 />
                             </>
                             : ""}
@@ -72,7 +92,6 @@ function ProductFormUpdate(props) {
             </form>
         </React.Fragment>
     );
-
 }
 
 export default ProductFormUpdate;

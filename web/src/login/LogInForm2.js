@@ -1,10 +1,7 @@
 import {useFormik} from 'formik';
-import Spinner from "../Spinner";
-
-function validateEmail(email) {
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-}
+import Spinner from "../utils/Spinner";
+import API_URL from "../utils/URL";
+import validateEmail from "../utils/validateEmail";
 
 async function getData(url, data) {
     try {
@@ -53,7 +50,7 @@ const LogInForm2 = (props) => {
         },
         validate,
         onSubmit: async (values) => {
-            const res = await getData("http://localhost:4000/api/v1/users/login", values);
+            const res = await getData(API_URL+"users/login", values);
             if (res.status === "fail"){
                 formik.errors.submit = res.message;
             }else{
@@ -64,10 +61,11 @@ const LogInForm2 = (props) => {
     });
 
     return (
-        <form onSubmit={formik.handleSubmit}>
+        <form className="container w-50" onSubmit={formik.handleSubmit}>
 
-            <label htmlFor="email">Email Address </label>
+            <label className="form-check-label" htmlFor="email">Email Address </label>
             <input
+                className="form-control"
                 id="email"
                 name="email"
                 type="email"
@@ -75,10 +73,11 @@ const LogInForm2 = (props) => {
                 onBlur={formik.handleBlur}
                 value={formik.values.email}
             />
-            {formik.touched.email && formik.errors.email ? <div className="Error">{formik.errors.email}</div> : <br/>}
+            {formik.touched.email && formik.errors.email ? <div className="Error">{formik.errors.email}</div> : ""}
 
-            <label htmlFor="password">Password </label>
+            <label className="form-check-label" htmlFor="password">Password </label>
             <input
+                className="form-control"
                 id="password"
                 name="password"
                 type="password"
@@ -89,7 +88,8 @@ const LogInForm2 = (props) => {
             {formik.touched.password && formik.errors.password ? <div className="Error">{formik.errors.password}</div> :
                 <br/>}
 
-            <button type="submit">Submit</button>
+            <button className="btn-primary" type="submit">Submit</button>
+            <br/>
             <Spinner enabled={formik.isSubmitting}/>
             {formik.errors.submit ? <div className="Error">{formik.errors.submit}</div> :
                 <br/>}
