@@ -31,27 +31,6 @@ export default function StackScreen() {
         setUserData
     }
 
-    // useEffect(() => {
-    //     const token = localStorage.getItem("token");
-    //     if (token) {
-    //         const tokenArray = token.split('.');
-    //         const payload = JSON.parse(atob(tokenArray[1]));
-    //         const current_time = Date.now().valueOf() / 1000;
-    //         if(payload.exp < current_time){
-    //             localStorage.removeItem("token");
-    //             localStorage.removeItem("user");
-    //         }else{
-    //             setState(
-    //                 {
-    //                     token,
-    //                     user: JSON.parse(localStorage.getItem("user")),
-    //                     loggedIn: true
-    //                 }
-    //             )
-    //         }
-    //     }
-    // }, []);
-
     /**
      * Define the app screens in a Stack navigator
      * remove if you want to scroll back to Login:
