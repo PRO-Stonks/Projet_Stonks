@@ -3,6 +3,11 @@ import {Text, View, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import styles from "../styles/ScanStyle.js";
 
+/**
+ * Scan component allowing to scan a QRcode
+ * @param props properties to store QRid
+ * @returns {JSX.Element} Scan view
+ */
 export default function Scan(props) {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);

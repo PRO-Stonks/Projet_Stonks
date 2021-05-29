@@ -3,17 +3,25 @@ import Scan from './Scan.js';
 import API_URL from "../url";
 import getElement from '../request/getElement.js'
 
-
+/**
+ * Info component to redirect to the display info screen after scanning
+ * @param route route containing useful parameters
+ * @param navigation navigation route
+ * @returns {JSX.Element} Scan view allowing to get an item info
+ * @constructor
+ */
 export default function Info({route, navigation}) {
     // get user token
     const {token, location} = route.params;
     // store scan id
     const [scanId, setScanId] = useState(null);
 
+    /**
+     * Check for item scan to display info
+     */
     useEffect(() => {
         if (scanId) {
            fetchData(scanId).then(r => {
-                console.log("LOCATION:" + location)
                     navigation.navigate('Info', {
                         element: r,
                         location: location,
@@ -29,13 +37,11 @@ export default function Info({route, navigation}) {
     /**
      * Call request to delete an element
      * @param data : id of the scanned element
-     * @returns {Promise<*>} : request response
+     * @returns {Promise<*>} : server response
      */
     async function fetchData(data) {
-        console.log(API_URL + 'elements/QR/' + data)
         const res = await getElement(API_URL + 'elements/QR/' + data + '?populateField=idProduct,idLocation&populateValue[idProduct]=name&populateValue[idLocation]=name', token);
         if (res.status === 'success') {
-            console.log(res)
             return {
                 name: res.data.idProduct.name,
                 id: res.data._id,

@@ -3,6 +3,11 @@ import Scan from './Scan.js';
 import deleteElement from '../request/deleteElement.js';
 import API_URL from "../url";
 
+/**
+ * Delete componenet to handle deletion of an item
+ * @param route route containing usefull parameters
+ * @returns {JSX.Element} Scan view to delete an item
+ */
 export default function Delete({route}) {
     // get user token
     const {token} = route.params;

@@ -9,25 +9,28 @@ import Scan from "./Scan";
 import List from "../components/List";
 import ItemListLocation from "../components/ItemListLocation";
 
-
+/**
+ * Menu component to display list of products and navigate to Options screen
+ * @param props properties
+ * @returns {JSX.Element} List of products or Options screen
+ */
 export default function Menu(props) {
     // used to get user token
     const userData = useContext(UserContext);
     // state to store list of products
     const [product, setProduct] = useState([]);
     const [location, setLocation] = useState({});
-    // to keep?
-    const [isFetchingProduct, setIsFetchingProduct] = useState(false);
     // state to check if we should scan
     const [isScan, setScan] = useState(false);
 
-
+    /**
+     * Handle logout in Menu
+     */
     React.useLayoutEffect(() => {
         props.navigation.setOptions({
             headerRight: () => (
                 <Button
                     onPress={() => {
-                        console.log("Logout")
                         userData.setUserData({loggedIn: false, user: {}, token: ""});
                         props.navigation.navigate("Login");
                     }
@@ -56,6 +59,11 @@ export default function Menu(props) {
         fetchData().then(r => setProduct(r)).catch(r => console.log(r))
     }, []);
 
+    /**
+     * Return a view containing a list of location
+     * @param item location to display
+     * @returns {JSX.Element} list of location view
+     */
     const renderLocation = ( {item} ) => {
         if (!item){
             throw DOMError;
@@ -68,9 +76,6 @@ export default function Menu(props) {
         );
     };
 
-    /**
-     * Menu view
-     */
     if (location._id) {
         return (
             isScan ? <Scan/> :

@@ -9,7 +9,12 @@ import ItemListProduct from "../components/ItemListProduct";
 import addElement from "../request/addElement";
 import styles from "../styles/AddStyle";
 
-
+/**
+ * Add component to display add view and allowing addition of an item
+ * @param route route containing useful parameters
+ * @param navigation navigation props
+ * @returns {JSX.Element} Add view
+ */
 export default function Add({route, navigation}) {
     const {products, token, location} = route.params;
     // state to store product info
@@ -23,6 +28,9 @@ export default function Add({route, navigation}) {
     // state to check if the date picker must be displayed
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
+    /**
+     * Add a product after scan
+     */
     useEffect(() => {
         if (scanId) {
             setProductInfo({...productInfo, code: scanId})
@@ -61,6 +69,11 @@ export default function Add({route, navigation}) {
         }
     }
 
+    /**
+     * Return a view containing a list of product
+     * @param item product to display
+     * @returns {JSX.Element} list of item view
+     */
     const renderProductItem = ({item}) => {
         if (!item) {
             throw DOMError;
@@ -77,7 +90,6 @@ export default function Add({route, navigation}) {
         setProductInfo({...productInfo, idProduct: item});
         setIsEnableProductList(false);
     }
-
 
     const showDatePicker = () => {
         setDatePickerVisibility(true);
