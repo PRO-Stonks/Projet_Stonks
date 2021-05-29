@@ -26,6 +26,10 @@ router.use(authController.restrictTo('admin'));
 router.post('/add', QRController.addQR);
 
 router
+    .route('/')
+    .delete(QRController.deleteAllQR);
+
+router
     .route('/:id')
     .patch(QRController.updateQR)
     .delete(QRController.deleteQR);

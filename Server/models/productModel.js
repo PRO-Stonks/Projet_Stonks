@@ -14,10 +14,14 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide a tag for this product"]
     },
-    active: { // Still don't completely understand this part
+    lowQuantity: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
+    active: {
         type: Boolean,
         default: true,
-        select: false,
     },
 });
 

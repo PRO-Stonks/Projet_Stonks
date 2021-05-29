@@ -22,6 +22,7 @@ const timeoutDuration = 3000;
 
 let idElement1;
 let idElement2;
+let idElement3;
 let tokenAdmin;
 let idAdmin;
 let tokenManager;
@@ -32,11 +33,14 @@ let idQR1;
 let idQR2;
 let idQR3;
 let idQR4;
+let idQR5;
 const codeQR1 = "QRcode1";
 const codeQR2 = "QRcode2";
 const codeQR3 = "QRcode3";
 const codeQR4 = "QRcode4";
+const codeQR5 = "QRcode5";
 let idProduct;
+let idProduct2;
 before(async function () {
     const database = process.env.DATABASE.replace(
         '${MONGO_USERNAME}', process.env.MONGO_USERNAME).replace(
@@ -146,10 +150,21 @@ before(async function () {
     }).then((doc) => {
         return doc._id;
     });
+    idQR5 = await QR.create({
+        code: codeQR5
+    }).then((doc) => {
+        return doc._id;
+    });
 
 
     // Create a product
     idProduct = await Product.create({
+        name: "ElementTest",
+        tag: "bad food"
+    }).then((doc) => {
+        return doc._id;
+    });
+    idProduct2 = await Product.create({
         name: "ElementTest",
         tag: "bad food"
     }).then((doc) => {
@@ -167,11 +182,21 @@ before(async function () {
         return doc._id;
     });
     idElement2 = await Element.create({
-        idQR: idQR1,
+        idQR: idQR2,
         entryDate: new Date('2020-04-02'),
         exitDate: new Date('2021-11-13'),
         price: 2,
         idProduct: idProduct,
+        idLocation: idLocation1
+    }).then((doc) => {
+        return doc._id;
+    });
+    idElement3 = await Element.create({
+        idQR: idQR5,
+        entryDate: new Date('2020-04-02'),
+        exitDate: new Date('2021-11-13'),
+        price: 2,
+        idProduct: idProduct2,
         idLocation: idLocation1
     }).then((doc) => {
         return doc._id;
@@ -247,10 +272,6 @@ describe('elementController', function () {
                     expect(res.status).to.be.equal(201);
                     expect(res.body.status).to.be.equal('success');
                 });
-            const docs = await ElementEvent.find({}).exec();
-            expect(docs.length).to.be.equal(1);
-            expect(docs[0].kind).to.be.equal("ElementEvent");
-            expect(docs[0].change).to.be.equal('Creation');
         });
 
         it('Non existing Qr code should fail', async () => {
@@ -319,7 +340,6 @@ describe('elementController', function () {
             const after = await ElementEvent.find({}).exec();
             expect(after.length).to.be.equal(prev.length + 1);
             expect(after[0].kind).to.be.equal("ElementEvent");
-            expect(after[0].change).to.be.equal('Creation');
         });
     });
 
@@ -386,6 +406,67 @@ describe('elementController', function () {
         });
     });
 
+    describe('Get element by QR code', function () {
+        it('should fail when not logged in or without token', async () => {
+            // Get Element
+            await chai
+                .request(app)
+                .get(mainRoute + "/elements/QR/" + codeQR1)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(401);
+                    expect(res.body.status).to.be.equal('fail');
+                });
+        });
+
+        it('should fail with invalid token', async () => {
+            // Fake token
+            let token = "fakeTokenIsNotVeryGentle";
+
+            // Get element
+            await chai
+                .request(app)
+                .get(mainRoute + "/elements/QR/" + codeQR1)
+                .set("Authorization", "Bearer " + token)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(500);
+                    expect(res.body.status).to.be.equal('error');
+                })
+        });
+
+        it('should fail with invalid id', async () => {
+            // Get Element
+            await chai
+                .request(app)
+                .get(mainRoute + "/elements/QR/" + mongoose.Types.ObjectId.createFromTime(42))
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal("fail");
+                    expect(res.body.message).to.be.equal("The QR code does not exist");
+                });
+        });
+
+        it('should work with correct id', async () => {
+            // Get Element
+            await chai
+                .request(app)
+                .get(mainRoute + "/elements/QR/" + codeQR1)
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    expect(res.status).to.be.equal(200);
+                    expect(res.body.status).to.be.equal("success");
+                    expect(res.body.data.price).to.be.equal(4);
+                });
+        });
+    });
+
 
     describe('Get all elements', function () {
         it('should fail when not logged in or without token', async () => {
@@ -422,15 +503,12 @@ describe('elementController', function () {
             // Get Elements
             await chai
                 .request(app)
-                .get(mainRoute + "/elements/")
+                .get(mainRoute + "/elements/"+"?page=1&populateField=idProduct&populateValue[idProduct]=name&sort=name")
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.results).to.be.equal(3);
-                    expect(res.body.data[0].price).to.be.equal(4);
-                    expect(res.body.data[1].price).to.be.equal(2);
                 });
         });
     });
@@ -471,13 +549,59 @@ describe('elementController', function () {
             // Get Elements
             await chai
                 .request(app)
-                .get(mainRoute + "/elements/local/" + idLocation1 + "/")
+                .get(mainRoute + "/elements/local/" + idLocation1)
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.results).to.be.equal(2);
+                    expect(res.body.results).to.be.equal(3);
+                });
+        });
+    });
+
+    describe('Get all elements for a given product', function () {
+        it('should fail when not logged in or without token', async () => {
+            // Get Elements
+            await chai
+                .request(app)
+                .get(mainRoute + "/elements/product/" + idProduct)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(401);
+                    expect(res.body.status).to.be.equal('fail');
+                });
+        });
+
+        it('should fail with invalid token', async () => {
+            // Fake token
+            let token = "fakeTokenIsNotVeryGentle";
+
+            // Get Elements
+            await chai
+                .request(app)
+                .get(mainRoute + "/elements/product/" + idProduct)
+                .set("Authorization", "Bearer " + token)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(500);
+                    expect(res.body.status).to.be.equal('error');
+                })
+        });
+
+        it('should work', async () => {
+            // Get Elements
+            await chai
+                .request(app)
+                .get(mainRoute + "/elements/product/" + idProduct)
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    expect(res.status).to.be.equal(200);
+                    expect(res.body.status).to.be.equal("success");
+                    expect(res.body.results).to.be.equal(3);
                 });
         });
     });
@@ -535,6 +659,42 @@ describe('elementController', function () {
                     expect(res.status).to.be.equal(404);
                     expect(res.body.status).to.be.equal("fail");
                     expect(res.body.message).to.be.equal("No document found with that id");
+                });
+        });
+
+        it('move should fail with invalid elementid', async () => {
+            // Update Element
+            await chai
+                .request(app)
+                .patch(mainRoute + "/elements/move/" + mongoose.Types.ObjectId.createFromTime(42) + "/" + idLocation2)
+                .send({
+                    price: 666
+                })
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal("fail");
+                    expect(res.body.message).to.be.equal("No document found with that id");
+                });
+        });
+
+        it('move should fail with invalid location id', async () => {
+            // Update Element
+            await chai
+                .request(app)
+                .patch(mainRoute + "/elements/move/" + idElement2 + "/" + mongoose.Types.ObjectId.createFromTime(42))
+                .send({
+                    price: 666
+                })
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal("fail");
+                    expect(res.body.message).to.be.equal("IdLocation not found");
                 });
         });
 
@@ -673,12 +833,76 @@ describe('elementController', function () {
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
                 .then((res) => {
-
                     expect(res.status).to.be.equal(204);
                 });
 
             // Check for the deleted location
             let doc = await Element.findById(id);
+            expect(doc).to.be.not.null;
+        });
+    });
+
+    describe('Soft delete element by QR', function () {
+        it('should fail when not logged in or without token', async () => {
+            // Soft delete Element
+            await chai
+                .request(app)
+                .delete(mainRoute + "/elements/QR/" + codeQR5)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(401);
+                    expect(res.body.status).to.be.equal('fail');
+                });
+        });
+
+        it('should fail with invalid token', async () => {
+            // Fake token
+            let token = "fakeTokenIsNotVeryGentle";
+
+            // Soft delete
+            await chai
+                .request(app)
+                .delete(mainRoute + "/elements/QR/" + codeQR5)
+                .set("Authorization", "Bearer " + token)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(500);
+                    expect(res.body.status).to.be.equal('error');
+                })
+        });
+
+        it('should fail with invalid code', async () => {
+            // Soft delete element
+            await chai
+                .request(app)
+                .delete(mainRoute + "/elements/QR/" + "NOPE")
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+
+                    expect(res.status).to.be.equal(404);
+                    expect(res.body.status).to.be.equal("fail");
+                    expect(res.body.message).to.be.equal("The QR code does not exist");
+                });
+        });
+
+        it('should work with correct id', async () => {
+            // Create Element
+
+            // Delete previous element
+            await chai
+                .request(app)
+                .delete(mainRoute +"/elements/QR/" + codeQR5)
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    expect(res.status).to.be.equal(204);
+                });
+
+            // Check for the deleted location
+            let doc = await Element.findById(idElement3);
             expect(doc).to.be.not.null;
         });
     });
@@ -787,6 +1011,8 @@ afterEach(async function () {
 after(async function () {
     const q = Promise.all([Element.deleteMany({
             idProduct: idProduct
+        }),Element.deleteMany({
+            idProduct: idProduct2
         }), Product.deleteMany({
             name: "ElementTest"
         }), Location.deleteMany({
@@ -805,6 +1031,7 @@ after(async function () {
             QR.findByIdAndDelete(idQR2),
             QR.findByIdAndDelete(idQR3),
             QR.findByIdAndDelete(idQR4),
+            QR.findByIdAndDelete(idQR5),
             User.deleteMany({
                 firstName: "testElement"
             })]

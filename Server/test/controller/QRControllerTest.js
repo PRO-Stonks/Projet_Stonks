@@ -259,16 +259,16 @@ describe('QRController', function () {
 
         it('should work', async () => {
             // Get QR
-            const prev = await QR.find({}).exec();
+
             await chai
                 .request(app)
                 .get(mainRoute + "/QR/")
                 .set("Authorization", "Bearer " + tokenManager)
                 .timeout(timeoutDuration)
-                .then((res) => {
+                .then(async (res) => {
                     expect(res.status).to.be.equal(200);
                     expect(res.body.status).to.be.equal("success");
-                    expect(res.body.results).to.be.equal(prev.length);
+
                 });
         });
     });
@@ -360,7 +360,6 @@ describe('QRController', function () {
         });
     });
 
-
     describe('Delete QR', function () {
         it('should fail when not logged in or without token', async () => {
             // Delete QR
@@ -429,6 +428,72 @@ describe('QRController', function () {
             await chai
                 .request(app)
                 .delete(mainRoute + "/QR/" + id)
+                .set("Authorization", "Bearer " + tokenAdmin)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    expect(res.status).to.be.equal(204);
+                });
+
+            // Check for the deleted location
+            let doc = await QR.findById(id);
+            expect(doc).to.be.null;
+        });
+    });
+
+    describe('Delete All QR', function () {
+        it('should fail when not logged in or without token', async () => {
+            // Delete QR
+            await chai
+                .request(app)
+                .delete(mainRoute + "/QR/")
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    expect(res.status).to.be.equal(401);
+                    expect(res.body.status).to.be.equal('fail');
+                });
+        });
+
+        it('should fail with invalid token', async () => {
+            // Fake token
+            let token = "fakeTokenIsNotVeryGentle";
+
+            // Delete QR
+            await chai
+                .request(app)
+                .delete(mainRoute + "/QR/")
+                .set("Authorization", "Bearer " + token)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    expect(res.status).to.be.equal(500);
+                    expect(res.body.status).to.be.equal('error');
+                })
+        });
+
+        it('should fail with non-admin users', async () => {
+            // Delete QR
+            await chai
+                .request(app)
+                .delete(mainRoute + "/QR/")
+                .set("Authorization", "Bearer " + tokenManager)
+                .timeout(timeoutDuration)
+                .then((res) => {
+                    expect(res.status).to.be.equal(403);
+                    expect(res.body.status).to.be.equal("fail");
+                });
+        });
+
+        it('should work', async () => {
+            // Create QR
+            let id = await QR.create({
+                code: "test"
+            }).then((doc) => {
+                return doc._id
+            });
+
+            // Delete previous QR
+            await chai
+                .request(app)
+                .delete(mainRoute + "/QR/")
                 .set("Authorization", "Bearer " + tokenAdmin)
                 .timeout(timeoutDuration)
                 .then((res) => {

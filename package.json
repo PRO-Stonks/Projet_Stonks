@@ -4,7 +4,8 @@
   "description": "The best stocks manager application to ever exists",
   "main": "Server/server.js",
   "scripts": {
-    "test-server": "cd Server && mocha \"test/**/*.js\"",
+    "test-server": "cd Server && TEST=true mocha \"test/**/*.js\"",
+    "coverage-server": "nyc --reporter=text yarn run test-server",
     "debug-server": "cd Server && ndb server.js",
     "start-server": "cd Server && PORT=4000 nodemon server.js"
   },
@@ -28,8 +29,16 @@
     "mongoose": "^5.12.1",
     "mongoose-unique-validator": "^2.0.3",
     "ndb": "^1.1.5",
+    "node-schedule": "^2.0.0",
     "nodemon": "^2.0.7",
     "validator": "^13.5.2",
     "xss-clean": "^0.1.1"
+  },
+  "devDependencies": {
+    "nyc": "^15.1.0"
+  },
+  "nyc": {
+    "include": "Server",
+    "exclude": ["Server/test/*","Server/controllers/alertController.js"]
   }
 }

@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const {ConnectionEvent} = require("../models/eventModel");
 const AppError = require("../utils/appError");
-const mongoose = require("mongoose");
+const base = require("./baseController");
 
 /**
  * Create a JWT token for the user
@@ -113,19 +113,7 @@ exports.signup = async (req, res, next) => {
             },
         });
     } catch (err) {
-        if (err instanceof mongoose.Error.ValidationError) {
-            let errorOutput = ""
-            Object.keys(err.errors).forEach((key) => {
-                errorOutput += err.errors[key].message + "\n";
-            });
-
-            next(new AppError(400, "Invalid Input", errorOutput),
-                req,
-                res,
-                next);
-        } else {
-            next(err);
-        }
+        return base.manageValidationError(err,req,res,next)
     }
 };
 

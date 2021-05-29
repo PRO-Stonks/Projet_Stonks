@@ -11,7 +11,8 @@ const dotenv = require('dotenv');
 dotenv.config({
     path: './config.env'
 });
-
+let QRid1;
+let QRid2;
 before(async function () {
     const database = process.env.DATABASE.replace(
         '${MONGO_USERNAME}', process.env.MONGO_USERNAME).replace(
@@ -27,18 +28,26 @@ before(async function () {
         useFindAndModify: false,
         useUnifiedTopology: true
     });
+    QRid1 = await QR.create(
+        {
+            code: "MODEL"
+        }
+    ).then((data) => {
+        return data._id;
+    });
+    QRid2 = await QR.create(
+        {
+            code: "MODEL1"
+        }
+    ).then((data) => {
+        return data._id;
+    })
 
 })
 
 describe('ElementModel', function () {
-    describe('Missing Element', async function () {
-        const QR = await QR.create(
-            {
-                code: "MODEL"
-            }
-        ).then((data) => {
-            return data._id;
-        });
+    describe('Missing Element',  function () {
+
         Object.keys(Element.schema.obj).forEach((key) => {
             it('should throws when ' + key + ' is not present', async () => {
                 if (Element.schema.obj[key].hasOwnProperty('required')) {
@@ -79,13 +88,7 @@ describe('ElementModel', function () {
     describe('Creation', function () {
         it('should create the correct Element', async () => {
             let test = {
-                idQR: await QR.create(
-                    {
-                        code: "MODEL"
-                    }
-                ).then((data) => {
-                    return data._id;
-                }),
+                idQR: QRid2,
                 entryDate: new Date('2021-04-02'),
                 exitDate: new Date('2021-09-28'),
                 price: 10080808,
@@ -132,8 +135,10 @@ after(async function () {
             name: "MODEL"
         }), Location.deleteMany({
             name: "MODEL"
-        }), QR.deleteMany({
+        }), QR.deleteOne({
             code: "MODEL"
+        }),QR.deleteOne({
+            code: "MODEL1"
         })]
     );
 });

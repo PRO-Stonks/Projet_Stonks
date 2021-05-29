@@ -23,7 +23,7 @@ app.use(helmet());
 
 // Limit request from the same API
 const limiter = rateLimit({
-    max: 150,
+    max: 250,
     windowMs: 60 * 60 * 1000,
     message: 'Too Many Request from this IP, please try again in an hour'
 });
@@ -51,6 +51,7 @@ app.use('/api/v1/elements', require('./routes/elementRoutes'));
 app.use('/api/v1/users', require('./routes/userRoutes'));
 app.use('/api/v1/events', require('./routes/eventRoutes'));
 app.use('/api/v1/QR', require('./routes/QRRoutes'));
+app.use('/api/v1/alerts/', require('./routes/alertRoutes'));
 
 
 // handle undefined Routes
@@ -60,5 +61,23 @@ app.use('*', (req, res, next) => {
 });
 
 app.use(globalErrHandler);
+
+
+
+const schedule = require('node-schedule');
+const alertController = require('./controllers/alertController');
+
+const rule = new schedule.RecurrenceRule();
+rule.hour = 0;
+rule.minute = 15;
+rule.second = 0;
+rule.dayOfWeek = new schedule.Range(0,6);
+
+if(!process.env.TEST){
+    const job = schedule.scheduleJob(rule, function(){
+        alertController.createAlert();
+    });
+}
+
 
 module.exports = app;

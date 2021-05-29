@@ -41,10 +41,16 @@ exports.getAllElementEvent = base.getAll(ElementEvent);
 exports.getElementEvent = base.getOne(ElementEvent);
 
 /**
- * Get by location handler
+ * Get by element handler
  * @type {function(Response.req, res, next): Promise<Document[]>}
  */
 exports.getElementEventForElement = base.getDocumentWithFilter(ElementEvent, "element");
+
+/**
+ * Get by product handler
+ * @type {function(Response.req, res, next): Promise<Document[]>}
+ */
+exports.getElementEventForProduct = base.getDocumentWithFilterAndNoPagination(ElementEvent, "product");
 
 /**
  * Get by user handler

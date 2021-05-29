@@ -18,8 +18,17 @@ router
     .get(elementController.getAllElementsByLocation);
 
 router
+    .route('/product/:product/')
+    .get(elementController.getAllElementsByProduct);
+
+router
     .route('/move/:id/:location')
     .patch(elementController.moveElement);
+
+router
+    .route('/QR/:code')
+    .get(elementController.getElementByQR)
+    .delete(elementController.deleteElementByQR);
 
 router
     .route('/')
@@ -39,5 +48,9 @@ router.use(authController.restrictTo('admin'));
 router
     .route('/hardDel/:id')
     .delete(elementController.deleteElement);
+
+router
+    .route('/hardDel/')
+    .delete(elementController.deleteAllElement);
 
 module.exports = router;
