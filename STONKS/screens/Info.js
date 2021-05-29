@@ -41,7 +41,7 @@ export default function Info({route, navigation}) {
                 id: res.data._id,
                 price: res.data.price,
                 entryDate: new Date(res.data.entryDate).toLocaleDateString(),
-                ...(res.data.exitDate && {exitDate: new Date(res.data.exitDate).toISOString().split('T')[0]}),
+                ...(res.data.exitDate && {exitDate: new Date(res.data.exitDate).toLocaleDateString()}),
                 location: res.data.idLocation,
             };
         } else {
