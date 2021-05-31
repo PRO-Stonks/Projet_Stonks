@@ -32,7 +32,7 @@ function ElementByProductManager({productId, token, ...props}) {
                     if (result.status === "fail") {
                         setError(result.message);
                     } else {
-                        setRawData(result.data);
+                        setRawData(result.data.filter(item => item.active));
                         setData(groupBy(result.data, function (element) {
                             if(!element.idLocation){
                                 console.log(element);
