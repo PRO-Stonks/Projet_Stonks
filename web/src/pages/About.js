@@ -6,7 +6,6 @@ function About() {
         <div className="about">
             <div className="container">
                 <div className="row align-items-center my-5">
-                    {/* #TODO remove later */}
                     <div className="col-lg-7">
                         <img src={logo} className="App-logo" alt="logo"/>
                         <p className="Logo-text-down">Not Stonks</p>

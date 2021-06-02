@@ -112,16 +112,18 @@ function QR(props) {
                 </Col>
 
                 {/* Deletion */}
-                <Col>
-                    <h4>Clear All</h4>
-                    <br/>
-                    {/* Delete button */}
-                    <button className="btn-danger" onClick={() => {
-                        clear(props.token).then(() => alert("All QR have been deleted"));
-                    }}>
-                        Delete
-                    </button>
-                </Col>
+                {/*
+                    <Col>
+                        <h4>Clear All</h4>
+                        <br/>
+                        <button className="btn-danger" onClick={() => {
+                            clear(props.token).then(() => alert("All QR have been deleted"));
+                        }}>
+                            Delete
+                        </button>
+                    </Col>
+                    */
+                }
             </Row>
         </div>
     );
