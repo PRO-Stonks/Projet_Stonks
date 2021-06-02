@@ -78,7 +78,7 @@ export default function Add({route, navigation}) {
         if (!item) {
             throw DOMError;
         }
-        return (
+        return ( item.active &&
             <ItemListProduct
                 item={item}
                 onPress={() => setProductId(item)}

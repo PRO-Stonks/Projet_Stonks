@@ -1,4 +1,4 @@
 
-const API_URL = 'http://192.168.0.59:4000/api/v1/'
+const API_URL = 'http://heig-vd-pro-stonks.herokuapp.com/api/v1/'
 
 export default API_URL;
