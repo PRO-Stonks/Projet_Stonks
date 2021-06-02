@@ -4,7 +4,6 @@ import logo from "../assets/Webp.net-resizeimage.png"
 
 /*
     The only diff with navWelcome is the log-Out button
-    #TODO improve this
  */
 function NavAdmin(props) {
     return (
