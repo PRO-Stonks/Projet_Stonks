@@ -1,0 +1,102 @@
+get:
+  tags:
+    - Element
+  summary: Get Element by id
+  operationId: getElementById
+  parameters:
+    - name: id
+      in: path
+      description: The id that needs to be fetched
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              data:
+                $ref: ../components/schemas/Element.yaml
+    '404':
+      description: No document found with that id
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml
+put:
+  tags:
+    - Element
+  summary: Update Element
+  operationId: updateElement
+  parameters:
+    - name: id
+      in: path
+      description: Element that need to be updated
+      required: true
+      schema:
+        type: string
+  requestBody:
+    description: Updated Element object
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/ElementNoLocation.yaml
+    required: true
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              data:
+                $ref: ../components/schemas/Element.yaml
+    '400':
+      description: Use of active in request or Invalid Input
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml
+    '404':
+      description: No document found with that id or tried to modified location
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml
+delete:
+  tags:
+    - Element
+  summary: (Soft)Delete Element
+  description: Disable an Element
+  operationId: deleteElement
+  parameters:
+    - name: id
+      in: path
+      description: The Element that needs to be deleted
+      required: true
+      schema:
+        type: string
+  responses:
+    '204':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+    '404':
+      description: No document found with that id
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml

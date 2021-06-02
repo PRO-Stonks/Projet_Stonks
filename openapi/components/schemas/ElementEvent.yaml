@@ -1,0 +1,24 @@
+type: object
+properties:
+  id:
+    type: string
+    format: mongoId
+  time:
+    type: string
+    format: date
+  user:
+    type: string
+    format: mongoId
+  element:
+    type: string
+    format: mongoId
+  oldLocation:
+    type: string
+    format: mongoId
+  change:
+    type: string
+    description: The type of the change
+    enum:
+      - Creation
+      - Move
+      - Remove

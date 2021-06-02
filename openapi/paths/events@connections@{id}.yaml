@@ -1,0 +1,30 @@
+get:
+  tags:
+    - Event
+  summary: Get ConnectionEvent by id
+  operationId: getConnectionEventById
+  parameters:
+    - name: id
+      in: path
+      description: The id that needs to be fetched
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              data:
+                $ref: ../components/schemas/ConnectionEvent.yaml
+    '404':
+      description: No document found with that id
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml

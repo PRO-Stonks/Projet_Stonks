@@ -1,0 +1,22 @@
+get:
+  tags:
+    - User
+  summary: Get all user
+  operationId: getAllUser
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              results:
+                type: number
+                description: The number of results
+              data:
+                type: array
+                items:
+                  $ref: ../components/schemas/UserLoginResponse.yaml
