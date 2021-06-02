@@ -1,0 +1,22 @@
+get:
+  tags:
+    - Element
+  summary: Get all elements
+  operationId: getAllElements
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              results:
+                type: number
+                description: The number of results
+              data:
+                type: array
+                items:
+                  $ref: ../components/schemas/Element.yaml

@@ -1,0 +1,42 @@
+put:
+  tags:
+    - Element
+  summary: Move Element
+  operationId: moveElement
+  parameters:
+    - name: id
+      in: path
+      description: Element that need to be updated
+      required: true
+      schema:
+        type: string
+    - name: location
+      in: path
+      description: Location to move to
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              data:
+                $ref: ../components/schemas/Element.yaml
+    '400':
+      description: Use of active in request or Invalid Input
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml
+    '404':
+      description: No document found with that id or invalid location
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml

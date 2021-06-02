@@ -1,0 +1,13 @@
+type: object
+properties:
+  status:
+    type: string
+  error:
+    type: object
+    description: Full error
+  message:
+    type: string
+    description: Quick Error description
+  stack:
+    type: string
+    description: Full stack unwind (Disabled in prod)

@@ -1,0 +1,1633 @@
+openapi: 3.0.1
+info:
+  title: STONKS
+  description: This is the Stonks (Stocks management application) API
+  contact:
+    email: leonard.besseau@heig-vd.ch
+  version: 1.0.0
+
+tags:
+- name: User
+  description: Operations about user
+- name: Element
+  description: Operations about element
+- name: Event
+  description: Operations about event
+- name: Location
+  description: Operations about location
+- name: Product
+  description: Operations about product
+- name: QR
+  description: Operations about product
+paths:
+  /users/login:
+    post:
+      security:
+        - {}
+      tags:
+      - User
+      summary: Logs user into the system
+      operationId: loginUser
+      requestBody:
+        description: Login body
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  token:
+                    type: string
+                    description: identification token
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/UserLoginResponse'
+                      
+        401:
+          description: Email or Password is wrong
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Please provide email or password
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      
+  /users/signup:
+    post:
+      security:
+        - {}
+      tags:
+      - User
+      summary: add an user into the system
+      operationId: signupUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSign'
+        required: true
+      responses:
+        201:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                          user:
+                            $ref: '#/components/schemas/UserLoginResponse'
+        400:
+          description: Invalid input
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users/:
+    get:
+      tags:
+      - User
+      summary: Get all user
+      operationId: getAllUser
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserLoginResponse'
+  /users/{id}:
+    get:
+      tags:
+      - User
+      summary: Get user by id
+      description: This can only be done by the admin
+      operationId: getUserById
+      parameters:
+      - name: id
+        in: path
+        description: 'The id that needs to be fetched '
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/UserLoginResponse'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+      - User
+      summary: Update user
+      description: This can only be done by the admin
+      operationId: updateUser
+      parameters:
+      - name: id
+        in: path
+        description: user that need to be updated
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Updated user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/UserLoginResponse'
+        400:
+          description: Use of active in request or Invalid Input
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+      - User
+      summary: (Soft)Delete user
+      description: This can only be done by the admin. Disable an user
+      operationId: deleteUser
+      parameters:
+      - name: id
+        in: path
+        description: The user that needs to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /elements/:
+    get:
+      tags:
+      - Element
+      summary: Get all elements
+      operationId: getAllElements
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Element'
+  /elements/{id}:
+    get:
+      tags:
+      - Element
+      summary: Get Element by id
+      operationId: getElementById
+      parameters:
+      - name: id
+        in: path
+        description: 'The id that needs to be fetched'
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Element'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+      - Element
+      summary: Update Element
+      operationId: updateElement
+      parameters:
+      - name: id
+        in: path
+        description: Element that need to be updated
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Updated Element object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElementNoLocation'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Element'
+        400:
+          description: Use of active in request or Invalid Input
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: No document found with that id or tried to modified location
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+      - Element
+      summary: (Soft)Delete Element
+      description: Disable an Element
+      operationId: deleteElement
+      parameters:
+      - name: id
+        in: path
+        description: The Element that needs to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /elements/local/{location}:
+    get:
+      tags:
+      - Element
+      summary: Get Element by location
+      operationId: getElementByLocation
+      parameters:
+      - name: location
+        in: path
+        description: 'The id that needs to be fetched'
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Element'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /elements/move/{id}/{location}:
+    put:
+      tags:
+      - Element
+      summary: Move Element
+      operationId: moveElement
+      parameters:
+      - name: id
+        in: path
+        description: Element that need to be updated
+        required: true
+        schema:
+          type: string
+      - name: location
+        in: path
+        description: Location to move to
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Element'
+        400:
+          description: Use of active in request or Invalid Input
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: No document found with that id or invalid location
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /elements/add:
+    post:
+      tags:
+      - Element
+      summary: add Element
+      operationId: AddElement
+      requestBody:
+        description: Creat Element object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElementAdd'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Element'
+        400:
+          description: QR code already in use or Invalid Input
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: QR code not found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /elements/hardDel/{id}:
+    delete:
+      tags:
+      - Element
+      summary: Delete Element
+      description: Only possible as admin
+      operationId: HardDeleteElement
+      parameters:
+      - name: id
+        in: path
+        description: The Element that needs to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /events/connections/:
+    get:
+      tags:
+      - Event
+      summary: Get All ConnectionEvent
+      description: Only possible as admin
+      operationId: getAllConnectionEvent
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ConnectionEvent'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /events/order/:
+    get:
+      tags:
+      - Event
+      summary: Get All OrderEvent
+      description: Only possible as admin
+      operationId: getAllOrderEvent
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrderEvent'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /events/element/:
+    get:
+      tags:
+      - Event
+      summary: Get All ElementEvent
+      description: Only possible as admin
+      operationId: getAllElementEvent
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ElementEvent'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /events/connections/{id}:
+    get:
+      tags:
+      - Event
+      summary: Get ConnectionEvent by id
+      operationId: getConnectionEventById
+      parameters:
+      - name: id
+        in: path
+        description: 'The id that needs to be fetched'
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/ConnectionEvent'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /events/order/{id}:
+    get:
+      tags:
+      - Event
+      summary: Get OrderEvent by id
+      operationId: getOrderEventById
+      parameters:
+      - name: id
+        in: path
+        description: 'The id that needs to be fetched'
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/OrderEvent'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /events/element/{id}:
+    get:
+      tags:
+      - Event
+      summary: Get ElementEvent by id
+      operationId: getElementEventById
+      parameters:
+      - name: id
+        in: path
+        description: 'The id that needs to be fetched'
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/ElementEvent'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /events/connections/user/{id}:
+    get:
+      tags:
+      - Event
+      summary: Get ConnectionEvent by id
+      operationId: getConnectionEventByUserId
+      parameters:
+      - name: id
+        in: path
+        description: 'The id that needs to be fetched'
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ConnectionEvent'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /events/element/user/{id}:
+    get:
+      tags:
+      - Event
+      summary: Get ElementEvent by id
+      operationId: getElementEventByUserId
+      parameters:
+      - name: id
+        in: path
+        description: 'The id that needs to be fetched'
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ElementEvent'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /events/element/product/{id}:
+    get:
+      tags:
+      - Event
+      summary: Get ElementEvent by id
+      operationId: getElementEventByProductID
+      parameters:
+      - name: id
+        in: path
+        description: 'The id that needs to be fetched'
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ElementEvent'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /locations/{id}:
+    get:
+      tags:
+      - Location
+      summary: Get Location by id
+      operationId: getLocationById
+      parameters:
+      - name: id
+        in: path
+        description: 'The id that needs to be fetched'
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Location'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+      - Location
+      summary: Update Location
+      description: This can only be done by the admin
+      operationId: updateLocation
+      parameters:
+      - name: id
+        in: path
+        description: Location that need to be updated
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Updated Location object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Location'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Location'
+        400:
+          description: Use of active in request or Invalid Input
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+      - Location
+      summary: (Soft)Delete Location
+      description: This can only be done by the admin. Disable a Location
+      operationId: deleteLocation
+      parameters:
+      - name: id
+        in: path
+        description: The Location that needs to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /locations/:
+    get:
+      tags:
+      - Location
+      summary: Get All Location
+      operationId: getAllLocation
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Location'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /locations/add:
+    post:
+      tags:
+      - Location
+      summary: add Location
+      operationId: AddLocation
+      requestBody:
+        description: Creat Location object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationAdd'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Location'
+        400:
+          description: QR code already in use or Invalid Input
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: QR code not found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /locations/hardDel/{id}:
+    delete:
+      tags:
+      - Location
+      summary: Delete Location
+      description: Only possible as admin
+      operationId: HardDeleteLocation
+      parameters:
+      - name: id
+        in: path
+        description: The Location that needs to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /products/{id}:
+    get:
+      tags:
+      - Product
+      summary: Get Product by id
+      operationId: getProductById
+      parameters:
+      - name: id
+        in: path
+        description: 'The id that needs to be fetched'
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Product'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+      - Product
+      summary: Update Product
+      description: This can only be done by the admin
+      operationId: updateProduct
+      parameters:
+      - name: id
+        in: path
+        description: Product that need to be updated
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Updated Product object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Product'
+        400:
+          description: Use of active in request or Invalid Input
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+      - Product
+      summary: (Soft)Delete Product
+      description: This can only be done by the admin. Disable a Product
+      operationId: deleteProduct
+      parameters:
+      - name: id
+        in: path
+        description: The Product that needs to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /products/:
+    get:
+      tags:
+      - Product
+      summary: Get All Product
+      operationId: getAllProduct
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /products/add:
+    post:
+      tags:
+      - Product
+      summary: add Product
+      operationId: AddProduct
+      requestBody:
+        description: Creat Product object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductAdd'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Product'
+        400:
+          description: QR code already in use or Invalid Input
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: QR code not found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /products/hardDel/{id}:
+    delete:
+      tags:
+      - Product
+      summary: Delete Product
+      description: Only possible as admin
+      operationId: HardDeleteProduct
+      parameters:
+      - name: id
+        in: path
+        description: The Product that needs to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /QR/{id}:
+    get:
+      tags:
+      - QR
+      summary: Get QR by id
+      operationId: getQRById
+      parameters:
+      - name: id
+        in: path
+        description: 'The id that needs to be fetched'
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/QR'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+      - QR
+      summary: Update QR
+      description: This can only be done by the admin
+      operationId: updateQR
+      parameters:
+      - name: id
+        in: path
+        description: QR that need to be updated
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Updated QR object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QR'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/QR'
+        400:
+          description: Use of active in request or Invalid Input
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+      - QR
+      summary: Delete QR
+      description: This can only be done by the admin.
+      operationId: deleteQR
+      parameters:
+      - name: id
+        in: path
+        description: The QR that needs to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /QR/:
+    get:
+      tags:
+      - QR
+      summary: Get All QR
+      operationId: getAllQR
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: number
+                    description: The number of results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/QR'
+        404:
+          description: No document found with that id
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /QR/add:
+    post:
+      tags:
+      - QR
+      summary: add QR
+      operationId: AddQR
+      requestBody:
+        description: Creat QR object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QRAdd'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/QR'
+        400:
+          description: QR code already in use or Invalid Input
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: QR code not found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: mongoId
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          description: The role of the user
+          enum:
+          - "manager"
+          - "admin"
+    UserSign:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          description: The role of the user
+          enum:
+          - "manager"
+          - "admin"
+    UserLoginResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: mongoId
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          description: The role of the user
+          enum:
+          - "manager"
+          - "admin"
+          
+    Element:
+      type: object
+      properties:
+        id:
+          type: string
+          format: mongoId
+        idQR:
+          type: string
+          format: mongoId
+        entryDate:
+          type: string
+          format: date
+        exitDate:
+          type: string
+          format: date
+        price:
+          type: number
+        idLocation:
+          type: string
+          format: mongoId
+    ElementAdd:
+      type: object
+      properties:
+        idQR:
+          type: string
+          format: mongoId
+        entryDate:
+          type: string
+          format: date
+        exitDate:
+          type: string
+          format: date
+        price:
+          type: number
+        idLocation:
+          type: string
+          format: mongoId
+    ElementNoLocation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: mongoId
+        idQR:
+          type: string
+          format: mongoId
+        entryDate:
+          type: string
+          format: date
+        exitDate:
+          type: string
+          format: date
+        price:
+          type: number
+    ConnectionEvent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: mongoId
+        time:
+          type: string
+          format: date
+        ip:
+          type: string
+          format: ipv6
+        user:
+          type: string
+          format: mongoId
+        userAgent:
+          type: string
+    OrderEvent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: mongoId
+        time:
+          type: string
+          format: date
+        user:
+          type: string
+          format: mongoId
+        order:
+          type: string
+          format: mongoId
+    ElementEvent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: mongoId
+        time:
+          type: string
+          format: date
+        user:
+          type: string
+          format: mongoId
+        element:
+          type: string
+          format: mongoId
+        oldLocation:
+          type: string
+          format: mongoId
+        change:
+          type: string
+          description: The type of the change
+          enum:
+          - "Creation"
+          - "Move"
+          - "Remove"
+    Location:
+      type: object
+      properties:
+        id:
+          type: string
+          format: mongoId
+        name:
+          type: string
+        address:
+         type: object
+         properties:
+          street:
+            type: string
+          noStreet:
+            type: number
+          npa: 
+            type: number
+          city:
+            type: string
+          country:
+            type: string
+    LocationAdd:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+         type: object
+         properties:
+          street:
+            type: string
+          noStreet:
+            type: number
+          npa: 
+            type: number
+          city:
+            type: string
+          country:
+            type: string
+  
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: mongoId
+        name:
+          type: string
+    ProductAdd:
+      type: object
+      properties:
+        name:
+          type: string
+    QR:
+      type: object
+      properties:
+        id:
+          type: string
+          format: mongoId
+        code:
+          type: string
+          format: uuid
+    QRAdd:
+      type: object
+      properties:
+        code:
+          type: string
+          format: uuid
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+        error:
+          type: object
+          description: Full error
+        message:
+          type: string
+          description: Quick Error description
+        stack:
+          type: string
+          description: Full stack unwind (Disabled in prod)
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    UnauthorizedError:
+      description: You are not logged in! Please login in to continue
+    ForbiddenError:
+      description: You are not allowed to do this action
+security:
+      - bearerAuth: []
+servers:
+  - url: http://127.0.0.1:4000/api/v1
+    description: Dev server (uses test data)
