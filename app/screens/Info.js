@@ -48,8 +48,8 @@ export default function Info({route, navigation}) {
                 name: res.data.idProduct.name,
                 id: res.data._id,
                 price: res.data.price,
-                entryDate: entryDate.getDate()+"/"+entryDate.getMonth()+"/"+entryDate.getFullYear(),
-                ...(res.data.exitDate && {exitDate: exitDate.getDate()+"/"+exitDate.getMonth()+"/"+exitDate.getFullYear()}),
+                entryDate: entryDate.getDate()+"/"+entryDate.getMonth()+1+"/"+entryDate.getFullYear(),
+                ...(res.data.exitDate && {exitDate: exitDate.getDate()+1+"/"+exitDate.getMonth()+"/"+exitDate.getFullYear()}),
                 location: res.data.idLocation,
             };
         } else {
