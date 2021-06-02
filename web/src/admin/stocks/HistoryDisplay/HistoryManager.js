@@ -17,8 +17,18 @@ function HistoryManager({token}) {
         }
     }
 
+    function compareActive(a, b) {
+        if (a.active && !b.active) {
+            return -1;
+        } else if (!a.active && b.active) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
     function sortElement(a, b) {
-        return a.name.localeCompare(b.name);
+        return compareActive(a, b) || a.name.localeCompare(b.name);
     }
 
     return <Container fluid>
