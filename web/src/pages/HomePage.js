@@ -10,9 +10,7 @@ import StocksManagerMenu from "../admin/stocks/StocksManagerMenu";
 import UserLogManager from "../admin/logs/LogsManagement/UserLogManager";
 import AlertManager from "../admin/alert/AlertManager";
 
-/* This home page is specific to Admins
-    #TODO later for manager
-*/
+/* This home page is specific to Admins */
 function HomePage(props) {
     return (
         <div>

@@ -3,7 +3,6 @@ import API_URL from "../URL";
 
 const NUMBER_OF_ELEMENT_PER_FETCH = 10;
 
-// TODO Add option to filter element displayed multi-filter would be nice
 /**
  * Paginated List
  * @param refetch a boolean to indicates that a refetch is needed.
