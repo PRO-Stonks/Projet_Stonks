@@ -2,8 +2,8 @@ import {Formik} from 'formik';
 import * as yup from 'yup'
 import * as React from 'react';
 import {Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import API_URL from "../url";
-import {UserContext} from "../UserContext";
+import API_URL from "../utils/url";
+import {UserContext} from "../utils/UserContext";
 import verifyUser from '../request/verifyUser.js';
 import styles from '../styles/LoginStyle';
 

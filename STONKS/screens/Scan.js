@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {Text, View, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import styles from "../styles/ScanStyle.js";
 
+/**
+ * Scan component allowing to scan a QRcode
+ * @param props properties to store QRid
+ * @returns {JSX.Element} Scan view
+ */
 export default function Scan(props) {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
@@ -41,24 +47,4 @@ export default function Scan(props) {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        height: '100%',
-        width: '100%',
-    },
-    text: {
-        fontSize: 35,
-        fontWeight: 'bold',
-    },
-    button: {
-        padding: 20,
-        textAlign: 'center',
-        fontSize: 28,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
 
-});

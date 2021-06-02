@@ -8,7 +8,7 @@ import Add from '../screens/Add.js';
 import Info from '../screens/Info.js';
 import DisplayInfo from '../screens/DisplayInfo.js'
 import Delete from '../screens/Delete';
-import {UserContext} from '../UserContext'
+import {UserContext} from '../utils/UserContext'
 
 export default function StackScreen() {
     // state to store user info
@@ -30,27 +30,6 @@ export default function StackScreen() {
         state,
         setUserData
     }
-
-    // useEffect(() => {
-    //     const token = localStorage.getItem("token");
-    //     if (token) {
-    //         const tokenArray = token.split('.');
-    //         const payload = JSON.parse(atob(tokenArray[1]));
-    //         const current_time = Date.now().valueOf() / 1000;
-    //         if(payload.exp < current_time){
-    //             localStorage.removeItem("token");
-    //             localStorage.removeItem("user");
-    //         }else{
-    //             setState(
-    //                 {
-    //                     token,
-    //                     user: JSON.parse(localStorage.getItem("user")),
-    //                     loggedIn: true
-    //                 }
-    //             )
-    //         }
-    //     }
-    // }, []);
 
     /**
      * Define the app screens in a Stack navigator

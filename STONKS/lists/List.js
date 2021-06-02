@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Dimensions, FlatList, StatusBar, StyleSheet, Text} from 'react-native';
 import NUMBER_OF_ELEMENT_PER_FETCH from "../utils/getNumberOfElementPerFetch";
-import API_URL from "../url";
+import API_URL from "../utils/url";
 import {SafeAreaView} from "react-navigation";
 
 

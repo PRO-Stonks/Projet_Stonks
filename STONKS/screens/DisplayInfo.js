@@ -1,23 +1,39 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from "react";
-import API_URL from "../url";
+import API_URL from "../utils/url";
 import moveElement from "../request/moveElement";
 import getLocation from "../request/getLocation";
+import styles from "../styles/DisplayInfoStyle.js";
 
+/**
+ * Display info component to display information about a scanned product
+ * @param navigation navigation props
+ * @param route route containing usefull paramaters
+ * @returns {JSX.Element} Display info view
+ */
 export default function DisplayInfo({navigation, route}) {
-
+    // get data
     const {element, location, token} = route.params;
-
+    // state to handle location change
     const [isLocationChange, setLocationChange] = useState();
-
+    // state to store location name
     const [locationName, setLocationName] = useState(element.location.name)
 
+    /**
+     * Process location change :
+     * - patch product to new location
+     * - fetch new location name
+     */
     const changeLocation = () => {
         moveData().then(r => console.log(r)).catch(r => console.log(r));
         fetchData().then(r => { setLocationName(r.data.name)}).catch(r => console.log(r));
         setLocationChange(false)
     }
 
+    /**
+     * Display button if location change is available
+     * @returns {JSX.Element|null} button view or null
+     */
     function ShowLocationChange(){
         if (isLocationChange) {
             return <TouchableOpacity
@@ -30,6 +46,9 @@ export default function DisplayInfo({navigation, route}) {
         }
     }
 
+    /**
+     * Check for location change
+     */
     useEffect(() => {
         setLocationChange(false)
         if (location.name !== element.location.name) {
@@ -37,6 +56,10 @@ export default function DisplayInfo({navigation, route}) {
         }
     }, [])
 
+    /**
+     * Patch product to new location
+     * @returns {Promise<*>} server response
+     */
     async function moveData() {
         const res = await moveElement(API_URL + 'elements/move/' + element.id + '/' + location._id, token);
         if (res.status === 'success') {
@@ -48,6 +71,10 @@ export default function DisplayInfo({navigation, route}) {
         }
     }
 
+    /**
+     * Fetch new location name
+     * @returns {Promise<*>} server response
+     */
     async function fetchData() {
         const res = await getLocation(API_URL + 'locations/' + location._id, token);
         if (res.status === 'success') {
@@ -58,6 +85,9 @@ export default function DisplayInfo({navigation, route}) {
         }
     }
 
+    /**
+     * Display info view
+     */
     return (
         <View style={styles.container}>
             <View style={styles.iView}>
@@ -83,63 +113,3 @@ export default function DisplayInfo({navigation, route}) {
 }
 
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "white",
-        alignItems: "center",
-        justifyContent: "flex-start",
-    },
-    iView: {
-        flex: 3,
-        marginTop: '10%',
-        backgroundColor: "white",
-        alignItems: 'center',
-        flexDirection: 'column',
-    },
-    text: {
-        fontSize: 25,
-        marginBottom: '8%',
-        fontWeight: 'bold',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    textL:{
-        fontSize: 25,
-        marginBottom: '10%',
-        fontWeight: 'bold',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    bView: {
-        flex: 1.8,
-        alignItems: 'center',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        marginBottom: '15%',
-    },
-    bText: {
-        fontSize: 25,
-        color: '#fff',
-        textAlign: 'center',
-        fontWeight: 'bold',
-    },
-    button: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'lightskyblue',
-        padding: 15,
-        borderRadius: 5,
-        width: '100%',
-        height: '40%',
-    },
-    bLocation: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'darkseagreen',
-        padding: 15,
-        borderRadius: 5,
-        width : '100%',
-        height: '40%',
-    }
-});
