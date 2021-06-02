@@ -68,7 +68,7 @@ export default function Menu(props) {
         if (!item){
             throw DOMError;
         }
-        return (
+        return (item.active &&
             <ItemListLocation
                 item={item}
                 onPress={() => setLocation(item)}

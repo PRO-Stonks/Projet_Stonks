@@ -42,12 +42,14 @@ export default function Info({route, navigation}) {
     async function fetchData(data) {
         const res = await getElement(API_URL + 'elements/QR/' + data + '?populateField=idProduct,idLocation&populateValue[idProduct]=name&populateValue[idLocation]=name', token);
         if (res.status === 'success') {
+            const entryDate = new Date(res.data.entryDate);
+            const exitDate = new Date(res.data.exitDate);
             return {
                 name: res.data.idProduct.name,
                 id: res.data._id,
                 price: res.data.price,
-                entryDate: new Date(res.data.entryDate).toLocaleDateString(),
-                ...(res.data.exitDate && {exitDate: new Date(res.data.exitDate).toLocaleDateString()}),
+                entryDate: entryDate.getDate()+"/"+entryDate.getMonth()+"/"+entryDate.getFullYear(),
+                ...(res.data.exitDate && {exitDate: exitDate.getDate()+"/"+exitDate.getMonth()+"/"+exitDate.getFullYear()}),
                 location: res.data.idLocation,
             };
         } else {
